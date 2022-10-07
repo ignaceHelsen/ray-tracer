@@ -4,9 +4,14 @@ import main.Ray;
 import main.Utility;
 import main.Vector;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class Sphere extends Object{
+    public Sphere(Color color) {
+        super(color);
+    }
+
     @Override
     public Vector getCollision(Ray ray) {
         double a = Math.pow(ray.getC().getX(), 2) + Math.pow(ray.getC().getY(), 2) + Math.pow(ray.getC().getZ(), 2);
@@ -28,9 +33,9 @@ public class Sphere extends Object{
 
         Vector firstCollisionPoint = new Vector(x, y, z, (byte) 1); // type = 1 since point
 
-        /* x = ray.getS().getX()*(1-th[0]);
-        y = ray.getS().getY()*(1-th[0]);
-        z = ray.getS().getZ()*(1-th[0]);
+        /* x = ray.getS().getX()*(1-th[1]);
+        y = ray.getS().getY()*(1-th[1];
+        z = ray.getS().getZ()*(1-th[1]);
 
         Vector secondCollisionPoint = new Vector(x, y, z, (byte) 1); // type = 1 since point */
 
