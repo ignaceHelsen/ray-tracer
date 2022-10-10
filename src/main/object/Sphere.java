@@ -25,7 +25,9 @@ public class Sphere extends Object{
         double t1 = -(b / a) + enumerator;
         double t2 = -(b / a) - enumerator;
 
-        double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0).toArray(); // timestamps need to be positive
+        double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0).sorted().toArray(); // timestamps need to be positive
+
+        if (th.length == 0) return null;
 
         double x = ray.getS().getX()*(1-th[0]);
         double y = ray.getS().getY()*(1-th[0]);
