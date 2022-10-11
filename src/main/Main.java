@@ -10,13 +10,13 @@ public class Main {
     public static void main(String[] args) {
         final int SCREEN_WIDTH = 1920/2;
         final int SCREEN_HEIGHT = 1080/2;
-        final int FOCALLENGTH = 1;
+        final int FOCALLENGTH = 10;
 
         // scene
         Scene scene = new Scene();
 
         // camera in center of screen
-        Camera camera = new Camera(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,0);
+        Camera camera = new Camera(FOCALLENGTH,SCREEN_WIDTH/2,SCREEN_HEIGHT/2);
 
         // screen
         // every ray's S will equal the camera position
@@ -39,7 +39,7 @@ public class Main {
                     for (int j = 0; j <= SCREEN_HEIGHT; j++) { // y
                         // every ray's S will equal the camera position
                         // the c vector will target the pixel hole and shoot through that
-                        Ray ray = new Ray(s, new Vector(-i, -j, FOCALLENGTH, (byte) 0)); // camera seems to be behind screen?
+                        Ray ray = new Ray(s, new Vector(FOCALLENGTH, i, j, (byte) 0)); // camera seems to be behind screen?
                         // for every object, cast the ray
                         for (Object object: scene.getObjects()) {
                             Vector point = object.getCollision(ray);
