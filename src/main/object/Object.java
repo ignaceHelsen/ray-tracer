@@ -8,7 +8,7 @@ import java.awt.*;
 
 public abstract class Object {
     private final Color color;
-    public abstract Vector getCollision(Ray ray);
+    public abstract Vector getFirstHitPoint(Ray ray);
     // collision function waaraan ray meegeven: locate collision in object
     // de verschillende transformatie functies
     // implementeer voor afgeleide klasse: sphere

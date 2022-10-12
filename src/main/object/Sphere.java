@@ -13,7 +13,7 @@ public class Sphere extends Object{
     }
 
     @Override
-    public Vector getCollision(Ray ray) {
+    public Vector getFirstHitPoint(Ray ray) {
         double a = Math.pow(ray.getC().getX(), 2) + Math.pow(ray.getC().getY(), 2) + Math.pow(ray.getC().getZ(), 2);
         double b = Utility.dot(ray.getS(), ray.getC());
         double c = Math.pow(ray.getS().getX(), 2) + Math.pow(ray.getS().getY(), 2) + Math.pow(ray.getS().getZ(), 2) - 1;

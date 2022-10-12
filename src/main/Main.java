@@ -47,7 +47,7 @@ public class Main {
                         Ray ray = new Ray(s, new Vector(FOCALLENGTH, i, j, 0));
                         // for every object, cast the ray
                         for (Object object: scene.getObjects()) {
-                            Vector point = object.getCollision(ray);
+                            Vector point = object.getFirstHitPoint(ray);
 
                             if (point != null) {
                                 // get color of object
