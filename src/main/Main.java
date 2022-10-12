@@ -10,17 +10,21 @@ public class Main {
     public static void main(String[] args) {
         final int SCREEN_WIDTH = 1920/2;
         final int SCREEN_HEIGHT = 1080/2;
-        final int FOCALLENGTH = 10;
+        final int FOCALLENGTH = 1000;
+
+        /*Ray ray = new Ray(new Vector(-5,0,0, 1), new Vector(1,0,0, 0));
+        Object sphere = new Sphere(Color.RED);
+        Vector point = sphere.getCollision(ray);*/
 
         // scene
         Scene scene = new Scene();
 
         // camera in center of screen
-        Camera camera = new Camera(FOCALLENGTH,SCREEN_WIDTH/2,SCREEN_HEIGHT/2);
+        Camera camera = new Camera(0, 0,0);
 
         // screen
         // every ray's S will equal the camera position
-        Vector s = new Vector(camera.getLocation().getX(), camera.getLocation().getY(), camera.getLocation().getZ(), (byte) 0);
+        Vector s = new Vector(camera.getLocation().getX(), camera.getLocation().getY(), camera.getLocation().getZ(), 1);
 
         Object sphere = new Sphere(Color.RED);
         scene.addObject(sphere);
@@ -35,11 +39,12 @@ public class Main {
                 Toolkit.getDefaultToolkit().sync();
 
                 // shoot rays in a for loop
-                for (int i = 0; i <= SCREEN_WIDTH; i++) { // x
-                    for (int j = 0; j <= SCREEN_HEIGHT; j++) { // y
+                for (int i = -(SCREEN_WIDTH/2); i <= SCREEN_WIDTH/2; i++) { // x
+                    for (int j = -(SCREEN_HEIGHT/2); j <= SCREEN_HEIGHT/2; j++) { // y
                         // every ray's S will equal the camera position
                         // the c vector will target the pixel hole and shoot through that
-                        Ray ray = new Ray(s, new Vector(FOCALLENGTH, i, j, (byte) 0)); // camera seems to be behind screen?
+                        // TODO shoot rays also to negative i's and j's --> transform s of every ray to outside
+                        Ray ray = new Ray(s, new Vector(FOCALLENGTH, i, j, 0));
                         // for every object, cast the ray
                         for (Object object: scene.getObjects()) {
                             Vector point = object.getCollision(ray);

@@ -29,11 +29,11 @@ public class Sphere extends Object{
 
         if (th.length == 0) return null;
 
-        double x = ray.getS().getX()*(1-th[0]);
-        double y = ray.getS().getY()*(1-th[0]);
-        double z = ray.getS().getZ()*(1-th[0]);
+        double x = ray.getS().getX() + ray.getC().getX() * th[0];
+        double y = ray.getS().getY() + ray.getC().getY() * th[0];
+        double z = ray.getS().getZ() + ray.getC().getZ() * th[0];
 
-        Vector firstCollisionPoint = new Vector(x, y, z, (byte) 1); // type = 1 since point
+        Vector firstCollisionPoint = new Vector(x, y, z, 1); // type = 1 since point
 
         /* x = ray.getS().getX()*(1-th[1]);
         y = ray.getS().getY()*(1-th[1];
@@ -42,8 +42,5 @@ public class Sphere extends Object{
         Vector secondCollisionPoint = new Vector(x, y, z, (byte) 1); // type = 1 since point */
 
         return firstCollisionPoint;
-
-        // TODO: create java 2d, and paint pixel (drawline)
-        // TODO: normalize c of vector
     }
 }

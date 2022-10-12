@@ -2,9 +2,9 @@ package main;
 
 public class Vector {
     private double x, y, z;
-    private byte type; // 1 for point, 0 for vector
+    private double type; // 1 for point, 0 for vector
 
-    public Vector(double x, double y, double z, byte type) {
+    public Vector(double x, double y, double z, double type) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -35,11 +35,11 @@ public class Vector {
         this.z = z;
     }
 
-    public byte getType() {
+    public double getType() {
         return type;
     }
 
-    public void setType(byte type) {
+    public void setType(double type) {
         this.type = type;
     }
 }
