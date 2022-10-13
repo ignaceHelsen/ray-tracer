@@ -2,17 +2,23 @@ package main;
 
 public class Ray {
     private Vector s; // origin
-    private Vector c; // direction
+    private Vector dir; // direction
 
-    public Ray(Vector s, Vector c) {
+    /**
+     * Will also normalize the direction vector
+     * @param s
+     * @param dir
+     */
+    public Ray(Vector s, Vector dir) {
         this.s = s;
-        this.c = c;
+        this.dir = dir;
+
 
         // normalize c
-        double v = Math.sqrt(Utility.dot(c, c));
-        c.setX(c.getX()/v);
-        c.setY(c.getY()/v);
-        c.setZ(c.getZ()/v);
+        double v = Math.sqrt(Utility.dot(dir, dir));
+        dir.setX(dir.getX()/v);
+        dir.setY(dir.getY()/v);
+        dir.setZ(dir.getZ()/v);
     }
 
     public Vector getS() {
@@ -23,11 +29,11 @@ public class Ray {
         this.s = s;
     }
 
-    public Vector getC() {
-        return c;
+    public Vector getDir() {
+        return dir;
     }
 
-    public void setC(Vector c) {
-        this.c = c;
+    public void setDir(Vector dir) {
+        this.dir = dir;
     }
 }
