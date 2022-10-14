@@ -4,14 +4,16 @@ import main.Ray;
 import main.Vector;
 import main.object.Object;
 import main.object.Sphere;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RayTest {
-    public static void main(String[] args) {
-        Object sphere = new Sphere(Color.RED);
+    @Test
+    public void testRay() {
+        Object sphere = new Sphere(Color.RED, 1);
 
         List<Ray> rays = new ArrayList<>();
         rays.add(new Ray(new Vector(4, 0, 0, 1), new Vector(-4, 3, 4, 0)));

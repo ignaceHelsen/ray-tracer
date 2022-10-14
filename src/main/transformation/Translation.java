@@ -1,34 +1,25 @@
 package main.transformation;
 
+import main.Utility;
 import main.Vector;
 
 public class Translation extends Transformation {
-    private int translateX;
-    private int translateY;
+    private final int translateY, translateZ;
 
-    private final double transformation[][] = {{1,0,9}, {0, 1, 9}, {0, 0, 1}};
+    private final double[][] transformation = {{1, 0, 0, 0}, {0, 1, 0, 9}, {0, 0, 1, 9}, {0, 0, 0, 1}}; // '9' is placeholder for y & z translation
 
-    public Translation(int translateX, int translateY) {
-        this.translateX = translateX;
+    public Translation(int translateY, int translateZ) {
         this.translateY = translateY;
+        this.translateZ = translateZ;
     }
 
     @Override
-    public Vector transformation(Vector input) {
-        transformation[0][2] = this.translateX;
-        transformation[1][2] = this.translateY;
+    public Vector transform(Vector input) {
+        transformation[1][3] = this.translateY;
+        transformation[2][3] = this.translateZ;
 
-        double[] inputVector = {input.getX(), input.getY(), input.getZ()};
-        double[] outputVector = new double[transformation.length];
+        // TODO: inverse matrix
 
-        for (int i = 0; i < outputVector.length; i++) {
-            int sum = 0;
-            for (int j = 0; j < transformation[0].length; j++) {
-                sum += transformation[i][j] * inputVector[j];
-            }
-            outputVector[i] = sum;
-        }
-
-        return new Vector(outputVector[0], outputVector[1], outputVector[2], 0);
+        return new Vector(Utility.multiplyVectors(input.getCoords(), transformation));
     }
 }

@@ -1,6 +1,7 @@
 package main;
 
 import main.object.Object;
+import main.transformation.Scale;
 import main.transformation.Transformation;
 import main.transformation.Translation;
 
@@ -9,7 +10,7 @@ import java.awt.*;
 
 public class Renderer {
     private final JFrame frame;
-    private final int focallength, screenWidth, screenHeight;
+    private final double focallength, screenWidth, screenHeight;
     private final Scene scene;
 
     public Renderer(int focallength, int screenWidth, int screenHeight, Scene scene) {
@@ -38,23 +39,31 @@ public class Renderer {
                 Toolkit.getDefaultToolkit().sync();
 
                 // shoot rays in a for loop
-                for (int i = -(screenWidth / 2); i <= screenWidth / 2; i++) { // x
-                    for (int j = -(screenHeight / 2); j <= screenHeight / 2; j++) { // y
-                        // every ray's S will equal the camera position
-                        // the c vector will target the pixel hole and shoot through that
-                        // TODO shoot rays also to negative i's and j's --> transform s of every ray to outside
-                        Ray ray = new Ray(origin, new Vector(focallength, i, j, 0));
+                for (int c = 0; c <= screenWidth; c++) {
+                    for (int r = 0; r <= screenHeight; r++) {
+                        final double H = screenHeight / 2;
+                        final double W = screenWidth / 2;
+
+                        Vector dir = new Vector(-focallength, W*((2*c/screenWidth)-1), H*((2*r/screenHeight)-1), 0);
+
+                        Ray ray = new Ray(origin, dir);
+
+                        Transformation translation = new Translation(-100, -10000);
+                        Transformation scale = new Scale(1,1);
+
+                        // ray.setS(scale.transform(ray.getS()));
+                        ray.setDir(scale.transform(ray.getDir()));
+
                         // for every object, cast the ray
                         for (Object object : scene.getObjects()) {
                             Vector point = object.getFirstHitPoint(ray);
 
                             if (point != null) {
                                 // we got a hit
-                                Transformation translation = new Translation(1,1);
-                                Ray transformedRay = new Ray(translation.transform(ray.getS()), translation.transform(ray.getDir()));
+
                                 // get color of object
-                                graph2d.setColor(Color.RED);
-                                graph2d.drawLine(i, j, i, j);
+                                graph2d.setColor(object.getColor());
+                                graph2d.drawLine(c, r, c, r);
                             }
                         }
                     }

@@ -8,8 +8,11 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class Sphere extends Object {
-    public Sphere(Color color) {
+    private final int radius;
+
+    public Sphere(Color color, int radius) {
         super(color);
+        this.radius = radius;
     }
 
     @Override
@@ -21,9 +24,9 @@ public class Sphere extends Object {
         double discrim = b * b - a * c;
         if (discrim < 0) return null;
 
-        double enumerator = Math.sqrt(discrim);
-        double t1 = (-b - enumerator) / a; // time of hitpoint 1
-        double t2 = (-b + enumerator) / a; // time of hitpoint 2
+        double discRoot = Math.sqrt(discrim);
+        double t1 = (-b - discRoot) / a; // time of hitpoint 1
+        double t2 = (-b + discRoot) / a; // time of hitpoint 2
 
         double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0).toArray(); // timestamps need to be positive
 
