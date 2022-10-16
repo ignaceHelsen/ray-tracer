@@ -4,20 +4,21 @@ import main.Utility;
 import main.Vector;
 
 public class Scale extends Transformation {
-    private final double scaleY, scaleZ;
+    public Scale(double scaleX, double scaleY, double scaleZ) {
+        double[][] transformation = {{1, 0, 0, 0},
+                                     {0, 1, 0, 0},
+                                     {0, 0, 1, 0},
+                                     {0, 0, 0, 1}};
 
-    private final double[][] transformation = {{1, 0, 0, 0}, {0, 9, 0, 0}, {0, 0, 9, 0}, {0, 0, 0, 1}}; // '9' is placeholder for y & z translation
+        transformation[0][0] = 1 / scaleX;
+        transformation[1][1] = 1 / scaleY;
+        transformation[2][2] = 1 / scaleZ;
 
-    public Scale(double scaleY, double scaleZ) {
-        this.scaleY = scaleY;
-        this.scaleZ = scaleZ;
+        setTransformation(transformation);
     }
 
     @Override
     public Vector transform(Vector input) {
-        transformation[1][1] = this.scaleY;
-        transformation[2][2] = this.scaleZ;
-
-        return new Vector(Utility.multiplyVectors(input.getCoords(), transformation));
+        return new Vector(Utility.multiplyMatrices(input.getCoords(), getTransformation()));
     }
 }

@@ -6,6 +6,7 @@ public class Ray {
 
     /**
      * Will also normalize the direction vector
+     *
      * @param s
      * @param dir
      */
@@ -13,12 +14,12 @@ public class Ray {
         this.s = s;
         this.dir = dir;
 
-
         // normalize c
         double v = Math.sqrt(Utility.dot(dir, dir));
-        dir.setX(dir.getX()/v);
-        dir.setY(dir.getY()/v);
-        dir.setZ(dir.getZ()/v);
+        dir.setX(dir.getX() / v);
+        dir.setY(dir.getY() / v);
+        dir.setZ(dir.getZ() / v);
+
     }
 
     public Vector getS() {

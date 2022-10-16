@@ -1,18 +1,18 @@
 package main.object;
 
 import main.Ray;
+import main.Utility;
 import main.Vector;
 import main.transformation.Transformation;
 
 import java.awt.*;
 
 public abstract class Object {
-    private final Color color;
-    public abstract Vector getFirstHitPoint(Ray ray);
-    // collision function waaraan ray meegeven: locate collision in object
-    // de verschillende transformatie functies
-    // implementeer voor afgeleide klasse: sphere
+    private Transformation transformation;
 
+    private final Color color;
+
+    public abstract Vector getFirstHitPoint(Ray ray);
 
     public Object(Color color) {
         this.color = color;
@@ -22,7 +22,12 @@ public abstract class Object {
         return color;
     }
 
-    public <I extends Object> I transform(Transformation transformation) {
-        return (I) this;
+    public void addTransformation(Transformation transformation) {
+        if (this.transformation == null) this.transformation = transformation;
+        else this.transformation.setTransformation(Utility.multiplyMatrices(this.transformation.getTransformation(), transformation.getTransformation()));
+    }
+
+    public Transformation getTransformation() {
+        return transformation;
     }
 }

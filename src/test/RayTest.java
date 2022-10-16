@@ -13,7 +13,7 @@ import java.util.List;
 public class RayTest {
     @Test
     public void testRay() {
-        Object sphere = new Sphere(Color.RED, 1);
+        Object sphere = new Sphere(Color.RED);
 
         List<Ray> rays = new ArrayList<>();
         rays.add(new Ray(new Vector(4, 0, 0, 1), new Vector(-4, 3, 4, 0)));
