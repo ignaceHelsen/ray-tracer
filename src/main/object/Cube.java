@@ -1,13 +1,14 @@
 package main.object;
 
+import main.Material;
 import main.Ray;
 import main.Vector;
 
 import java.awt.*;
 
 public class Cube extends Object {
-    public Cube(Color color) {
-        super(color);
+    public Cube(Material material) {
+        super(material);
     }
 
     @Override

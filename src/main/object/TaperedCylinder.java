@@ -1,5 +1,6 @@
 package main.object;
 
+import main.Material;
 import main.Ray;
 import main.Utility;
 import main.Vector;
@@ -10,8 +11,8 @@ import java.util.Arrays;
 public class TaperedCylinder extends Object {
     private final double ratio; // closer to 1: cylinder, closer to 0: cone
 
-    public TaperedCylinder(Color color, double ratio) {
-        super(color);
+    public TaperedCylinder(Material material, double ratio) {
+        super(material);
         this.ratio = ratio;
     }
 

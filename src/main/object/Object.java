@@ -1,26 +1,21 @@
 package main.object;
 
+import main.Material;
 import main.Ray;
 import main.Utility;
 import main.Vector;
 import main.transformation.Transformation;
 
-import java.awt.*;
-
 public abstract class Object {
     private Transformation transformation;
+    private final Material material;
 
-    private final Color color;
+    public Object(Material material) {
+        this.material = material;
+    }
 
     public abstract Vector getFirstHitPoint(Ray ray);
 
-    public Object(Color color) {
-        this.color = color;
-    }
-
-    public Color getColor() {
-        return color;
-    }
 
     public void addTransformation(Transformation transformation) {
         if (this.transformation == null) this.transformation = transformation;
@@ -29,5 +24,9 @@ public abstract class Object {
 
     public Transformation getTransformation() {
         return transformation;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }

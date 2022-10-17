@@ -24,19 +24,25 @@ public class Main {
         Camera camera = new Camera(FOCALLENGTH, 0, -100);
         scene.setCamera(camera);
 
-        Transformation translationSphere = new Translation(-205,-105, -105);
-        Transformation translationSphere2 = new Translation(500,15, 5);
-        Transformation translationCube = new Translation(0,100, 0);
-        Transformation translationCone = new Translation(700,0, 0);
+        Transformation translationSphere = new Translation(-205, -105, -105);
+        Transformation translationSphere2 = new Translation(500, 15, 5);
+        Transformation translationCube = new Translation(0, 100, 0);
+        Transformation translationCone = new Translation(700, 0, 0);
         Transformation rotate = new Rotation().rotateX(45).rotateY(10).rotateZ(10);
         Transformation scale = new Scale(50, 50, 50);
         Transformation scale2 = new Scale(40, 40, 40);
 
+        // MATERIALS
+        Material red = new Material(Color.red, 0.5, 0.5, 0.5);
+        Material blue = new Material(Color.blue, 0.5, 0.5, 0.5);
+        Material pink = new Material(Color.pink, 0.5, 0.5, 0.5);
+        Material green = new Material(Color.green, 0.5, 0.5, 0.5);
+
         // OBJECTS
-        Object sphere = new Sphere(Color.RED);
-        Object cube = new Cube(Color.BLUE);
-        Object sphere2 = new Sphere(Color.PINK);
-        Object cone = new TaperedCylinder(Color.GREEN, 0.1);
+        Object sphere = new Sphere(red);
+        Object cube = new Cube(blue);
+        Object sphere2 = new Sphere(pink);
+        Object cone = new TaperedCylinder(green, 0.1);
 
         cone.addTransformation(scale);
         cone.addTransformation(translationCone);
@@ -61,26 +67,26 @@ public class Main {
         renderer.setScene(scene);
 
         // pan around the space
-        for (int i = 0; i < 100; i++) {
-            camera.location.setY(camera.location.getY()+1);
-            camera.location.setX(camera.location.getX()-2);
-            Thread.sleep(10);
+        /*for (int i = 0; i < 1000; i++) {
+            camera.location.setY(camera.location.getY() + 0.1);
+            camera.location.setX(camera.location.getX() - 0.2);
+            Thread.sleep(1);
             renderer.setScene(scene);
             renderer.draw();
         }
 
-        for (int i = 0; i < 150; i++) {
-            camera.location.setY(camera.location.getY()-1);
-            Thread.sleep(10);
+        for (int i = 0; i < 1500; i++) {
+            camera.location.setY(camera.location.getY() - 0.1);
+            Thread.sleep(1);
             renderer.setScene(scene);
             renderer.draw();
         }
 
-        for (int i = 0; i < 1000; i++) {
-            camera.location.setX(camera.location.getX()-1);
-            Thread.sleep(10);
+        for (int i = 0; i < 10000; i++) {
+            camera.location.setX(camera.location.getX() - 0.1);
+            Thread.sleep(1);
             renderer.setScene(scene);
             renderer.draw();
-        }
+        }*/
     }
 }

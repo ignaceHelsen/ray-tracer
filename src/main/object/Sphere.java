@@ -1,15 +1,15 @@
 package main.object;
 
+import main.Material;
 import main.Ray;
 import main.Utility;
 import main.Vector;
 
-import java.awt.*;
 import java.util.Arrays;
 
 public class Sphere extends Object {
-    public Sphere(Color color) {
-        super(color);
+    public Sphere(Material material) {
+        super(material);
     }
 
     @Override
