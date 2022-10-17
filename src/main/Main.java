@@ -11,9 +11,9 @@ import main.transformation.Translation;
 import java.awt.*;
 
 public class Main {
-    public static void main(String[] args) {
-        final int SCREEN_WIDTH = 1920 / 2;
-        final int SCREEN_HEIGHT = 1080 / 2;
+    public static void main(String[] args) throws InterruptedException {
+        final int SCREEN_WIDTH = 1920;
+        final int SCREEN_HEIGHT = 1080;
         final double FOCALLENGTH = 1000;
 
         // scene
@@ -21,10 +21,7 @@ public class Main {
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 1, 1);
-
-        // screen
-        // every ray's S will equal the camera position
-        Vector s = new Vector(camera.getLocation().getX(), camera.getLocation().getY(), camera.getLocation().getZ(), 1);
+        scene.setCamera(camera);
 
         Transformation translationSphere = new Translation(-105,-105, -105);
         Transformation translationSphere2 = new Translation(500,15, 5);
@@ -52,6 +49,31 @@ public class Main {
         scene.addObject(cube);
         scene.addObject(sphere2);
 
-        new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, scene).startRender(s);
+        Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT);
+        renderer.startRender();
+        renderer.setScene(scene);
+
+        // pan around the space
+        for (int i = 0; i < 100; i++) {
+            camera.location.setY(camera.location.getY()+1);
+            camera.location.setX(camera.location.getX()-2);
+            Thread.sleep(10);
+            renderer.setScene(scene);
+            renderer.draw();
+        }
+
+        for (int i = 0; i < 150; i++) {
+            camera.location.setY(camera.location.getY()-1);
+            Thread.sleep(10);
+            renderer.setScene(scene);
+            renderer.draw();
+        }
+
+        for (int i = 0; i < 1000; i++) {
+            camera.location.setX(camera.location.getX()-1);
+            Thread.sleep(10);
+            renderer.setScene(scene);
+            renderer.draw();
+        }
     }
 }
