@@ -44,6 +44,8 @@ public class TaperedCylinder extends Object {
         double y = ray.getS().getY() + ray.getDir().getY() * th[0];
         double z = ray.getS().getZ() + ray.getDir().getZ() * th[0];
 
+        if (z > 2 || z < 0) return null;
+
         Vector firstCollisionPoint = new Vector(x, y, z, 1);
 
         // Vector secondCollisionPoint = new Vector(x, y, z, 1);
