@@ -3,6 +3,7 @@ package main;
 import main.object.Cube;
 import main.object.Object;
 import main.object.Sphere;
+import main.object.TaperedCylinder;
 import main.transformation.Rotation;
 import main.transformation.Scale;
 import main.transformation.Transformation;
@@ -37,6 +38,8 @@ public class Main {
         Object sphere = new Sphere(Color.RED);
         Object cube = new Cube(Color.BLUE);
         Object sphere2 = new Sphere(Color.PINK);
+        Object cone = new TaperedCylinder(Color.GREEN, 0);
+        //cone.addTransformation(scale);
 
         sphere.addTransformation(scale);
         sphere.addTransformation(translationSphere);
@@ -48,9 +51,10 @@ public class Main {
         cube.addTransformation(scale);
         cube.addTransformation(translationCube);
 
-        scene.addObject(sphere);
-        scene.addObject(cube);
-        scene.addObject(sphere2);
+        //scene.addObject(sphere);
+        //scene.addObject(cube);
+        //scene.addObject(sphere2);
+        scene.addObject(cone);
 
         new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, scene).startRender(s);
     }

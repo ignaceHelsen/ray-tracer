@@ -56,8 +56,6 @@ public class Renderer {
                             Vector point = object.getFirstHitPoint(ray);
 
                             if (point != null) {
-                                // get normal vector
-                                Vector m =
                                 // get color of object
                                 graph2d.setColor(object.getColor());
                                 graph2d.drawLine(c, r, c, r);
