@@ -42,7 +42,7 @@ public class Main {
         Object sphere = new Sphere(red);
         Object cube = new Cube(blue);
         Object sphere2 = new Sphere(pink);
-        Object cone = new TaperedCylinder(green, 0.1);
+        Object cone = new TaperedCylinder(green, 0.05);
 
         cone.addTransformation(scale);
         cone.addTransformation(translationCone);
@@ -70,21 +70,21 @@ public class Main {
         /*for (int i = 0; i < 1000; i++) {
             camera.location.setY(camera.location.getY() + 0.1);
             camera.location.setX(camera.location.getX() - 0.2);
-            Thread.sleep(1);
+            Thread.sleep(2);
             renderer.setScene(scene);
             renderer.draw();
         }
 
         for (int i = 0; i < 1500; i++) {
             camera.location.setY(camera.location.getY() - 0.1);
-            Thread.sleep(1);
+            Thread.sleep(2);
             renderer.setScene(scene);
             renderer.draw();
         }
 
         for (int i = 0; i < 10000; i++) {
             camera.location.setX(camera.location.getX() - 0.1);
-            Thread.sleep(1);
+            Thread.sleep(2);
             renderer.setScene(scene);
             renderer.draw();
         }*/

@@ -1,9 +1,6 @@
 package main.object;
 
-import main.Material;
-import main.Ray;
-import main.Utility;
-import main.Vector;
+import main.*;
 import main.transformation.Transformation;
 
 public abstract class Object {
@@ -14,7 +11,7 @@ public abstract class Object {
         this.material = material;
     }
 
-    public abstract Vector getFirstHitPoint(Ray ray);
+    public abstract Intersection getFirstHitPoint(Ray ray);
 
 
     public void addTransformation(Transformation transformation) {

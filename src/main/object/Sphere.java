@@ -1,9 +1,6 @@
 package main.object;
 
-import main.Material;
-import main.Ray;
-import main.Utility;
-import main.Vector;
+import main.*;
 
 import java.util.Arrays;
 
@@ -13,7 +10,7 @@ public class Sphere extends Object {
     }
 
     @Override
-    public Vector getFirstHitPoint(Ray ray) {
+    public Intersection getFirstHitPoint(Ray ray) {
         if (getTransformation() != null)
             ray = new Ray(getTransformation().transform(ray.getS()), getTransformation().transform(ray.getDir()));
 
@@ -28,18 +25,30 @@ public class Sphere extends Object {
         double t1 = (-b - discRoot) / a; // time of hitpoint 1
         double t2 = (-b + discRoot) / a; // time of hitpoint 2
 
-        double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0).toArray(); // timestamps need to be positive
+        double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0.0001).toArray(); // timestamps need to be positive
 
         if (th.length == 0) return null;
 
-        double x = ray.getS().getX() + ray.getDir().getX() * th[0];
-        double y = ray.getS().getY() + ray.getDir().getY() * th[0];
-        double z = ray.getS().getZ() + ray.getDir().getZ() * th[0];
+        double xEnter = ray.getS().getX() + ray.getDir().getX() * th[0];
+        double yEnter = ray.getS().getY() + ray.getDir().getY() * th[0];
+        double zEnter = ray.getS().getZ() + ray.getDir().getZ() * th[0];
 
-        Vector firstCollisionPoint = new Vector(x, y, z, 1);
+        Vector firstCollisionPoint = new Vector(xEnter, yEnter, zEnter, 1);
 
-        // Vector secondCollisionPoint = new Vector(x, y, z, 1);
+        Intersection intersection = new Intersection(firstCollisionPoint, th[0]);
 
-        return firstCollisionPoint;
+        if (th.length == 2) {
+            double xExit = ray.getS().getX() + ray.getDir().getX() * th[0];
+            double yExit = ray.getS().getY() + ray.getDir().getY() * th[0];
+            double zExit = ray.getS().getZ() + ray.getDir().getZ() * th[0];
+
+            Vector secondCollisionPoint = new Vector(xExit, yExit, zExit, 1);
+
+            // add second intersection to intersection
+            intersection.setExit(secondCollisionPoint);
+            intersection.setT2(th[1]);
+        }
+
+        return intersection;
     }
 }

@@ -1,5 +1,6 @@
 package main.object;
 
+import main.Intersection;
 import main.Material;
 import main.Ray;
 import main.Vector;
@@ -12,7 +13,7 @@ public class Cube extends Object {
     }
 
     @Override
-    public Vector getFirstHitPoint(Ray ray) {
+    public Intersection getFirstHitPoint(Ray ray) {
         if (getTransformation() != null)
             ray = new Ray(getTransformation().transform(ray.getS()), getTransformation().transform(ray.getDir()));
 
@@ -70,12 +71,18 @@ public class Cube extends Object {
 
         if (tIn < 0.00001) return null;
 
-        double x = ray.getS().getX() + ray.getDir().getX() * tIn;
-        double y = ray.getS().getY() + ray.getDir().getY() * tIn;
-        double z = ray.getS().getZ() + ray.getDir().getZ() * tIn;
+        double xEnter = ray.getS().getX() + ray.getDir().getX() * tIn;
+        double yEnter = ray.getS().getY() + ray.getDir().getY() * tIn;
+        double zEnter = ray.getS().getZ() + ray.getDir().getZ() * tIn;
 
-        Vector firstCollisionPoint = new Vector(x, y, z, 1);
+        Vector firstCollisionPoint = new Vector(xEnter, yEnter, zEnter, 1);
 
-        return firstCollisionPoint;
+        double xExit = ray.getS().getX() + ray.getDir().getX() * tOut;
+        double yExit = ray.getS().getY() + ray.getDir().getY() * tOut;
+        double zExit = ray.getS().getZ() + ray.getDir().getZ() * tOut;
+
+        Vector secondCollisionPoint = new Vector(xExit, yExit, zExit, 1);
+
+        return new Intersection(firstCollisionPoint, secondCollisionPoint, tIn, tOut);
     }
 }

@@ -4,6 +4,7 @@ import main.object.Object;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.stream.Collectors;
 
 public class Renderer {
     private final JFrame frame;
@@ -50,6 +51,7 @@ public class Renderer {
                         Ray ray = new Ray(scene.getCamera().getLocation(), dir);
 
                         // for every object, cast the ray
+                        List<Intersection> intersections = scene.getObjects().stream().map(o -> o.getFirstHitPoint(ray)).sorted(o -> o.getT1()).collect(Collectors.toList());
                         for (Object object : scene.getObjects()) {
                             Vector point = object.getFirstHitPoint(ray);
 
