@@ -4,6 +4,9 @@ import main.object.Object;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Renderer {
@@ -50,18 +53,24 @@ public class Renderer {
 
                         Ray ray = new Ray(scene.getCamera().getLocation(), dir);
 
-                        // for every object, cast the ray
-                        List<Intersection> intersections = scene.getObjects().stream().map(o -> o.getFirstHitPoint(ray)).sorted(o -> o.getT1()).collect(Collectors.toList());
-                        for (Object object : scene.getObjects()) {
-                            Vector point = object.getFirstHitPoint(ray);
+                        // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
+                        double minIntersectionTime = Integer.MAX_VALUE;
+                        Object closestObject = null;
 
-                            if (point != null) {
-                                // get shade
-
-                                // get color of object
-                                graph2d.setColor(object.getMaterial().getColor());
-                                graph2d.drawLine(c, r, c, r);
+                        for(Object object : scene.getObjects()) {
+                            Intersection intersection = object.getFirstHitPoint(ray);
+                            if(intersection != null && intersection.getT1() < minIntersectionTime) {
+                                minIntersectionTime = intersection.getT1();
+                                closestObject = object;
                             }
+                        }
+
+                        if(closestObject != null) {
+                            // get shade
+
+                            // get color of object
+                            graph2d.setColor(closestObject.getMaterial().getColor());
+                            graph2d.drawLine(c, r, c, r);
                         }
                     }
                 }

@@ -13,7 +13,6 @@ public abstract class Object {
 
     public abstract Intersection getFirstHitPoint(Ray ray);
 
-
     public void addTransformation(Transformation transformation) {
         if (this.transformation == null) this.transformation = transformation;
         else this.transformation.setTransformation(Utility.multiplyMatrices(this.transformation.getTransformation(), transformation.getTransformation()));

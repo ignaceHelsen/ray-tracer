@@ -1,9 +1,7 @@
 package main;
 
-import main.object.Cube;
+import main.object.*;
 import main.object.Object;
-import main.object.Sphere;
-import main.object.TaperedCylinder;
 import main.transformation.Rotation;
 import main.transformation.Scale;
 import main.transformation.Transformation;
@@ -37,8 +35,10 @@ public class Main {
         Material blue = new Material(Color.blue, 0.5, 0.5, 0.5);
         Material pink = new Material(Color.pink, 0.5, 0.5, 0.5);
         Material green = new Material(Color.green, 0.5, 0.5, 0.5);
+        Material gray = new Material(Color.gray, 0.5, 0.5, 0.5);
 
         // OBJECTS
+        Object plane = new Plane(gray);
         Object sphere = new Sphere(red);
         Object cube = new Cube(blue);
         Object sphere2 = new Sphere(pink);
@@ -57,6 +57,7 @@ public class Main {
         cube.addTransformation(scale);
         cube.addTransformation(translationCube);
 
+        scene.addObject(plane);
         scene.addObject(sphere);
         scene.addObject(cube);
         scene.addObject(sphere2);
