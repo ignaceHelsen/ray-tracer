@@ -8,9 +8,11 @@ import java.util.List;
 // holds all objects
 public class Scene {
     private final List<Object> objects;
+    private final Vector lightsource; // point
     private Camera camera;
 
-    public Scene() {
+    public Scene(Vector lightsource) {
+        this.lightsource = lightsource;
         this.objects = new ArrayList<>();
     }
 
@@ -28,5 +30,9 @@ public class Scene {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public Vector getLightsource() {
+        return lightsource;
     }
 }

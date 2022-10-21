@@ -10,9 +10,13 @@ public class Sphere extends Object {
     }
 
     @Override
-    public Intersection getFirstHitPoint(Ray ray) {
+    public Intersection getFirstHitPoint(Ray originalRay) {
+        Ray ray;
+
         if (getTransformation() != null)
-            ray = new Ray(getTransformation().transform(ray.getS()), getTransformation().transform(ray.getDir()));
+            ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
+        else
+            ray = originalRay;
 
         double a = Utility.dot(ray.getDir(), ray.getDir());
         double b = Utility.dot(ray.getS(), ray.getDir());
@@ -29,25 +33,38 @@ public class Sphere extends Object {
 
         if (th.length == 0) return null;
 
-        double xEnter = ray.getS().getX() + ray.getDir().getX() * th[0];
-        double yEnter = ray.getS().getY() + ray.getDir().getY() * th[0];
-        double zEnter = ray.getS().getZ() + ray.getDir().getZ() * th[0];
+        // we got at least one hit, calculate x y & z
+        double x = ray.getS().getX() + ray.getDir().getX() * th[0];
+        double y = ray.getS().getY() + ray.getDir().getY() * th[0];
+        double z = ray.getS().getZ() + ray.getDir().getZ() * th[0];
 
-        Vector firstCollisionPoint = new Vector(xEnter, yEnter, zEnter, 1);
+        Intersection intersection = new Intersection();
+        Vector point = new Vector(x, y, z, 1);
 
-        Intersection intersection = new Intersection(firstCollisionPoint, th[0]);
+        if (th.length == 1) {  // only one hit, could be either a tangent hit or an exit hit
+            // 1 hit found, the previous calculated x y & z are now the exit points
+            // just regard it as an exit hit
+            intersection.setExit(point);
+            intersection.setT2(th[0]);
+        } else {
+            // 2 hits found, the previous calculated x y & z are now the enter points
+            intersection.setEnter(point);
+            intersection.setT1(th[0]);
 
-        if (th.length == 2) {
-            double xExit = ray.getS().getX() + ray.getDir().getX() * th[0];
-            double yExit = ray.getS().getY() + ray.getDir().getY() * th[0];
-            double zExit = ray.getS().getZ() + ray.getDir().getZ() * th[0];
+            double xExit = ray.getS().getX() + ray.getDir().getX() * th[1];
+            double yExit = ray.getS().getY() + ray.getDir().getY() * th[1];
+            double zExit = ray.getS().getZ() + ray.getDir().getZ() * th[1];
 
-            Vector secondCollisionPoint = new Vector(xExit, yExit, zExit, 1);
-
-            // add second intersection to intersection
-            intersection.setExit(secondCollisionPoint);
+            Vector exit = new Vector(xExit, yExit, zExit, 1);
+            intersection.setExit(exit);
             intersection.setT2(th[1]);
         }
+
+        if (intersection.getT1() == -1) intersection.setNormalVector(intersection.getExit().getCoords());
+        else intersection.setNormalVector(intersection.getEnter().getCoords());
+
+        // set type of ve
+        intersection.setNormalVector(new double[] {intersection.getNormalVector()[0], intersection.getNormalVector()[1], intersection.getNormalVector()[2], 0});
 
         return intersection;
     }

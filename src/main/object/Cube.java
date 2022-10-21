@@ -13,42 +13,54 @@ public class Cube extends Object {
     }
 
     @Override
-    public Intersection getFirstHitPoint(Ray ray) {
+    public Intersection getFirstHitPoint(Ray originalRay) {
+        Ray ray;
+
         if (getTransformation() != null)
-            ray = new Ray(getTransformation().transform(ray.getS()), getTransformation().transform(ray.getDir()));
+            ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
+        else
+            ray = originalRay;
 
         double tHit, numer, denom;
         double tIn = -10000, tOut = 10000;
+        double[] normal = new double[3];
 
         for (int i = 0; i < 6; i++) {
             switch (i) {
                 case 0 -> {
                     numer = 1.0 - ray.getS().getY();
                     denom = ray.getDir().getY();
+                    normal = new double[]{0, 1, 0, 1};
                 }
                 case 1 -> {
                     numer = 1.0 + ray.getS().getY();
                     denom = -ray.getDir().getY();
+                    normal = new double[]{0, -1, 0, 1};
                 }
                 case 2 -> {
                     numer = 1.0 - ray.getS().getX();
                     denom = ray.getDir().getX();
+                    normal = new double[]{1, 0, 0, 1};
                 }
                 case 3 -> {
                     numer = 1.0 + ray.getS().getX();
                     denom = -ray.getDir().getX();
+                    normal = new double[]{-1, 0, 0, 1};
                 }
                 case 4 -> {
                     numer = 1.0 - ray.getS().getZ();
                     denom = ray.getDir().getZ();
+                    normal = new double[]{0, 0, 1, 1};
                 }
                 case 5 -> {
                     numer = 1.0 + ray.getS().getZ();
                     denom = -ray.getDir().getZ();
+                    normal = new double[]{0, 0, -1, 1};
                 }
                 default -> {
                     numer = 0;
                     denom = 0;
+                    normal = new double[]{0, 0, 0, 1};
                 }
             }
 
@@ -83,6 +95,6 @@ public class Cube extends Object {
 
         Vector secondCollisionPoint = new Vector(xExit, yExit, zExit, 1);
 
-        return new Intersection(firstCollisionPoint, secondCollisionPoint, tIn, tOut);
+        return new Intersection(firstCollisionPoint, secondCollisionPoint, tIn, tOut, normal);
     }
 }

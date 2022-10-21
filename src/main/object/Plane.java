@@ -14,11 +14,15 @@ public class Plane extends Object {
     }
 
     @Override
-    public Intersection getFirstHitPoint(Ray ray) {
-        if (getTransformation() != null)
-            ray = new Ray(getTransformation().transform(ray.getS()), getTransformation().transform(ray.getDir()));
+    public Intersection getFirstHitPoint(Ray originalRay) {
+        Ray ray;
 
-        double th = - (ray.getS().getZ() / ray.getDir().getZ());
+        if (getTransformation() != null)
+            ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
+        else
+            ray = originalRay;
+
+        double th = -(ray.getS().getZ() / ray.getDir().getZ());
 
         double x = ray.getS().getX() + ray.getDir().getX() * th;
         double y = ray.getS().getY() + ray.getDir().getY() * th;
@@ -26,8 +30,6 @@ public class Plane extends Object {
 
         Vector firstCollisionPoint = new Vector(x, y, z, 1);
 
-        Intersection intersection = new Intersection(firstCollisionPoint, th);
-
-        return intersection;
+        return new Intersection(firstCollisionPoint, null, th, -1, new double[]{firstCollisionPoint.getX(), firstCollisionPoint.getY(), firstCollisionPoint.getZ(), 0});
     }
 }

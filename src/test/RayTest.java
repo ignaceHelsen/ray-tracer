@@ -8,14 +8,15 @@ import main.object.Plane;
 import main.object.Sphere;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RayTest {
     @Test
     public void testSphere() {
-        Object sphere = new Sphere(new Material(Color.red, 0.5, 0.5, 0.5));
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633});
+
+        Object sphere = new Sphere(emerald);
 
         List<Ray> rays = new ArrayList<>();
         rays.add(new Ray(new Vector(4, 0, 0, 1), new Vector(-4, 3, 4, 0)));
@@ -52,7 +53,9 @@ public class RayTest {
 
     @Test
     public void testPlane() {
-        Object plane = new Plane(new Material(Color.gray, 0.5, 0.5, 0.5));
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633});
+
+        Object plane = new Plane(emerald);
 
         Ray ray = new Ray(new Vector(4, 1, 3, 1), new Vector(-3,-5,-3, 0));
 

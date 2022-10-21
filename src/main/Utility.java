@@ -1,8 +1,7 @@
 package main;
 
-import main.transformation.Transformation;
-
 public class Utility {
+    // TODO: add checks on lenghts/sizes
     public static double dot(Vector v1, Vector v2) {
         return v1.getX()*v2.getX() + v1.getY()*v2.getY() + v1.getZ()*v2.getZ();
     }
@@ -54,5 +53,29 @@ public class Utility {
         }
 
         return transposed;
+    }
+
+    public static double[] sum(double[] vectorOne, double[] vectorTwo) {
+        double[] sum = new double[vectorOne.length];
+
+        for (int i = 0; i < vectorOne.length; i++) {
+            sum[i] = vectorOne[i] + vectorTwo[i];
+        }
+
+        return sum;
+    }
+
+    public static double[] subtract(double[] vectorOne, double[] vectorTwo) {
+        double[] result = new double[vectorOne.length];
+
+        for (int i = 0; i < vectorOne.length; i++) {
+            result[i] = vectorOne[i] - vectorTwo[i];
+        }
+
+        return result;
+    }
+
+    public static double norm(double[] vector) {
+        return Math.sqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[2]*vector[2]);
     }
 }
