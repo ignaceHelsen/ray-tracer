@@ -16,6 +16,27 @@ public class Utility {
         return sum;
     }
 
+    // Not really a valid mathematical multiplication but I need it
+    public static double[] multiplyMatrices(double[] input, double[] multiply) {
+        double[] outputVector = new double[input.length];
+
+        for (int i = 0; i < input.length; i++) {
+            outputVector[i] = input[i] * multiply[i];
+        }
+
+        return outputVector;
+    }
+
+    public static double[] multiplyMatrices(double factor, double[] matrix) {
+        double[] outputVector = new double[matrix.length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            outputVector[i] = matrix[i] * factor;
+        }
+
+        return outputVector;
+    }
+
     public static double[] multiplyMatrices(double[] input, double[][] multiply) {
         double[] outputVector = new double[input.length];
 
@@ -77,5 +98,17 @@ public class Utility {
 
     public static double norm(double[] vector) {
         return Math.sqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[2]*vector[2]);
+    }
+
+    public static double[] normalize(double[] vector) {
+        double[] normalized = new double[4];
+
+        double v = Math.sqrt(Utility.dot(vector, vector));
+        normalized[0] = vector[0] / v;
+        normalized[1] = vector[1] / v;
+        normalized[2] = vector[2] / v;
+        normalized[3] = vector[3] / v;
+
+        return normalized;
     }
 }

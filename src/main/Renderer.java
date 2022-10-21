@@ -74,31 +74,63 @@ public class Renderer {
                             // p 641
                             // shading
                             // Color: ambient, diffuse, specular
+                            int red = 0;
+                            int green = 0;
+                            int blue = 0;
+
                             double[] ambient = closestObject.getMaterial().getAmbient();
                             double[] diffuse = closestObject.getMaterial().getDiffuse();
                             double[] specular = closestObject.getMaterial().getSpecular();
 
+                            red += ambient[0];
+                            green += ambient[1];
+                            blue += ambient[2];
+
                             // m is the roughness of the material
                             double mRoughness = 0.2;
-                            double[] normalVector = closestIntersection.getNormalVector();
-                            double[] transposedNormalVector = Utility.multiplyMatrices(normalVector, Utility.transpose(closestObject.getTransformation().getTransformation()));
+                            double[] normalVector = Utility.normalize(closestIntersection.getNormalVector());
+
+                            // for each lightsource
+                            double[] s = Utility.normalize(Utility.subtract(scene.getLightsource().getCoords(), closestIntersection.getEnter().getCoords()));
+                            // lambert term = diffuse part
+                            double mDots = Utility.dot(s, normalVector);
+                            double[] diffuseColorRGB = Utility.multiplyMatrices(Utility.multiplyMatrices(mDots, diffuse), scene.getLightsourceColor());
+                            red += diffuseColorRGB[0];
+                            green += diffuseColorRGB[1];
+                            blue += diffuseColorRGB[2];
+
+                            // specular part (Cook & Torrance)
                             // angle between h and m (normal vector)
                             // h: halfway vector (between incoming light and ray)
-                            double[] h = Utility.sum(ray.getDir().getCoords(), Utility.subtract(scene.getLightsource().getCoords(), closestIntersection.getEnter().getCoords())); // TODO: either getExit or getEnter
+                            double[] rayDir = ray.getDir().getCoords().clone();
+                            double[] h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(scene.getLightsource().getCoords(), closestIntersection.getEnter().getCoords())); // TODO: either getExit or getEnter
+                            h = Utility.normalize(h);
 
                             // angle between h and transposedNormalVector
+                            double[] transposedNormalVector = Utility.multiplyMatrices(normalVector, Utility.transpose(closestObject.getTransformation().getTransformation()));
                             double angle = Math.acos(Utility.dot(transposedNormalVector, h)/ Utility.norm(transposedNormalVector) * Utility.norm(h));
                             double fraction = Math.exp(-Math.pow(Math.tan(angle)/mRoughness, 2))/(4*mRoughness*mRoughness*Math.pow(Math.cos(angle), 4));
 
-                            specular[0] = specular[0]*fraction;
-                            specular[1] = specular[1]*fraction;
-                            specular[2] = specular[2]*fraction;
+                            specular = Utility.multiplyMatrices(fraction, Utility.multiplyMatrices(scene.getLightsourceColor(), specular));
 
-                            int red = (int) (ambient[0]*255 + diffuse[0]*255 + specular[0]*255);
-                            int green = (int) (ambient[1]*255 + diffuse[1]*255 + specular[1]*255);
-                            int blue = (int) (ambient[2]*255 + diffuse[2]*255 + specular[2]*255);
+                            red += (int) (ambient[0]*255 + diffuse[0]*255 + specular[0]*255);
+                            green += (int) (ambient[1]*255 + diffuse[1]*255 + specular[1]*255);
+                            blue += (int) (ambient[2]*255 + diffuse[2]*255 + specular[2]*255);
 
                             // get color of object
+                            if (red > 255) {
+                                System.out.println("red" + red);
+                                red = 255;
+                            }
+                            if (green > 255) {
+                                System.out.println("green" + green);
+                                green = 255;
+                            }
+                            if (blue > 255) {
+                                System.out.println("blue" + blue);
+                                blue = 255;
+                            }
+
                             Color color = new Color(red, green, blue);
                             graph2d.setColor(color);
                             graph2d.drawLine(c, r, c, r);

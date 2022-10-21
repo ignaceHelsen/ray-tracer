@@ -11,11 +11,11 @@ import java.awt.*;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        final int SCREEN_WIDTH = 1920;
-        final int SCREEN_HEIGHT = 1080;
+        final int SCREEN_WIDTH = 1920/2;
+        final int SCREEN_HEIGHT = 1080/2;
         final double FOCALLENGTH = 500;
-        final int CMAX = 1920;
-        final int RMAX = 1080;
+        final int CMAX = SCREEN_WIDTH/2;
+        final int RMAX = SCREEN_HEIGHT/2;
 
         /*
             /----------y
@@ -27,8 +27,8 @@ public class Main {
         */
 
         // scene
-        Vector lightsource = new Vector(0, 0, -1000, 1);
-        Scene scene = new Scene(lightsource);
+        Vector lightsource = new Vector(0, 0, 100, 1);
+        Scene scene = new Scene(lightsource, new double[]{255, 0, 0});
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);

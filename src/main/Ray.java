@@ -15,10 +15,7 @@ public class Ray {
         this.dir = dir;
 
         // normalize c
-        double v = Math.sqrt(Utility.dot(dir, dir));
-        dir.setX(dir.getX() / v);
-        dir.setY(dir.getY() / v);
-        dir.setZ(dir.getZ() / v);
+        this.dir = new Vector(Utility.normalize(dir.getCoords()));
 
     }
 
