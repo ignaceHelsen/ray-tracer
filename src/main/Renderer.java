@@ -5,6 +5,7 @@ import main.object.Plane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 
 public class Renderer {
     private final JFrame frame;
@@ -100,42 +101,44 @@ public class Renderer {
                             normalVector = Utility.normalize(normalVector);
 
                             // for each lightsource
-                            double[] s;
-                            if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
-                                s = Utility.normalize(Utility.subtract(scene.getLightsource().getCoords(), closestIntersection.getExit().getCoords()));
-                            else
-                                s = Utility.normalize(Utility.subtract(scene.getLightsource().getCoords(), closestIntersection.getEnter().getCoords()));
+                            for(Map.Entry<Vector, double[]> lightsource: scene.getLightsources().entrySet()) {
+                                double[] s;
+                                if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
+                                    s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
+                                else
+                                    s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
 
-                            // lambert term = diffuse part
-                            double mDots = Utility.dot(s, normalVector);
-                            double[] diffuseColorRGB = Utility.multiplyMatrixFactorArray(Utility.multiplyMatrices(mDots, diffuse), scene.getLightsourceColor());
+                                // lambert term = diffuse part
+                                double mDots = Utility.dot(s, normalVector);
+                                double[] diffuseColorRGB = Utility.multiplyMatrixFactorArray(Utility.multiplyMatrices(mDots, diffuse), lightsource.getValue());
 
-                            red += diffuseColorRGB[0];
-                            green += diffuseColorRGB[1];
-                            blue += diffuseColorRGB[2];
+                                red += diffuseColorRGB[0];
+                                green += diffuseColorRGB[1];
+                                blue += diffuseColorRGB[2];
 
-                            // specular part (Cook & Torrance)
-                            // angle between h and m (normal vector)
-                            // h: halfway vector (between incoming light and ray)
-                            double[] rayDir = ray.getDir().getCoords().clone();
+                                // specular part (Cook & Torrance)
+                                // angle between h and m (normal vector)
+                                // h: halfway vector (between incoming light and ray)
+                                double[] rayDir = ray.getDir().getCoords().clone();
 
-                            double[] h;
-                            if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
-                                h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(scene.getLightsource().getCoords(), closestIntersection.getExit().getCoords()));
-                            else
-                                h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(scene.getLightsource().getCoords(), closestIntersection.getEnter().getCoords()));
+                                double[] h;
+                                if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
+                                    h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
+                                else
+                                    h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
 
 
-                            h = Utility.normalize(h);
+                                h = Utility.normalize(h);
 
-                            // angle between h and transposedNormalVector
-                            double angle = Math.acos(Utility.dot(normalVector, h) / Utility.norm(normalVector) * Utility.norm(h));
-                            double fraction = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
-                            double[] phongCookTerrace = Utility.multiplyMatrices(fraction, Utility.multiplyMatrixFactorArray(scene.getLightsourceColor(), specular));
+                                // angle between h and transposedNormalVector
+                                double angle = Math.acos(Utility.dot(normalVector, h) / Utility.norm(normalVector) * Utility.norm(h));
+                                double fraction = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
+                                double[] phongCookTerrace = Utility.multiplyMatrices(fraction, Utility.multiplyMatrixFactorArray(lightsource.getValue(), specular));
 
-                            red += specular[0] * phongCookTerrace[0];
-                            green += specular[1] * phongCookTerrace[1];
-                            blue += specular[2] * phongCookTerrace[2];
+                                red += specular[0] * phongCookTerrace[0];
+                                green += specular[1] * phongCookTerrace[1];
+                                blue += specular[2] * phongCookTerrace[2];
+                            }
 
                             red *= 255;
                             green *= 255;

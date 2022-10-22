@@ -25,8 +25,18 @@ public class Main {
         */
 
         // scene
-        Vector lightsource = new Vector(0, 0, -300, 1); // location
-        Scene scene = new Scene(lightsource, new double[]{0.3, 0.3, 0.3}); // light color
+        Vector lightsourceWhite = new Vector(0, 0, -6000, 1); // location
+        Vector lightsourceBlue = new Vector(500, 0, -1, 1);
+        Vector lightsourceRed = new Vector(0, -1000, -10, 1);
+        Vector lightsourceOrange = new Vector(-100, 1000, -10, 1);
+        Vector lightsourcePink = new Vector(-10000, -10, -10, 1);
+
+        Scene scene = new Scene(); // light color
+        scene.addLightsource(lightsourceWhite, new double[]{1, 1, 1});
+        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 1});
+        scene.addLightsource(lightsourceRed, new double[]{1, 0, 0});
+        scene.addLightsource(lightsourceOrange, new double[]{1, 0.3, 0});
+        //scene.addLightsource(lightsourcePink, new double[]{1, 0.1, 0.5});
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
@@ -37,7 +47,7 @@ public class Main {
         Transformation translationCubeBlue = new Translation(-100, 200, 0);
         Transformation translationConeGreen = new Translation(-50, -50, -50);
         Transformation rotate = new Rotation().rotateX(45).rotateY(10).rotateZ(10);
-        Transformation rotateCone = new Rotation().rotateX(180).rotateY(180).rotateZ(180);
+        Transformation rotateCone = new Rotation().rotateX(180);
         Transformation scaleSphereRed = new Scale(30, 30, 30);
         Transformation scaleCone = new Scale(300, 300, 300);
         Transformation scaleSpherePink = new Scale(50, 50, 50);

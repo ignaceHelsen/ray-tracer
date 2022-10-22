@@ -4,21 +4,18 @@ import main.object.Object;
 
 import java.awt.*;
 import java.awt.image.ColorModel;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 // holds all objects
 public class Scene {
     private final List<Object> objects;
-    private final Vector lightsource; // point
-    private double[] lightsourceColor;
+    private Map<Vector, double[]> lightsources; // points
     private Camera camera;
 
-    public Scene(Vector lightsource, double[] lightsourceColor) {
-        this.lightsource = lightsource;
+    public Scene() {
         this.objects = new ArrayList<>();
-        this.lightsourceColor = lightsourceColor;
+        lightsources = new HashMap<>();
     }
 
     public void addObject(Object object) {
@@ -37,15 +34,12 @@ public class Scene {
         return camera;
     }
 
-    public Vector getLightsource() {
-        return lightsource;
+
+    public void addLightsource(Vector lightsource, double[] color) {
+        this.lightsources.put(lightsource, color);
     }
 
-    public void setLightsourceColor(double[] lightsourceColor) {
-        this.lightsourceColor = lightsourceColor;
-    }
-
-    public double[] getLightsourceColor() {
-        return lightsourceColor;
+    public Map<Vector, double[]> getLightsources() {
+        return this.lightsources;
     }
 }
