@@ -17,7 +17,7 @@ public class Utility {
     }
 
     // Not really a valid mathematical multiplication but I need it
-    public static double[] multiplyMatrices(double[] input, double[] multiply) {
+    public static double[] multiplyMatrixFactorArray(double[] input, double[] multiply) {
         double[] outputVector = new double[input.length];
 
         for (int i = 0; i < input.length; i++) {

@@ -14,7 +14,7 @@ import java.util.List;
 public class RayTest {
     @Test
     public void testSphere() {
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633});
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, 0.25);
 
         Object sphere = new Sphere(emerald);
 
@@ -53,11 +53,11 @@ public class RayTest {
 
     @Test
     public void testPlane() {
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633});
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, 0.2);
 
         Object plane = new Plane(emerald);
 
-        Ray ray = new Ray(new Vector(4, 1, 3, 1), new Vector(-3,-5,-3, 0));
+        Ray ray = new Ray(new Vector(4, 1, 3, 1), new Vector(-3, -5, -3, 0));
 
         var coords = plane.getFirstHitPoint(ray);
         if (coords == null) {
