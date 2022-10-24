@@ -48,9 +48,6 @@ public class Renderer {
                 final double y = 2 / screenWidth;
                 final double z = 2 / screenHeight;
 
-                double max1 = 0;
-                double max2 = 0;
-
                 // shoot rays in a for loop
                 float starttime = System.nanoTime();
                 for (double c = 0; c <= screenWidth; c++) { //nColumns
@@ -58,9 +55,6 @@ public class Renderer {
                         //Vector dir = new Vector(-focallength, -(W - screenWidth * (y * c / cmax)), -(H - screenHeight * (z * r / rmax)), 0);
                         Vector dir = new Vector(-focallength, W * (y * c - 1), H * (z * r - 1), 0);
                         //Vector dir = new Vector(-focallength, (W - screenWidth) * (y * c / cmax), (H - screenHeight) * (z * r / rmax), 0);
-
-                        if (max1 > dir.getCoords()[1]) max1 = dir.getCoords()[1];
-                        if (max2 > dir.getCoords()[2]) max2 = dir.getCoords()[2];
 
                         Ray ray = new Ray(scene.getCamera().getLocation(), dir);
 
@@ -101,7 +95,15 @@ public class Renderer {
                             normalVector = Utility.normalize(normalVector);
 
                             // for each lightsource
-                            for(Map.Entry<Vector, double[]> lightsource: scene.getLightsources().entrySet()) {
+                            for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
+                                // TODO: check if point in shadow
+                                /*// shoot ray towards lightsource, if object in way, darken the point
+
+                                Vector direction = lightsource.getKey();
+                                direction.setType(0);
+                                Ray checkShadow = new Ray(closestIntersection.getEnter(), direction);
+                                // check for every object if we intersect it*/
+
                                 double[] s;
                                 if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
                                     s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
@@ -110,34 +112,38 @@ public class Renderer {
 
                                 // lambert term = diffuse part
                                 double mDots = Utility.dot(s, normalVector);
-                                double[] diffuseColorRGB = Utility.multiplyMatrixFactorArray(Utility.multiplyMatrices(mDots, diffuse), lightsource.getValue());
+                                if (mDots > 0.0001) {
+                                    // hitpoint is pointed towards the light
 
-                                red += diffuseColorRGB[0];
-                                green += diffuseColorRGB[1];
-                                blue += diffuseColorRGB[2];
+                                    double[] diffuseColorRGB = Utility.multiplyMatrixFactorArray(Utility.multiplyMatrices(mDots, diffuse), lightsource.getValue());
 
-                                // specular part (Cook & Torrance)
-                                // angle between h and m (normal vector)
-                                // h: halfway vector (between incoming light and ray)
-                                double[] rayDir = ray.getDir().getCoords().clone();
+                                    red += diffuseColorRGB[0];
+                                    green += diffuseColorRGB[1];
+                                    blue += diffuseColorRGB[2];
 
-                                double[] h;
-                                if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
-                                    h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
-                                else
-                                    h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
+                                    // specular part (Cook & Torrance)
+                                    // angle between h and m (normal vector)
+                                    // h: halfway vector (between incoming light and ray)
+                                    double[] rayDir = ray.getDir().getCoords().clone();
+
+                                    double[] h;
+                                    if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
+                                        h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
+                                    else
+                                        h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
 
 
-                                h = Utility.normalize(h);
+                                    h = Utility.normalize(h);
 
-                                // angle between h and transposedNormalVector
-                                double angle = Math.acos(Utility.dot(normalVector, h) / Utility.norm(normalVector) * Utility.norm(h));
-                                double fraction = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
-                                double[] phongCookTerrace = Utility.multiplyMatrices(fraction, Utility.multiplyMatrixFactorArray(lightsource.getValue(), specular));
+                                    // angle between h and transposedNormalVector
+                                    double angle = Math.acos(Utility.dot(normalVector, h) / Utility.norm(normalVector) * Utility.norm(h));
+                                    double fraction = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
+                                    double[] phongCookTerrace = Utility.multiplyMatrices(fraction, Utility.multiplyMatrixFactorArray(lightsource.getValue(), specular));
 
-                                red += specular[0] * phongCookTerrace[0];
-                                green += specular[1] * phongCookTerrace[1];
-                                blue += specular[2] * phongCookTerrace[2];
+                                    red += specular[0] * phongCookTerrace[0];
+                                    green += specular[1] * phongCookTerrace[1];
+                                    blue += specular[2] * phongCookTerrace[2];
+                                }
                             }
 
                             red *= 255;
@@ -176,8 +182,6 @@ public class Renderer {
 
                 float endtime = System.nanoTime();
                 System.out.println(endtime - starttime);
-                System.out.println(max1);
-                System.out.println(max2);
             }
         };
 

@@ -32,11 +32,11 @@ public class Main {
         Vector lightsourcePink = new Vector(-10000, -10, -10, 1);
 
         Scene scene = new Scene(); // light color
-        //scene.addLightsource(lightsourceWhite, new double[]{0.5, 0.5, 0.5});
+        scene.addLightsource(lightsourceWhite, new double[]{0.5, 0.5, 0.5});
         scene.addLightsource(lightsourceBlue, new double[]{0, 0, 0.5});
         scene.addLightsource(lightsourceRed, new double[]{0.5, 0, 0});
         scene.addLightsource(lightsourceOrange, new double[]{0.5, 0.1, 0});
-        //scene.addLightsource(lightsourcePink, new double[]{1, 0.1, 0.5});
+        scene.addLightsource(lightsourcePink, new double[]{1, 0.1, 0.5});
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
