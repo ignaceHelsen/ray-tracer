@@ -36,10 +36,10 @@ public class Renderer {
     void startRender() {
         this.panel = new JPanel(true) {
             @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
+            public void paintComponent(Graphics graphics) {
+                super.paintComponent(graphics);
 
-                Graphics2D graph2d = (Graphics2D) g;
+                Graphics2D graph2d = (Graphics2D) graphics;
                 Toolkit.getDefaultToolkit().sync();
 
                 final double H = screenHeight / 2;
@@ -114,35 +114,72 @@ public class Renderer {
                                 double mDots = Utility.dot(s, normalVector);
                                 if (mDots > 0.0001) {
                                     // hitpoint is pointed towards the light
+                                    // first calculate the Fresnel coeff
+                                    double normNormalVector = Utility.norm(normalVector);
+                                    double angleOfIncidence = Utility.dot(normalVector, s) / normNormalVector * Utility.norm(s);
+                                    angleOfIncidence = Math.acos(angleOfIncidence);
+
+                                    double gRefractionSquared = Math.pow(closestObject.getMaterial().getRefractionIndex(), 2) + angleOfIncidence*angleOfIncidence-1;
+                                    double gRefraction = Math.sqrt(gRefractionSquared);
+                                    // the fresnel coeff will be higher with higher refractionindices
+                                    double fresnelCoefficient = 1/2 * (Math.pow(gRefraction-angleOfIncidence,2)/Math.pow(gRefraction+angleOfIncidence,2) * (1 + Math.pow((angleOfIncidence*(gRefraction+angleOfIncidence)-1)/(angleOfIncidence*(gRefraction-angleOfIncidence)+1),2)));
+
+
+
+
+
+
 
                                     double[] diffuseColorRGB = Utility.multiplyMatrixFactorArray(Utility.multiplyMatrices(mDots, diffuse), lightsource.getValue());
 
-                                    red += diffuseColorRGB[0];
-                                    green += diffuseColorRGB[1];
-                                    blue += diffuseColorRGB[2];
+                                    red += diffuseColorRGB[0]*fresnelCoefficient;
+                                    green += diffuseColorRGB[1]*fresnelCoefficient;
+                                    blue += diffuseColorRGB[2]*fresnelCoefficient;
 
                                     // specular part (Cook & Torrance)
                                     // angle between h and m (normal vector)
                                     // h: halfway vector (between incoming light and ray)
-                                    double[] rayDir = ray.getDir().getCoords().clone();
+                                    double[] v = ray.getDir().getCoords().clone();
+                                    v = new double[]{-v[0], -v[1], -v[2], -v[3]};
 
                                     double[] h;
                                     if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
-                                        h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
+                                        h = Utility.sum(Utility.normalize(v), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
                                     else
-                                        h = Utility.sum(Utility.normalize(new double[]{-rayDir[0], -rayDir[1], -rayDir[2], -rayDir[3]}), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
+                                        h = Utility.sum(Utility.normalize(v), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
 
 
                                     h = Utility.normalize(h);
 
                                     // angle between h and transposedNormalVector
-                                    double angle = Math.acos(Utility.dot(normalVector, h) / Utility.norm(normalVector) * Utility.norm(h));
-                                    double fraction = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
-                                    double[] phongCookTerrace = Utility.multiplyMatrices(fraction, Utility.multiplyMatrixFactorArray(lightsource.getValue(), specular));
+                                    double angle = Math.acos(Utility.dot(normalVector, h) / normNormalVector * Utility.norm(h));
+                                    double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
+                                    //double[] phongCookTerrace = Utility.multiplyMatrices(d, Utility.multiplyMatrixFactorArray(lightsource.getValue(), specular));
 
-                                    red += specular[0] * phongCookTerrace[0];
+
+
+
+
+
+                                    // fraction of light that is not shadowed.
+                                    double gs = (2*Utility.dot(normalVector, h)*Utility.dot(normalVector, v))/Utility.dot(h, s);
+                                    // fraction of light that is not masked.
+                                    double gm = (2*Utility.dot(normalVector, h)*Utility.dot(normalVector, s))/Utility.dot(h, s);
+                                    double g = Math.min(Math.min(1, gm), gs);
+
+                                    double phongSpecular = (fresnelCoefficient*d*g)/(Utility.dot(normalVector, v));
+
+                                    /*red += specular[0] * phongCookTerrace[0];
                                     green += specular[1] * phongCookTerrace[1];
-                                    blue += specular[2] * phongCookTerrace[2];
+                                    blue += specular[2] * phongCookTerrace[2];*/
+
+                                    red += specular[0];
+                                    green += specular[1];
+                                    blue += specular[2];
+
+                                    red *= phongSpecular;
+                                    green *= phongSpecular;
+                                    blue *= phongSpecular;
                                 }
                             }
 
