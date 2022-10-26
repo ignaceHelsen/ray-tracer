@@ -32,11 +32,11 @@ public class Main {
         Vector lightsourcePink = new Vector(-10000, -10, -10, 1);
 
         Scene scene = new Scene(); // light color
-        scene.addLightsource(lightsourceWhite, new double[]{0.5, 0.5, 0.5});
-        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 0.5});
-        scene.addLightsource(lightsourceRed, new double[]{0.5, 0, 0});
-        scene.addLightsource(lightsourceOrange, new double[]{0.5, 0.1, 0});
-        scene.addLightsource(lightsourcePink, new double[]{1, 0.1, 0.5});
+        scene.addLightsource(lightsourceWhite, new double[]{255, 255, 255});
+        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
+        scene.addLightsource(lightsourceRed, new double[]{255, 0, 0});
+        scene.addLightsource(lightsourceOrange, new double[]{122, 50, 0});
+        scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
@@ -54,10 +54,10 @@ public class Main {
         Transformation translationPlane = new Translation(0, 0, 50);
 
         // MATERIALS
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, 0.1, 0.999);
-        Material pearl = new Material(new double[]{0.25, 0.20725, 0.20725}, new double[]{1, 0.829, 0.829}, new double[]{0.296648, 0.296648, 0.296648}, 0.1, 0.99);
-        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{0.774597, 0.774597, 0.774597}, 0.1, 0.99);
-        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, 0.1, 0.99);
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, 0.7, 0.2);
+        Material pearl = new Material(new double[]{0.25, 0.20725, 0.20725}, new double[]{1, 0.829, 0.829}, new double[]{0.296648, 0.296648, 0.296648}, 0.7, 0.2);
+        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{0.774597, 0.774597, 0.774597}, 0.7, 0.2);
+        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, 0.7, 0.2);
 
         // OBJECTS
         Object plane = new Plane(gold);

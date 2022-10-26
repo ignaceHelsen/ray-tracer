@@ -4,7 +4,7 @@ import main.*;
 import main.transformation.Transformation;
 
 public abstract class Object {
-    private Transformation transformation;
+    private Transformation transformation; // already the inverse!
     private final Material material;
 
     public Object(Material material) {

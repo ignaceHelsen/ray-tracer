@@ -1,7 +1,5 @@
 package main;
 
-import java.util.Arrays;
-
 public class Material {
     private final double[] ambient;
     private final double[] diffuse;
@@ -10,9 +8,9 @@ public class Material {
     private double roughness;
 
     public Material(double[] ambient, double[] diffuse, double[] specular, double refractionIndex, double roughness) {
-        this.ambient = Arrays.stream(ambient).map(v -> v+=0.1).toArray();
-        this.diffuse = Arrays.stream(diffuse).map(v -> v+=0.1).toArray();
-        this.specular = Arrays.stream(specular).map(v -> v+=0.1).toArray();
+        this.ambient = ambient;
+        this.diffuse = diffuse;
+        this.specular = specular;
         this.refractionIndex = refractionIndex;
         this.roughness = roughness;
     }
