@@ -78,9 +78,7 @@ public class Renderer {
                             // p 641
                             // shading
                             // Color: ambient, diffuse, specular
-                            double red = 0;
-                            double green = 0;
-                            double blue = 0;
+                            double[] rgb = new double[3];
 
                             double[] ambient = closestObject.getMaterial().getAmbient();
                             double[] diffuse = closestObject.getMaterial().getDiffuse();
@@ -113,34 +111,25 @@ public class Renderer {
                                     //double fresnelCoefficient = Math.pow(gRefraction - cRefraction, 2) / Math.pow(gRefraction + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction + cRefraction) - 1) / (cRefraction * (gRefraction - cRefraction) + 1), 2));
                                     // fresnel at angle of 0 (p.647)
                                     double[] fresnelCoefficient0RGB = new double[3];
-                                    fresnelCoefficient0RGB[0] = Math.pow((closestObject.getMaterial().getRefractionIndex()[0] - 1), 2) / Math.pow((closestObject.getMaterial().getRefractionIndex()[0] + 1), 2);
-                                    fresnelCoefficient0RGB[1] = Math.pow((closestObject.getMaterial().getRefractionIndex()[1] - 1), 2) / Math.pow((closestObject.getMaterial().getRefractionIndex()[1] + 1), 2);
-                                    fresnelCoefficient0RGB[2] = Math.pow((closestObject.getMaterial().getRefractionIndex()[2] - 1), 2) / Math.pow((closestObject.getMaterial().getRefractionIndex()[2] + 1), 2);
+                                    for (int i = 0; i < 2; i++) {
+                                        fresnelCoefficient0RGB[i] = Math.pow((closestObject.getMaterial().getRefractionIndex()[i] - 1), 2) / Math.pow((closestObject.getMaterial().getRefractionIndex()[i] + 1), 2);
+                                    }
 
                                     /*
                                      AMBIENT
                                      */
-
-                                    red += ambient[0] * closestObject.getMaterial().getDistributionK()[0] * fresnelCoefficient0RGB[0];
-                                    green += ambient[1] * closestObject.getMaterial().getDistributionK()[0] * fresnelCoefficient0RGB[1];
-                                    blue += ambient[2] * closestObject.getMaterial().getDistributionK()[0] * fresnelCoefficient0RGB[2];
-
-                                    // lambert term = diffuse part
-                                    /*double[] diffuseColorRGB = Utility.multiplyMatrixFactorArray(Utility.multiplyMatrices(mDots, diffuse), lightsource.getValue());
-
-                                    red += diffuseColorRGB[0] * dw * fresnelCoefficient;
-                                    green += diffuseColorRGB[1] * dw * fresnelCoefficient;
-                                    blue += diffuseColorRGB[2] * dw * fresnelCoefficient;*/
+                                    for (int i = 0; i < 2; i++) {
+                                        rgb[i] += ambient[i] * closestObject.getMaterial().getDistributionK()[0] * fresnelCoefficient0RGB[i];
+                                    }
 
                                     /*
                                     DIFFUSE
                                      */
 
                                     double lambert = Math.max(0, Utility.dot(s, normalVector) / (Utility.norm(s) * Utility.norm(normalVector)));
-
-                                    red += specular[0] * dw * closestObject.getMaterial().getDistributionK()[2] * fresnelCoefficient0RGB[0] * lambert;
-                                    green += specular[1] * dw * closestObject.getMaterial().getDistributionK()[2] * fresnelCoefficient0RGB[1] * lambert;
-                                    blue += specular[2] * dw * closestObject.getMaterial().getDistributionK()[2] * fresnelCoefficient0RGB[2] * lambert;
+                                    for (int i = 0; i < 2; i++) {
+                                        rgb[i] += specular[i] * dw * closestObject.getMaterial().getDistributionK()[2] * fresnelCoefficient0RGB[i] * lambert;
+                                    }
 
                                     /*
                                     SPECULAR
@@ -175,60 +164,41 @@ public class Renderer {
 
                                         // g² = η² + c² - 1
                                         double[] gRefractionSquaredRGB = new double[3];
+                                        for (int i = 0; i < 2; i++) {
+                                            gRefractionSquaredRGB[i] = Math.pow(closestObject.getMaterial().getRefractionIndex()[i], 2) + angleOfIncidence * angleOfIncidence - 1;
+                                        }
 
-                                        gRefractionSquaredRGB[0] = Math.pow(closestObject.getMaterial().getRefractionIndex()[0], 2) + angleOfIncidence * angleOfIncidence - 1;
-                                        gRefractionSquaredRGB[1] = Math.pow(closestObject.getMaterial().getRefractionIndex()[1], 2) + angleOfIncidence * angleOfIncidence - 1;
-                                        gRefractionSquaredRGB[2] = Math.pow(closestObject.getMaterial().getRefractionIndex()[2], 2) + angleOfIncidence * angleOfIncidence - 1;
                                         double[] gRefraction = Arrays.stream(gRefractionSquaredRGB).map(Math::sqrt).toArray();
 
                                         // now we need the fresnel coeff at the angle non-zero
                                         double[] fresnelCoefficientAngleRGB = new double[3];
-                                        fresnelCoefficientAngleRGB[0] = 0.5 * Math.pow(gRefraction[0] - cRefraction, 2) / Math.pow(gRefraction[0] + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction[0] + cRefraction) - 1) / (cRefraction * (gRefraction[0] - cRefraction) + 1), 2));
-                                        fresnelCoefficientAngleRGB[1] = 0.5 * Math.pow(gRefraction[1] - cRefraction, 2) / Math.pow(gRefraction[1] + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction[1] + cRefraction) - 1) / (cRefraction * (gRefraction[1] - cRefraction) + 1), 2));
-                                        fresnelCoefficientAngleRGB[2] = 0.5 * Math.pow(gRefraction[2] - cRefraction, 2) / Math.pow(gRefraction[2] + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction[2] + cRefraction) - 1) / (cRefraction * (gRefraction[2] - cRefraction) + 1), 2));
+                                        for (int i = 0; i < 2; i++) {
+                                            fresnelCoefficientAngleRGB[i] = 0.5 * Math.pow(gRefraction[i] - cRefraction, 2) / Math.pow(gRefraction[i] + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction[i] + cRefraction) - 1) / (cRefraction * (gRefraction[i] - cRefraction) + 1), 2));
+                                        }
 
                                         double[] phongSpecularRGB = new double[3];
-                                        phongSpecularRGB[0] = (fresnelCoefficientAngleRGB[0] * d * g) / (Utility.dot(normalVector, v));
-                                        phongSpecularRGB[1] = (fresnelCoefficientAngleRGB[1] * d * g) / (Utility.dot(normalVector, v));
-                                        phongSpecularRGB[2] = (fresnelCoefficientAngleRGB[2] * d * g) / (Utility.dot(normalVector, v));
+                                        for (int i = 0; i < 2; i++) {
+                                            phongSpecularRGB[i] = (fresnelCoefficientAngleRGB[i] * d * g) / (Utility.dot(normalVector, v));
+                                        }
 
                                         /*red += specular[0] * phongCookTerrace[0];
                                         green += specular[1] * phongCookTerrace[1];
                                         blue += specular[2] * phongCookTerrace[2];*/
-
-                                        red += specular[0] * closestObject.getMaterial().getDistributionK()[2] * dw * phongSpecularRGB[0];
-                                        green += specular[1] * closestObject.getMaterial().getDistributionK()[2] * dw * phongSpecularRGB[1];
-                                        blue += specular[2] * closestObject.getMaterial().getDistributionK()[2] * dw * phongSpecularRGB[2];
+                                        for (int i = 0; i < 2; i++) {
+                                            rgb[i] += specular[i] * closestObject.getMaterial().getDistributionK()[2] * dw * phongSpecularRGB[i];
+                                        }
                                     }
                                 }
                             }
 
-                            red *= 255;
-                            green *= 255;
-                            blue *= 255;
+                            rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
+                            rgb = Arrays.stream(rgb).map(v -> {
+                                if (v > 255) v = 255;
+                                else if (v < 0) v = 0;
+                                return v;
+                            }).toArray();
 
-                            // get color of object
-                            if (red < 0) {
-                                red = 0;
-                            }
-                            if (green < 0) {
-                                green = 0;
-                            }
-                            if (blue < 0) {
-                                blue = 0;
-                            }
-
-                            if (red > 255) {
-                                red = 255;
-                            }
-                            if (green > 255) {
-                                green = 255;
-                            }
-                            if (blue > 255) {
-                                blue = 255;
-                            }
-
-                            Color color = new Color((int) red, (int) green, (int) blue);
+                            Color color = new Color((int) rgb[0], (int) rgb[1], (int) rgb[2]);
                             graph2d.setColor(color);
                             graph2d.drawLine((int) c, (int) r, (int) c, (int) r);
                         }
