@@ -5,6 +5,7 @@ import main.object.Plane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Map;
 
 public class Renderer {
@@ -60,7 +61,7 @@ public class Renderer {
 
                         // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
                         double minIntersectionTime = Integer.MAX_VALUE;
-                        Object closestObject = null;
+                        Object closestObject = null; // object that was hit
                         Intersection closestIntersection = null;
 
                         for (Object object : scene.getObjects()) {
@@ -94,44 +95,56 @@ public class Renderer {
                             for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
                                 double dw = 0.0001; // width lightbeam coming from source
 
-                                // TODO: check if point in shadow
-                                /*// shoot ray towards lightsource, if object in way, darken the point
-
-                                Vector direction = lightsource.getKey();
-                                direction.setType(0);
-                                Ray checkShadow = new Ray(closestIntersection.getEnter(), direction);
-                                // check for every object if we intersect it*/
-
                                 double[] s;
                                 if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
                                     s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
                                 else
                                     s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
 
-                                // lambert term = diffuse part
                                 double mDots = Utility.dot(s, normalVector);
-                                if (mDots > 0.0001) {
+                                if (mDots > 0) {
                                     // hitpoint is pointed towards the light
                                     // first calculate the Fresnel coeff
                                     double angleOfIncidence = getAngle(normalVector, s);
-                                    //angleOfIncidence = Math.toRadians(angleOfIncidence);
 
-                                    double gRefractionSquared = Math.pow(closestObject.getMaterial().getRefractionIndex(), 2) + angleOfIncidence * angleOfIncidence - 1;
-                                    double gRefraction = Math.sqrt(gRefractionSquared);
-                                    // the fresnel coeff will be higher with higher refractionindices
-                                    double fresnelCoefficient = (Math.pow(gRefraction - angleOfIncidence, 2) / Math.pow(gRefraction + angleOfIncidence, 2) * (1 + Math.pow((angleOfIncidence * (gRefraction + angleOfIncidence) - 1) / (angleOfIncidence * (gRefraction - angleOfIncidence) + 1), 2)));
-                                    fresnelCoefficient = fresnelCoefficient * 0.5;
+                                    // the fresnel coeff is the fraction that is reflected and will be higher with higher refractionindices
+                                    // fresnel at certain angle p(644)
+                                    double cRefraction = Math.cos(angleOfIncidence);
+                                    //double fresnelCoefficient = Math.pow(gRefraction - cRefraction, 2) / Math.pow(gRefraction + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction + cRefraction) - 1) / (cRefraction * (gRefraction - cRefraction) + 1), 2));
+                                    // fresnel at angle of 0 (p.647)
+                                    double[] fresnelCoefficient0RGB = new double[3];
+                                    fresnelCoefficient0RGB[0] = Math.pow((closestObject.getMaterial().getRefractionIndex()[0] - 1), 2) / Math.pow((closestObject.getMaterial().getRefractionIndex()[0] + 1), 2);
+                                    fresnelCoefficient0RGB[1] = Math.pow((closestObject.getMaterial().getRefractionIndex()[1] - 1), 2) / Math.pow((closestObject.getMaterial().getRefractionIndex()[1] + 1), 2);
+                                    fresnelCoefficient0RGB[2] = Math.pow((closestObject.getMaterial().getRefractionIndex()[2] - 1), 2) / Math.pow((closestObject.getMaterial().getRefractionIndex()[2] + 1), 2);
 
-                                    red += ambient[0] * fresnelCoefficient;
-                                    green += ambient[1] * fresnelCoefficient;
-                                    blue += ambient[2] * fresnelCoefficient;
+                                    /*
+                                     AMBIENT
+                                     */
 
+                                    red += ambient[0] * closestObject.getMaterial().getDistributionK()[0] * fresnelCoefficient0RGB[0];
+                                    green += ambient[1] * closestObject.getMaterial().getDistributionK()[0] * fresnelCoefficient0RGB[1];
+                                    blue += ambient[2] * closestObject.getMaterial().getDistributionK()[0] * fresnelCoefficient0RGB[2];
 
-                                    double[] diffuseColorRGB = Utility.multiplyMatrixFactorArray(Utility.multiplyMatrices(mDots, diffuse), lightsource.getValue());
+                                    // lambert term = diffuse part
+                                    /*double[] diffuseColorRGB = Utility.multiplyMatrixFactorArray(Utility.multiplyMatrices(mDots, diffuse), lightsource.getValue());
 
                                     red += diffuseColorRGB[0] * dw * fresnelCoefficient;
                                     green += diffuseColorRGB[1] * dw * fresnelCoefficient;
-                                    blue += diffuseColorRGB[2] * dw * fresnelCoefficient;
+                                    blue += diffuseColorRGB[2] * dw * fresnelCoefficient;*/
+
+                                    /*
+                                    DIFFUSE
+                                     */
+
+                                    double lambert = Math.max(0, Utility.dot(s, normalVector) / (Utility.norm(s) * Utility.norm(normalVector)));
+
+                                    red += specular[0] * dw * closestObject.getMaterial().getDistributionK()[2] * fresnelCoefficient0RGB[0] * lambert;
+                                    green += specular[1] * dw * closestObject.getMaterial().getDistributionK()[2] * fresnelCoefficient0RGB[1] * lambert;
+                                    blue += specular[2] * dw * closestObject.getMaterial().getDistributionK()[2] * fresnelCoefficient0RGB[2] * lambert;
+
+                                    /*
+                                    SPECULAR
+                                     */
 
                                     // specular part (Cook & Torrance)
                                     // angle between h and m (normal vector)
@@ -140,40 +153,53 @@ public class Renderer {
                                     v = new double[]{-v[0], -v[1], -v[2], -v[3]};
 
                                     double[] h;
-                                    if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
+                                    if (closestIntersection.getEnter() == null) // tangent hit or only exit hit = only one hitpoint which we have set as exit Sphere@44
                                         h = Utility.sum(Utility.normalize(v), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
                                     else
                                         h = Utility.sum(Utility.normalize(v), Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
 
-
                                     h = Utility.normalize(h);
 
-                                    // angle between h and transposedNormalVector
-                                    double angle = getAngle(normalVector, h);
-                                    double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
-                                    //double[] phongCookTerrace = Utility.multiplyMatrices(d, Utility.multiplyMatrixFactorArray(lightsource.getValue(), specular));
+                                    double mDoth = Utility.dot(h, normalVector);
+                                    if (mDoth > 0) {
+                                        // angle between h and transposedNormalVector
+                                        double angle = getAngle(normalVector, h);
+                                        double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
 
+                                        // G will scale the strength of the specular component
+                                        // fraction of light that is not shadowed.
+                                        double gs = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, v)) / Utility.dot(h, s);
+                                        // fraction of light that is not masked.
+                                        double gm = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, s)) / Utility.dot(h, s);
+                                        double g = Math.min(Math.min(1, gm), gs);
 
-                                    // fraction of light that is not shadowed.
-                                    double gs = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, v)) / Utility.dot(h, s);
-                                    // fraction of light that is not masked.
-                                    double gm = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, s)) / Utility.dot(h, s);
-                                    double g = Math.min(Math.min(1, gm), gs);
+                                        // g² = η² + c² - 1
+                                        double[] gRefractionSquaredRGB = new double[3];
 
-                                    double phongSpecular = (fresnelCoefficient * d * g) / (Utility.dot(normalVector, v));
+                                        gRefractionSquaredRGB[0] = Math.pow(closestObject.getMaterial().getRefractionIndex()[0], 2) + angleOfIncidence * angleOfIncidence - 1;
+                                        gRefractionSquaredRGB[1] = Math.pow(closestObject.getMaterial().getRefractionIndex()[1], 2) + angleOfIncidence * angleOfIncidence - 1;
+                                        gRefractionSquaredRGB[2] = Math.pow(closestObject.getMaterial().getRefractionIndex()[2], 2) + angleOfIncidence * angleOfIncidence - 1;
+                                        double[] gRefraction = Arrays.stream(gRefractionSquaredRGB).map(Math::sqrt).toArray();
 
-                                    /*red += specular[0] * phongCookTerrace[0];
-                                    green += specular[1] * phongCookTerrace[1];
-                                    blue += specular[2] * phongCookTerrace[2];*/
+                                        // now we need the fresnel coeff at the angle non-zero
+                                        double[] fresnelCoefficientAngleRGB = new double[3];
+                                        fresnelCoefficientAngleRGB[0] = 0.5 * Math.pow(gRefraction[0] - cRefraction, 2) / Math.pow(gRefraction[0] + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction[0] + cRefraction) - 1) / (cRefraction * (gRefraction[0] - cRefraction) + 1), 2));
+                                        fresnelCoefficientAngleRGB[1] = 0.5 * Math.pow(gRefraction[1] - cRefraction, 2) / Math.pow(gRefraction[1] + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction[1] + cRefraction) - 1) / (cRefraction * (gRefraction[1] - cRefraction) + 1), 2));
+                                        fresnelCoefficientAngleRGB[2] = 0.5 * Math.pow(gRefraction[2] - cRefraction, 2) / Math.pow(gRefraction[2] + cRefraction, 2) * (1 + Math.pow((cRefraction * (gRefraction[2] + cRefraction) - 1) / (cRefraction * (gRefraction[2] - cRefraction) + 1), 2));
 
-                                    // TODO add the k-factor (p.646)
-                                    red += specular[0] * dw * phongSpecular;
-                                    green += specular[1] * dw * phongSpecular;
-                                    blue += specular[2] * dw * phongSpecular;
+                                        double[] phongSpecularRGB = new double[3];
+                                        phongSpecularRGB[0] = (fresnelCoefficientAngleRGB[0] * d * g) / (Utility.dot(normalVector, v));
+                                        phongSpecularRGB[1] = (fresnelCoefficientAngleRGB[1] * d * g) / (Utility.dot(normalVector, v));
+                                        phongSpecularRGB[2] = (fresnelCoefficientAngleRGB[2] * d * g) / (Utility.dot(normalVector, v));
 
-                                    red *= phongSpecular;
-                                    green *= phongSpecular;
-                                    blue *= phongSpecular;
+                                        /*red += specular[0] * phongCookTerrace[0];
+                                        green += specular[1] * phongCookTerrace[1];
+                                        blue += specular[2] * phongCookTerrace[2];*/
+
+                                        red += specular[0] * closestObject.getMaterial().getDistributionK()[2] * dw * phongSpecularRGB[0];
+                                        green += specular[1] * closestObject.getMaterial().getDistributionK()[2] * dw * phongSpecularRGB[1];
+                                        blue += specular[2] * closestObject.getMaterial().getDistributionK()[2] * dw * phongSpecularRGB[2];
+                                    }
                                 }
                             }
 
@@ -220,8 +246,7 @@ public class Renderer {
     }
 
     private double getAngle(double[] vectorOne, double[] vectorTwo) {
-        double normVectorOne = Utility.norm(vectorOne);
-        return Math.toRadians(Math.acos(Utility.dot(vectorOne, vectorTwo) / normVectorOne * Utility.norm(vectorTwo)));
+        return Math.acos(Utility.dot(vectorOne, vectorTwo) / Utility.norm(vectorOne) * Utility.norm(vectorTwo));
     }
 
     public void draw() {

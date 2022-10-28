@@ -1,17 +1,22 @@
 package main;
 
+import java.util.Arrays;
+
 public class Material {
+    // all RGB values
     private final double[] ambient;
     private final double[] diffuse;
     private final double[] specular;
-    private final double refractionIndex;
+    private final double[] refractionIndex;
+    private final double[] distributionK;
     private double roughness;
 
-    public Material(double[] ambient, double[] diffuse, double[] specular, double refractionIndex, double roughness) {
-        this.ambient = ambient;
-        this.diffuse = diffuse;
-        this.specular = specular;
+    public Material(double[] ambient, double[] diffuse, double[] specular, double[] refractionIndex, double roughness, double[] distributionK) {
+        this.ambient = Arrays.stream(ambient).map(v -> v *= 5).toArray();
+        this.diffuse = Arrays.stream(diffuse).map(v -> v *= 5).toArray();
+        this.specular = Arrays.stream(specular).map(v -> v *= 5).toArray();
         this.refractionIndex = refractionIndex;
+        this.distributionK = distributionK;
         this.roughness = roughness;
     }
 
@@ -27,7 +32,7 @@ public class Material {
         return specular;
     }
 
-    public double getRefractionIndex() {
+    public double[] getRefractionIndex() {
         return refractionIndex;
     }
 
@@ -39,4 +44,7 @@ public class Material {
         this.roughness = roughness;
     }
 
+    public double[] getDistributionK() {
+        return distributionK;
+    }
 }

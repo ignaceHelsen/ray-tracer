@@ -25,7 +25,7 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(0, 0, -6000, 1); // location
+        Vector lightsourceWhite = new Vector(500, 0, -10000, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1);
         Vector lightsourceRed = new Vector(0, -1000, -10, 1);
         Vector lightsourceOrange = new Vector(-1000, 1000, -10, 1);
@@ -33,36 +33,36 @@ public class Main {
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{255, 255, 255});
-        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
-        scene.addLightsource(lightsourceRed, new double[]{255, 0, 0});
-        scene.addLightsource(lightsourceOrange, new double[]{122, 50, 0});
-        scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
+        //scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
+        //scene.addLightsource(lightsourceRed, new double[]{255, 0, 0});
+        //scene.addLightsource(lightsourceOrange, new double[]{122, 50, 0});
+        //scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
         scene.setCamera(camera);
 
-        Transformation translationSphereEmerald = new Translation(100, -100, 50);
+        Transformation translationSphereArgon = new Translation(100, -100, 50);
         Transformation translationSphereChrome = new Translation(-50, 0, -50);
-        Transformation translationCubePearl = new Translation(-100, 200, 0);
+        Transformation translationCubeCopper = new Translation(-100, 200, 0);
         Transformation translationConeGold = new Translation(-50, -50, -50);
         Transformation rotate = new Rotation().rotateX(45).rotateY(10).rotateZ(10);
         Transformation rotateCone = new Rotation().rotateX(180);
-        Transformation scaleSphereEmerald = new Scale(30, 30, 30);
+        Transformation scaleSphereArgon = new Scale(30, 30, 30);
         Transformation scaleCone = new Scale(300, 300, 300);
         Transformation scaleSphereChrome = new Scale(50, 50, 50);
         Transformation translationPlane = new Translation(0, 0, 50);
 
         // MATERIALS
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, 0.7, 0.2);
-        Material pearl = new Material(new double[]{0.25, 0.20725, 0.20725}, new double[]{1, 0.829, 0.829}, new double[]{0.296648, 0.296648, 0.296648}, 0.7, 0.2);
-        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{0.774597, 0.774597, 0.774597}, 0.7, 0.2);
-        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, 0.7, 0.2);
+        Material argon = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{1.2636, 1.00028233, 1.00028426}, 0.2, new double[]{1, 0.5, 0.5});
+        Material copper = new Material(new double[]{0.19125, 0.0735, 0.0225}, new double[]{0.7038, 0.27048, 0.0828}, new double[]{0.256777, 0.137622, 0.086014}, new double[]{0.21989, 1.0066, 1.2493}, 0.2, new double[]{1, 0.5, 0.5});
+        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1071, 3.1812, 2.5010}, new double[]{3.1812, 3.1071, 2.5010}, 0.2, new double[]{1, 0.5, 0.5});
+        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, new double[]{0.15557, 0.42415, 1.3148}, 0.2, new double[]{1, 0.5, 0.5});
 
         // OBJECTS
         Object plane = new Plane(gold);
-        Object sphere = new Sphere(emerald);
-        Object cube = new Cube(pearl);
+        Object sphere = new Sphere(argon);
+        Object cube = new Cube(copper);
         Object sphere2 = new Sphere(chrome);
         Object cone = new TaperedCylinder(gold, 0.95);
 
@@ -72,21 +72,21 @@ public class Main {
         cone.addTransformation(translationConeGold);
         cone.addTransformation(rotateCone);
 
-        sphere.addTransformation(scaleSphereEmerald);
-        sphere.addTransformation(translationSphereEmerald);
+        sphere.addTransformation(scaleSphereArgon);
+        sphere.addTransformation(translationSphereArgon);
 
         sphere2.addTransformation(scaleSphereChrome);
         sphere2.addTransformation(translationSphereChrome);
 
         cube.addTransformation(rotate);
-        cube.addTransformation(scaleSphereEmerald);
-        cube.addTransformation(translationCubePearl);
+        cube.addTransformation(scaleSphereArgon);
+        cube.addTransformation(translationCubeCopper);
 
         scene.addObject(plane);
-        scene.addObject(sphere);
-        scene.addObject(cube);
-        scene.addObject(sphere2);
-        scene.addObject(cone);
+        //scene.addObject(sphere);
+        //scene.addObject(cube);
+        //scene.addObject(sphere2);
+        //scene.addObject(cone);
 
         Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, CMAX, RMAX);
         renderer.setScene(scene);
@@ -114,5 +114,10 @@ public class Main {
             renderer.setScene(scene);
             renderer.draw();
         }*/
+    }
+
+    public static double fresnelToRefr(double fresnel) {
+        double sqrt = Math.sqrt(fresnel);
+        return (1 + sqrt) / (1 - sqrt);
     }
 }

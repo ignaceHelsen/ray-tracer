@@ -7,8 +7,6 @@ import main.Vector;
 import main.transformation.Transformation;
 
 public class Plane extends Object {
-    private Transformation transformation;
-
     public Plane(Material material) {
         super(material);
     }

@@ -16,8 +16,15 @@ public class Utility {
         return sum;
     }
 
+    /**
+     * Will element-wise mulitply two matrixes. This is not the mathematical matrix multiplication.
+     * @param input: matrix
+     * @param multiply: matrix
+     * @return Element-wise multiplication
+     */
     // Not really a valid mathematical multiplication but I need it
     public static double[] multiplyMatrixFactorArray(double[] input, double[] multiply) {
+        // element-wise multiplication
         double[] outputVector = new double[input.length];
 
         for (int i = 0; i < input.length; i++) {
