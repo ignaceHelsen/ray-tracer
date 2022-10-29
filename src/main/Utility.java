@@ -16,6 +16,17 @@ public class Utility {
         return sum;
     }
 
+    public static double[] multiplyElementWise(double factor, double[] vector) {
+        // element-wise multiplication
+        double[] outputVector = new double[vector.length];
+
+        for (int i = 0; i < vector.length; i++) {
+            outputVector[i] = factor * vector[i];
+        }
+
+        return outputVector;
+    }
+
     /**
      * Will element-wise mulitply two matrixes. This is not the mathematical matrix multiplication.
      * @param input: matrix
@@ -23,7 +34,7 @@ public class Utility {
      * @return Element-wise multiplication
      */
     // Not really a valid mathematical multiplication but I need it
-    public static double[] multiplyMatrixFactorArray(double[] input, double[] multiply) {
+    public static double[] multiplyElementWise(double[] input, double[] multiply) {
         // element-wise multiplication
         double[] outputVector = new double[input.length];
 
@@ -93,6 +104,16 @@ public class Utility {
         return sum;
     }
 
+    public static Vector subtract(Vector vectorOne, Vector vectorTwo) {
+        double[] result = new double[vectorOne.getCoords().length];
+
+        for (int i = 0; i < vectorOne.getCoords().length; i++) {
+            result[i] = vectorOne.getCoords()[i] - vectorTwo.getCoords()[i];
+        }
+
+        return new Vector(result);
+    }
+
     public static double[] subtract(double[] vectorOne, double[] vectorTwo) {
         double[] result = new double[vectorOne.length];
 
@@ -108,13 +129,12 @@ public class Utility {
     }
 
     public static double[] normalize(double[] vector) {
-        double[] normalized = new double[4];
+        double[] normalized = new double[vector.length];
 
         double v = Math.sqrt(Utility.dot(vector, vector));
-        normalized[0] = vector[0] / v;
-        normalized[1] = vector[1] / v;
-        normalized[2] = vector[2] / v;
-        normalized[3] = vector[3] / v;
+        for (int i = 0; i < vector.length; i++) {
+            normalized[i] = vector[i] / v;
+        }
 
         return normalized;
     }

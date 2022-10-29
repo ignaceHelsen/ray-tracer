@@ -23,7 +23,7 @@ public class Cube extends Object {
 
         double tHit, numer, denom;
         double tIn = -10000, tOut = 10000;
-        double[] normal = new double[3];
+        double[] normal = new double[4];
 
         for (int i = 0; i < 6; i++) {
             switch (i) {

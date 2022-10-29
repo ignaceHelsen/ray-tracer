@@ -10,7 +10,7 @@ import java.util.List;
 // holds all objects
 public class Scene {
     private final List<Object> objects;
-    private Map<Vector, double[]> lightsources; // points
+    private final Map<Vector, double[]> lightsources; // points
     private Camera camera;
 
     public Scene() {
