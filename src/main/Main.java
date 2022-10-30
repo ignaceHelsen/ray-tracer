@@ -25,7 +25,7 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(500, 0, -10000, 1); // location
+        Vector lightsourceWhite = new Vector(500, 0, -300, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1);
         Vector lightsourceRed = new Vector(0, -1000, -10, 1);
         Vector lightsourceOrange = new Vector(-1000, 1000, -10, 1);
@@ -42,27 +42,27 @@ public class Main {
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
         scene.setCamera(camera);
 
-        Transformation translationSphereArgon = new Translation(200, -100, 50);
+        Transformation translationSphereRuby = new Translation(200, -100, 50);
         Transformation translationSphereChrome = new Translation(-50, 0, -50);
         Transformation translationCubeCopper = new Translation(-150, 200, 0);
         Transformation translationConeGold = new Translation(-50, -50, -50);
         Transformation rotate = new Rotation().rotateX(45).rotateY(45).rotateZ(45);
         Transformation rotateCone = new Rotation().rotateX(180);
-        Transformation scaleSphereArgon = new Scale(30, 30, 30);
+        Transformation scaleSphereRuby = new Scale(30, 30, 30);
         Transformation scaleCone = new Scale(300, 300, 300);
         Transformation scaleSphereChrome = new Scale(50, 50, 50);
         Transformation translationPlane = new Translation(0, 0, 50);
 
         // MATERIALS
-        Material argon = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{1.2636, 1.00028233, 1.00028426}, 0.2, new double[]{1, 0.5, 0.5});
+        Material ruby = new Material(new double[]{0.1745*15, 0.01175*10, 0.01175*10}, new double[]{0.61424*15, 0.04136*10, 0.04136*10}, new double[]{0.727811*15, 0.626959*10, 0.626959*10}, new double[]{1.762*1.2, 1.770*1.2, 1.778*1.2}, 0.2, new double[]{1, 0.5, 0.5});
         Material copper = new Material(new double[]{0.19125, 0.0735, 0.0225}, new double[]{0.7038, 0.27048, 0.0828}, new double[]{0.256777, 0.137622, 0.086014}, new double[]{fresnelToRefr(0.755), fresnelToRefr(0.49), fresnelToRefr(0.095)}, 0.2, new double[]{1, 0.5, 0.5});
-        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1071, 3.1812, 2.5010}, new double[]{3.1812, 3.1071, 2.5010}, 0.2, new double[]{1, 0.5, 0.5});
-        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{1, 0.5, 0.5});
+        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812*2, 3.1812*2, 3.1812*2}, 0.2, new double[]{1, 0.5, 0.5});
+        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, new double[]{fresnelToRefr(0.989)*1.5, fresnelToRefr(0.876)*1.5, fresnelToRefr(0.399)*1.5}, 0.5, new double[]{1, 0.5, 0.5});
 
         // OBJECTS
         Object plane = new Plane(gold);
-        Object sphere = new Sphere(argon);
-        Object cube = new Cube(gold);
+        Object sphere = new Sphere(ruby);
+        Object cube = new Cube(copper);
         Object sphere2 = new Sphere(chrome);
         Object cone = new TaperedCylinder(gold, 0.95);
 
@@ -72,14 +72,14 @@ public class Main {
         cone.addTransformation(translationConeGold);
         cone.addTransformation(rotateCone);
 
-        sphere.addTransformation(scaleSphereArgon);
-        sphere.addTransformation(translationSphereArgon);
+        sphere.addTransformation(scaleSphereRuby);
+        sphere.addTransformation(translationSphereRuby);
 
         sphere2.addTransformation(scaleSphereChrome);
         sphere2.addTransformation(translationSphereChrome);
 
         cube.addTransformation(rotate);
-        cube.addTransformation(scaleSphereArgon);
+        cube.addTransformation(scaleSphereRuby);
         cube.addTransformation(translationCubeCopper);
 
         scene.addObject(plane);

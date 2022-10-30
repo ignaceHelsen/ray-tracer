@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Renderer {
     private static final double LIGHTSOURCEFACTOR = 0.004;
-    private static final double EPSILON = 10;
+    private static final double EPSILON = 10; // the difference that will be subtracted for shadowing
     private final JFrame frame;
     private JPanel panel;
     private final double focallength, screenWidth, screenHeight;
@@ -153,8 +153,9 @@ public class Renderer {
             Vector start = new Vector(Utility.subtract(hitpoint.getCoords(), Utility.multiplyElementWise(EPSILON, ray.getDir().getCoords())));
             Vector dir = Utility.subtract(lightsource.getKey(), hitpoint);
 
-            if(isInShadow(start, dir)) {
-                return; // skip diffusive and specular part
+            if (isInShadow(start, dir)) {
+                rgb = Arrays.stream(rgb).map(value -> value * 0.1).toArray();
+                continue; // skip diffusive and specular part
             }
 
             // now onto diffuse and specular
@@ -234,7 +235,7 @@ public class Renderer {
 
     private boolean isInShadow(Vector start, Vector dir) {
         Ray shadowFeeler = new Ray(start, dir);
-        for(Object o: scene.getObjects()) {
+        for (Object o : scene.getObjects()) {
             Intersection intersection = o.getFirstHitPoint(shadowFeeler);
             if (intersection != null && intersection.getExit() != null)
                 return true;
