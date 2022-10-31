@@ -25,14 +25,14 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(500, 0, -300, 1); // location
+        Vector lightsourceWhite = new Vector(500, 0, -3000, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1);
         Vector lightsourceRed = new Vector(0, -1000, -10, 1);
         Vector lightsourceOrange = new Vector(-1000, 1000, -10, 1);
         Vector lightsourcePink = new Vector(-100, -10, -10, 1);
 
         Scene scene = new Scene(); // light color
-        scene.addLightsource(lightsourceWhite, new double[]{255, 255, 255});
+        scene.addLightsource(lightsourceWhite, new double[]{120, 120, 120});
         scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
         scene.addLightsource(lightsourceRed, new double[]{255, 0, 0});
         scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
