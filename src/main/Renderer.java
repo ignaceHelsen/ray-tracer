@@ -5,18 +5,24 @@ import main.object.Object;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Random;
 
 public class Renderer {
     private static final double LIGHTSOURCEFACTOR = 0.004;
-    private static final double EPSILON = 10; // the difference that will be subtracted for shadowing
+    private static final double EPSILON = 2; // the difference that will be subtracted for shadowing
     private final JFrame frame;
     private JPanel panel;
     private final double focallength, screenWidth, screenHeight;
     private Scene scene;
     private final double cmax;
     private final double rmax;
+    private Canvas canvas;
+    private BufferedImage buffer;
+    private BufferStrategy strategy;
 
     public Renderer(double focallength, double screenWidth, double screenHeight, double cmax, double rmax) {
         this.focallength = focallength;
@@ -26,89 +32,100 @@ public class Renderer {
         this.cmax = cmax;
         this.rmax = rmax;
 
-        frame.setFocusable(true);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setTitle("Ray tracer");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setResizable(true);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setSize((int) screenWidth, (int) screenHeight);
+        this.canvas = new Canvas();
+        buffer = new BufferedImage(((int) screenWidth), ((int) screenHeight), BufferedImage.TYPE_3BYTE_BGR);
+        this.canvas.setSize(new Dimension((int) screenWidth + 1, (int) screenHeight + 1));
+        this.canvas.setPreferredSize(new Dimension((int) screenWidth + 1, (int) screenHeight + 1));
+        this.canvas.setIgnoreRepaint(true);
+        this.frame.add(canvas);
+        this.frame.setTitle("Ray tracer");
+        this.frame.setResizable(true);
+        this.frame.setVisible(true);
+        this.frame.pack();
+        this.canvas.createBufferStrategy(2);
+        this.strategy = canvas.getBufferStrategy();
     }
 
-    void startRender() {
-        this.panel = new JPanel(true) {
-            @Override
-            public void paintComponent(Graphics graphics) {
-                super.paintComponent(graphics);
+    void show() {
+        Graphics2D graphics = (Graphics2D) strategy.getDrawGraphics();
+        graphics.drawImage(buffer, 0, 0, (int) screenWidth, (int) screenHeight, null);
+        graphics.dispose();
+        strategy.show();
+    }
 
-                Graphics2D graph2d = (Graphics2D) graphics;
-                Toolkit.getDefaultToolkit().sync();
+    public void startRender() {
+        final double h = screenHeight / 2;
+        final double w = screenWidth / 2;
 
-                final double H = screenHeight / 2;
-                final double W = screenWidth / 2;
+        float starttime = System.nanoTime();
+        // shoot rays in a for loop
+        for (double c = 0; c <= screenWidth - 1; c++) { //nColumns
+            for (double r = 0; r <= screenHeight - 1; r++) { // nRows
+                Vector dir = new Vector(-focallength, -(w - screenWidth * (c / cmax)), -(h - screenHeight * (r / rmax)), 0);
+                //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
+                //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
 
-                final double y = 2 / screenWidth;
-                final double z = 2 / screenHeight;
+                Ray ray = new Ray(scene.getCamera().getLocation(), dir);
 
-                // shoot rays in a for loop
-                float starttime = System.nanoTime();
-                for (double c = 0; c <= screenWidth; c++) { //nColumns
-                    for (double r = 0; r <= screenHeight; r++) { // nRows
-                        //Vector dir = new Vector(-focallength, -(W - screenWidth * (y * c / cmax)), -(H - screenHeight * (z * r / rmax)), 0);
-                        Vector dir = new Vector(-focallength, W * (y * c - 1), H * (z * r - 1), 0);
-                        //Vector dir = new Vector(-focallength, (W - screenWidth) * (y * c / cmax), (H - screenHeight) * (z * r / rmax), 0);
+                // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
+                double minIntersectionTime = Integer.MAX_VALUE;
+                Object closestObject = null; // object that was hit
+                Intersection closestIntersection = null;
 
-                        Ray ray = new Ray(scene.getCamera().getLocation(), dir);
+                for (Object object : scene.getObjects()) {
+                    Intersection intersection = object.getFirstHitPoint(ray);
 
-                        // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
-                        double minIntersectionTime = Integer.MAX_VALUE;
-                        Object closestObject = null; // object that was hit
-                        Intersection closestIntersection = null;
-
-                        for (Object object : scene.getObjects()) {
-                            Intersection intersection = object.getFirstHitPoint(ray);
-
-                            if (intersection != null && intersection.getT1() < minIntersectionTime && intersection.getT1() >= 0) {
-                                closestIntersection = intersection;
-                                minIntersectionTime = intersection.getT1();
-                                closestObject = object;
-                            }
-                        }
-
-                        if (closestObject != null) {
-                            // p 641
-                            // shading
-                            // Color: ambient, diffuse, specular
-                            double[] rgb = new double[3];
-
-                            getShading(ray, closestObject, closestIntersection, rgb);
-
-                            rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
-                            rgb = Arrays.stream(rgb).map(v -> {
-                                if (v > 255) v = 255;
-                                else if (v < 0) v = 0;
-                                return v;
-                            }).toArray();
-
-                            Color color = new Color((int) rgb[0], (int) rgb[1], (int) rgb[2]);
-                            graph2d.setColor(color);
-                            graph2d.drawLine((int) c, (int) r, (int) c, (int) r);
-                        }
+                    if (intersection != null && intersection.getT1() < minIntersectionTime && intersection.getT1() >= 0) {
+                        closestIntersection = intersection;
+                        minIntersectionTime = intersection.getT1();
+                        closestObject = object;
                     }
                 }
 
-                graph2d.dispose();
 
-                float endtime = System.nanoTime();
-                System.out.println(endtime - starttime);
+                if (closestObject != null) {
+                    // p 641
+                    // shading
+                    // Color: ambient, diffuse, specular
+                    double[] rgb = new double[3];
+
+                    getShading(ray, closestObject, closestIntersection, rgb);
+
+                    rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
+                    rgb = Arrays.stream(rgb).map(v -> {
+                        if (v > 255) v = 255;
+                        else if (v < 0) v = 0;
+                        return v;
+                    }).toArray();
+
+                    //Color color = new Color((int) rgb[0], (int) rgb[1], (int) rgb[2]);
+                    int color = ((int) rgb[0] << 16) | ((int) rgb[1] << 8) | (int) rgb[2];
+                    buffer.setRGB((int) c, (int) r, color);
+                    //graphics.setColor(color);
+                    //graphics.drawLine(, (int) c, (int) r);
+                } else {
+                    if (r < w) {
+                        if (new Random().nextDouble(100) < 0.1) {
+                            int color = (145 << 16) | (211 << 8) | 255;
+                            buffer.setRGB((int) c, (int) r, color);
+                        }
+                    } else {
+                        buffer.setRGB((int) c, (int) r, 0);
+                    }
+                }
+
             }
-        };
+        }
 
-        frame.add(panel);
+        //graphics.dispose();
+
+        float endtime = System.nanoTime();
+        System.out.println(endtime - starttime);
     }
 
     private void getShading(Ray ray, Object closestObject, Intersection closestIntersection, double[] rgb) {
+        if (closestObject instanceof Cube)
+            System.out.printf("");
         double[] ambient = closestObject.getMaterial().getAmbient();
         double[] diffuse = closestObject.getMaterial().getDiffuse();
         double[] specular = closestObject.getMaterial().getSpecular();
@@ -154,7 +171,7 @@ public class Renderer {
             Vector dir = Utility.subtract(lightsource.getKey(), hitpoint);
 
             if (isInShadow(start, dir)) {
-                rgb = Arrays.stream(rgb).map(value -> value * 0.1).toArray();
+                //rgb = Arrays.stream(rgb).map(value -> value * 0.1).toArray();
                 continue; // skip diffusive and specular part
             }
 
@@ -246,10 +263,6 @@ public class Renderer {
 
     private double getAngle(double[] vectorOne, double[] vectorTwo) {
         return Math.acos(Utility.dot(vectorOne, vectorTwo) / Utility.norm(vectorOne) * Utility.norm(vectorTwo));
-    }
-
-    public void draw() {
-        this.panel.repaint();
     }
 
     public void setScene(Scene scene) {

@@ -71,7 +71,7 @@ public class TaperedCylinder extends Object {
             intersection.setT2(th[1]);
         }
 
-        if (intersection.getT1() == -1) intersection.setNormalVector(intersection.getExit().getCoords());
+        if (th.length == 1) intersection.setNormalVector(intersection.getExit().getCoords());
         else intersection.setNormalVector(intersection.getEnter().getCoords());
 
         // set type of ve
