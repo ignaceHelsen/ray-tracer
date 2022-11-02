@@ -8,12 +8,12 @@ import main.transformation.Transformation;
 import main.transformation.Translation;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
-        final double SCREEN_WIDTH = 2160;
+    public static void main(String[] args) {
+        final double SCREEN_WIDTH = 1920;
         final double SCREEN_HEIGHT = 1080;
-        final double FOCALLENGTH = 1000;
-        final double CMAX = SCREEN_WIDTH;
-        final double RMAX = SCREEN_HEIGHT;
+        final double FOCALLENGTH = 500;
+        final double CMAX = 1920;
+        final double RMAX = 1080;
 
         /*
             /----------y
@@ -25,7 +25,7 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(0, 0, -3000, 1); // location
+        Vector lightsourceWhite = new Vector(0, 0, -300, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1); // location
         Vector lightsourceRed = new Vector(0, -1000, -10, 1); // location
         Vector lightsourceOrange = new Vector(-1000, 1000, -10, 1); // location
@@ -46,7 +46,7 @@ public class Main {
         Transformation translationSphereChrome = new Translation(-50, 0, -50);
         Transformation translationCubeCopper = new Translation(-120, 200, 0);
         Transformation translationConeGold = new Translation(-50, -50, -50);
-        Transformation rotate = new Rotation().rotateX(45).rotateY(45).rotateZ(45);
+        Transformation rotate = new Rotation().rotateX(12).rotateY(30).rotateZ(54);
         Transformation rotateCone = new Rotation().rotateX(180);
         Transformation scaleSphereRuby = new Scale(30, 30, 30);
         Transformation scaleCone = new Scale(300, 300, 300);
@@ -95,12 +95,11 @@ public class Main {
         render.start();
 
         Thread show = new Thread(() -> {
-            while (true) {
+            while (render.isAlive()) {
                 try {
-                    renderer.show();
-
                     Thread.sleep(1000);
 
+                    renderer.show();
                     System.out.println("show");
 
                 } catch (InterruptedException v) {
@@ -110,29 +109,6 @@ public class Main {
         });
 
         show.start();
-
-        // pan around the space
-        /*for (int i = 0; i < 1000; i++) {
-            camera.location.setY(camera.location.getY() + 0.1);
-            camera.location.setX(camera.location.getX() - 0.2);
-            Thread.sleep(2);
-            renderer.setScene(scene);
-            renderer.draw();
-        }
-
-        for (int i = 0; i < 1500; i++) {
-            camera.location.setY(camera.location.getY() - 0.1);
-            Thread.sleep(2);
-            renderer.setScene(scene);
-            renderer.draw();
-        }
-
-        for (int i = 0; i < 5000; i++) {
-            camera.location.setX(camera.location.getX() - 0.1);
-            Thread.sleep(2);
-            renderer.setScene(scene);
-            renderer.draw();
-        }*/
     }
 
     public static double fresnelToRefr(double fresnel) {

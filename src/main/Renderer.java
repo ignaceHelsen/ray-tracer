@@ -15,14 +15,13 @@ public class Renderer {
     private static final double LIGHTSOURCEFACTOR = 0.004;
     private static final double EPSILON = 2; // the difference that will be subtracted for shadowing
     private final JFrame frame;
-    private JPanel panel;
     private final double focallength, screenWidth, screenHeight;
     private Scene scene;
     private final double cmax;
     private final double rmax;
-    private Canvas canvas;
-    private BufferedImage buffer;
-    private BufferStrategy strategy;
+    private final Canvas canvas;
+    private final BufferedImage buffer;
+    private final BufferStrategy strategy;
 
     public Renderer(double focallength, double screenWidth, double screenHeight, double cmax, double rmax) {
         this.focallength = focallength;
@@ -59,8 +58,8 @@ public class Renderer {
 
         float starttime = System.nanoTime();
         // shoot rays in a for loop
-        for (double c = 0; c <= screenWidth - 1; c++) { //nColumns
-            for (double r = 0; r <= screenHeight - 1; r++) { // nRows
+        for (double r = 0; r <= screenHeight - 1; r++) { // nRows
+            for (double c = 0; c <= screenWidth - 1; c++) { //nColumns
                 Vector dir = new Vector(-focallength, -(w - screenWidth * (c / cmax)), -(h - screenHeight * (r / rmax)), 0);
                 //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
                 //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
@@ -101,8 +100,6 @@ public class Renderer {
                     //Color color = new Color((int) rgb[0], (int) rgb[1], (int) rgb[2]);
                     int color = ((int) rgb[0] << 16) | ((int) rgb[1] << 8) | (int) rgb[2];
                     buffer.setRGB((int) c, (int) r, color);
-                    //graphics.setColor(color);
-                    //graphics.drawLine(, (int) c, (int) r);
                 } else {
                     if (r < w) {
                         if (new Random().nextDouble(100) < 0.1) {
@@ -117,15 +114,11 @@ public class Renderer {
             }
         }
 
-        //graphics.dispose();
-
         float endtime = System.nanoTime();
         System.out.println(endtime - starttime);
     }
 
     private void getShading(Ray ray, Object closestObject, Intersection closestIntersection, double[] rgb) {
-        if (closestObject instanceof Cube)
-            System.out.printf("");
         double[] ambient = closestObject.getMaterial().getAmbient();
         double[] diffuse = closestObject.getMaterial().getDiffuse();
         double[] specular = closestObject.getMaterial().getSpecular();
@@ -191,7 +184,7 @@ public class Renderer {
             // first calculate the Fresnel coeff
             double angleOfIncidence = getAngle(normalVector, s);
 
-            if (mDots > 0) { // = mdots in book
+            if (mDots > 0) {
                 // hitpoint is pointed towards the light
                 /*
                   DIFFUSE
