@@ -34,9 +34,9 @@ public class Sphere extends Object {
         if (th.length == 0) return null;
 
         // we got at least one hit, calculate x y & z
-        double x = ray.getS().getX() + ray.getDir().getX() * th[0];
-        double y = ray.getS().getY() + ray.getDir().getY() * th[0];
-        double z = ray.getS().getZ() + ray.getDir().getZ() * th[0];
+        double x = originalRay.getS().getX() + originalRay.getDir().getX() * th[0];
+        double y = originalRay.getS().getY() + originalRay.getDir().getY() * th[0];
+        double z = originalRay.getS().getZ() + originalRay.getDir().getZ() * th[0];
 
         Intersection intersection = new Intersection();
         Vector point = new Vector(x, y, z, 1);
@@ -51,9 +51,9 @@ public class Sphere extends Object {
             intersection.setEnter(point);
             intersection.setT1(th[0]);
 
-            double xExit = ray.getS().getX() + ray.getDir().getX() * th[1];
-            double yExit = ray.getS().getY() + ray.getDir().getY() * th[1];
-            double zExit = ray.getS().getZ() + ray.getDir().getZ() * th[1];
+            double xExit = originalRay.getS().getX() + originalRay.getDir().getX() * th[1];
+            double yExit = originalRay.getS().getY() + originalRay.getDir().getY() * th[1];
+            double zExit = originalRay.getS().getZ() + originalRay.getDir().getZ() * th[1];
 
             Vector exit = new Vector(xExit, yExit, zExit, 1);
             intersection.setExit(exit);

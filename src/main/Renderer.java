@@ -1,7 +1,8 @@
 package main;
 
-import main.object.Cube;
 import main.object.Object;
+import main.object.Plane;
+import main.object.Sphere;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +14,7 @@ import java.util.Random;
 
 public class Renderer {
     private static final double LIGHTSOURCEFACTOR = 0.004;
-    private static final double EPSILON = 2; // the difference that will be subtracted for shadowing
+    private static final double EPSILON = 0.001; // the difference that will be subtracted for shadowing
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
     private Scene scene;
@@ -68,27 +69,40 @@ public class Renderer {
 
                 // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
                 double minIntersectionTime = Integer.MAX_VALUE;
-                Object closestObject = null; // object that was hit
-                Intersection closestIntersection = null;
+                Object objectHit = null; // object that was hit
+                Intersection intersectionHit = null;
 
                 for (Object object : scene.getObjects()) {
                     Intersection intersection = object.getFirstHitPoint(ray);
 
-                    if (intersection != null && intersection.getT1() < minIntersectionTime && intersection.getT1() >= 0) {
-                        closestIntersection = intersection;
-                        minIntersectionTime = intersection.getT1();
-                        closestObject = object;
+                    // we know that if only one hit is present this hit has been set at exit and the time at T2. (btw, if only one hit -> t1 has been set to -1)
+                    // if, as normally, two hits are present (one enter and one exit) we know that T1 corresponds to the enter time and t2 to the exit time.
+                    // there will always be a T2.
+                    // intersection times always have to be >= 0.
+                    if (intersection != null) {
+                        if (objectHit instanceof Sphere && object instanceof Plane && intersection.getT2() >= 0 && intersection.getT2() < 500)
+                            System.out.printf("");
+                        if ((intersection.getEnter() == null && intersection.getT2() >= 0 && intersection.getT2() < minIntersectionTime) || (intersection.getEnter() != null && intersection.getT1() >= 0 && intersection.getT1() < minIntersectionTime)) {
+                            intersectionHit = intersection;
+
+                            // for priorities with objects that are closer by and should be painted instead of objects behind it
+                            if (intersection.getEnter() == null) // set min as exit time (=T2)
+                                minIntersectionTime = intersection.getT2();
+                            else
+                                minIntersectionTime = intersection.getT1();
+
+                            objectHit = object;
+                        }
                     }
                 }
 
-
-                if (closestObject != null) {
+                if (objectHit != null) {
                     // p 641
                     // shading
                     // Color: ambient, diffuse, specular
                     double[] rgb = new double[3];
 
-                    getShading(ray, closestObject, closestIntersection, rgb);
+                    getShading(ray, objectHit, intersectionHit, rgb);
 
                     rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
                     rgb = Arrays.stream(rgb).map(v -> {
@@ -97,7 +111,6 @@ public class Renderer {
                         return v;
                     }).toArray();
 
-                    //Color color = new Color((int) rgb[0], (int) rgb[1], (int) rgb[2]);
                     int color = ((int) rgb[0] << 16) | ((int) rgb[1] << 8) | (int) rgb[2];
                     buffer.setRGB((int) c, (int) r, color);
                 } else {
@@ -118,17 +131,17 @@ public class Renderer {
         System.out.println(endtime - starttime);
     }
 
-    private void getShading(Ray ray, Object closestObject, Intersection closestIntersection, double[] rgb) {
-        double[] ambient = closestObject.getMaterial().getAmbient();
-        double[] diffuse = closestObject.getMaterial().getDiffuse();
-        double[] specular = closestObject.getMaterial().getSpecular();
+    private void getShading(Ray ray, Object objectHit, Intersection intersection, double[] rgb) {
+        double[] ambient = objectHit.getMaterial().getAmbient();
+        double[] diffuse = objectHit.getMaterial().getDiffuse();
+        double[] specular = objectHit.getMaterial().getSpecular();
 
         double[] v = ray.getDir().getCoords().clone();
         v = Arrays.stream(v).map(value -> value * -1).toArray();
 
         // m is the roughness of the material
-        double mRoughness = closestObject.getMaterial().getRoughness();
-        double[] normalVector = Utility.multiplyMatrices(closestIntersection.getNormalVector(), Utility.transpose(closestObject.getTransformation().getTransformation()));
+        double mRoughness = objectHit.getMaterial().getRoughness();
+        double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), Utility.transpose(objectHit.getTransformation().getTransformation()));
         normalVector = Utility.normalize(normalVector);
 
         // the fresnel coeff is the fraction that is reflected and will be higher with higher refractionindices
@@ -138,7 +151,7 @@ public class Renderer {
         // fresnel at angle of 0 (p.647)
         double[] fresnelCoefficient0RGB = new double[3];
         for (int i = 0; i < 3; i++) {
-            fresnelCoefficient0RGB[i] = Math.pow((closestObject.getMaterial().getRefractionIndex()[i] - 1), 2) / Math.pow((closestObject.getMaterial().getRefractionIndex()[i] + 1), 2);
+            fresnelCoefficient0RGB[i] = Math.pow((objectHit.getMaterial().getRefractionIndex()[i] - 1), 2) / Math.pow((objectHit.getMaterial().getRefractionIndex()[i] + 1), 2);
         }
 
         /*
@@ -146,14 +159,14 @@ public class Renderer {
         */
 
         for (int i = 0; i < 3; i++) {
-            rgb[i] += ambient[i] * closestObject.getMaterial().getkDistribution()[0] * fresnelCoefficient0RGB[i];
+            rgb[i] += ambient[i] * objectHit.getMaterial().getkDistribution()[0] * fresnelCoefficient0RGB[i];
         }
 
         Vector hitpoint;
-        if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
-            hitpoint = closestIntersection.getExit();
+        if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
+            hitpoint = intersection.getExit();
         else
-            hitpoint = closestIntersection.getEnter();
+            hitpoint = intersection.getEnter();
 
         // TODO recurselevel (shadows) (p.672)
 
@@ -163,8 +176,7 @@ public class Renderer {
             Vector start = new Vector(Utility.subtract(hitpoint.getCoords(), Utility.multiplyElementWise(EPSILON, ray.getDir().getCoords())));
             Vector dir = Utility.subtract(lightsource.getKey(), hitpoint);
 
-            if (isInShadow(start, dir)) {
-                //rgb = Arrays.stream(rgb).map(value -> value * 0.1).toArray();
+            if (isInShadow(start, dir) && objectHit instanceof Plane) {
                 continue; // skip diffusive and specular part
             }
 
@@ -173,10 +185,10 @@ public class Renderer {
             double dw = 1; // width lightbeam coming from source
 
             double[] s;
-            if (closestIntersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
-                s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getExit().getCoords()));
+            if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
+                s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), intersection.getExit().getCoords()));
             else
-                s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), closestIntersection.getEnter().getCoords()));
+                s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), intersection.getEnter().getCoords()));
 
             double mDots = Utility.dot(s, normalVector);
             double cRefraction = mDots;
@@ -184,7 +196,7 @@ public class Renderer {
             // first calculate the Fresnel coeff
             double angleOfIncidence = getAngle(normalVector, s);
 
-            if (mDots > 0) {
+            if (mDots > 0.0001) {
                 // hitpoint is pointed towards the light
                 /*
                   DIFFUSE
@@ -192,7 +204,7 @@ public class Renderer {
 
                 double lambert = Math.max(0, mDots / (Utility.norm(s) * Utility.norm(normalVector)));
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] += specular[i] * dw * closestObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * LIGHTSOURCEFACTOR);
+                    rgb[i] += specular[i] * dw * objectHit.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * LIGHTSOURCEFACTOR);
                 }
 
                 /*
@@ -204,7 +216,7 @@ public class Renderer {
                 double[] h = Utility.normalize(Utility.sum(Utility.normalize(v), s));
 
                 double mDoth = Utility.dot(h, normalVector);
-                if (mDoth > 0) {
+                if (mDoth > 0.0001) {
                     // angle between h and transposedNormalVector
                     double angle = getAngle(normalVector, h);
                     double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
@@ -219,7 +231,7 @@ public class Renderer {
                     // gRefractionSquaredRGB = g² = η² + c² - 1
                     double[] gRefractionSquaredRGB = new double[3];
                     for (int i = 0; i < 3; i++) {
-                        gRefractionSquaredRGB[i] = Math.pow(closestObject.getMaterial().getRefractionIndex()[i], 2) + angleOfIncidence * angleOfIncidence - 1;
+                        gRefractionSquaredRGB[i] = Math.pow(objectHit.getMaterial().getRefractionIndex()[i], 2) + angleOfIncidence * angleOfIncidence - 1;
                     }
 
                     double[] gRefraction = Arrays.stream(gRefractionSquaredRGB).map(Math::sqrt).toArray();
@@ -236,7 +248,7 @@ public class Renderer {
                     }
 
                     for (int i = 0; i < 3; i++) {
-                        rgb[i] += specular[i] * closestObject.getMaterial().getkDistribution()[2] * dw * phongSpecularRGB[i];
+                        rgb[i] += specular[i] * objectHit.getMaterial().getkDistribution()[2] * dw * phongSpecularRGB[i];
                     }
                 }
             }
@@ -246,7 +258,7 @@ public class Renderer {
     private boolean isInShadow(Vector start, Vector dir) {
         Ray shadowFeeler = new Ray(start, dir);
         for (Object o : scene.getObjects()) {
-            Intersection intersection = o.getFirstHitPoint(shadowFeeler);
+            Intersection intersection = o.getFirstHitPoint(shadowFeeler); //shoot the ray and check if we got a hitpoint
             if (intersection != null && intersection.getExit() != null)
                 return true;
         }

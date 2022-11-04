@@ -4,7 +4,6 @@ import main.Intersection;
 import main.Material;
 import main.Ray;
 import main.Vector;
-import main.transformation.Transformation;
 
 public class Plane extends Object {
     public Plane(Material material) {
@@ -22,12 +21,12 @@ public class Plane extends Object {
 
         double th = -(ray.getS().getZ() / ray.getDir().getZ());
 
-        double x = ray.getS().getX() + ray.getDir().getX() * th;
-        double y = ray.getS().getY() + ray.getDir().getY() * th;
-        double z = ray.getS().getZ() + ray.getDir().getZ() * th;
+        double x = originalRay.getS().getX() + originalRay.getDir().getX() * th;
+        double y = originalRay.getS().getY() + originalRay.getDir().getY() * th;
+        double z = originalRay.getS().getZ() + originalRay.getDir().getZ() * th;
 
-        Vector firstCollisionPoint = new Vector(x, y, z, 1);
+        Vector collision = new Vector(x, y, z, 1);
 
-        return new Intersection(firstCollisionPoint, null, th, -1, new double[]{firstCollisionPoint.getX(), firstCollisionPoint.getY(), firstCollisionPoint.getZ(), 0});
+        return new Intersection(null, collision, -1, th, new double[]{collision.getX(), collision.getY(), collision.getZ(), 0});
     }
 }

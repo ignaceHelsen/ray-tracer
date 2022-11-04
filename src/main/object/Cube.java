@@ -87,18 +87,18 @@ public class Cube extends Object {
 
         if (tIn < 0.00001) return null;
 
-        double xEnter = ray.getS().getX() + ray.getDir().getX() * tIn;
-        double yEnter = ray.getS().getY() + ray.getDir().getY() * tIn;
-        double zEnter = ray.getS().getZ() + ray.getDir().getZ() * tIn;
+        double xEnter = originalRay.getS().getX() + originalRay.getDir().getX() * tIn;
+        double yEnter = originalRay.getS().getY() + originalRay.getDir().getY() * tIn;
+        double zEnter = originalRay.getS().getZ() + originalRay.getDir().getZ() * tIn;
 
         Vector firstCollisionPoint = new Vector(xEnter, yEnter, zEnter, 1);
 
-        double xExit = ray.getS().getX() + ray.getDir().getX() * tOut;
-        double yExit = ray.getS().getY() + ray.getDir().getY() * tOut;
-        double zExit = ray.getS().getZ() + ray.getDir().getZ() * tOut;
+        double xExit = originalRay.getS().getX() + originalRay.getDir().getX() * tOut;
+        double yExit = originalRay.getS().getY() + originalRay.getDir().getY() * tOut;
+        double zExit = originalRay.getS().getZ() + originalRay.getDir().getZ() * tOut;
 
         Vector secondCollisionPoint = new Vector(xExit, yExit, zExit, 1);
 
-        return new Intersection(firstCollisionPoint, secondCollisionPoint, tIn, tOut, new double[] {normalVectors[inSurf][0], normalVectors[inSurf][1], normalVectors[inSurf][2], normalVectors[inSurf][3]});
+        return new Intersection(firstCollisionPoint, secondCollisionPoint, tIn, tOut, new double[]{normalVectors[inSurf][0], normalVectors[inSurf][1], normalVectors[inSurf][2], normalVectors[inSurf][3]});
     }
 }
