@@ -16,13 +16,13 @@ public class Sphere extends Object {
         if (getTransformation() != null)
             ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
         else
-            ray = originalRay;
+            ray = originalRay.clone();
 
         double a = Utility.dot(ray.getDir(), ray.getDir());
         double b = Utility.dot(ray.getS(), ray.getDir());
         double c = Utility.dot(ray.getS(), ray.getS()) - 1;
 
-        double discrim = b * b - a * c;
+        double discrim = (b * b) - (a * c);
         if (discrim < 0) return null;
 
         double discRoot = Math.sqrt(discrim);

@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class Renderer {
     private static final double LIGHTSOURCEFACTOR = 0.004;
-    private static final double EPSILON = 0.001; // the difference that will be subtracted for shadowing
+    private static final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
     private Scene scene;
@@ -70,7 +70,7 @@ public class Renderer {
                 // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
                 double minIntersectionTime = Integer.MAX_VALUE;
                 Object objectHit = null; // object that was hit
-                Intersection intersectionHit = null;
+                Intersection intersectionHit = null; // the closest intersection and which we will be using later on
 
                 for (Object object : scene.getObjects()) {
                     Intersection intersection = object.getFirstHitPoint(ray);
@@ -80,7 +80,7 @@ public class Renderer {
                     // there will always be a T2.
                     // intersection times always have to be >= 0.
                     if (intersection != null) {
-                        if (objectHit instanceof Sphere && object instanceof Plane && intersection.getT2() >= 0 && intersection.getT2() < 500)
+                        if (objectHit instanceof Sphere && object instanceof Plane && intersection.getT2() >= 0 && intersection.getT2() < 470)
                             System.out.printf("");
                         if ((intersection.getEnter() == null && intersection.getT2() >= 0 && intersection.getT2() < minIntersectionTime) || (intersection.getEnter() != null && intersection.getT1() >= 0 && intersection.getT1() < minIntersectionTime)) {
                             intersectionHit = intersection;

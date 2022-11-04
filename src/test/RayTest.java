@@ -40,7 +40,7 @@ public class RayTest {
         rays.add(new Ray(new Vector(4, -2, 2, 1), new Vector(-7, 3, -4, 0)));
         rays.add(new Ray(new Vector(4, -2, 2, 1), new Vector(7, -3, 4, 0)));
         rays.add(new Ray(new Vector(0.5, 0.3, 0.2, 0), new Vector(-3.5, 0.7, -2.2, 0)));
-        rays.add(new Ray(new Vector(-7, 8, 2, 0), new Vector(6, 2, 4, 0)));
+        /*rays.add(new Ray(new Vector(-7, 8, 2, 0), new Vector(6, 2, 4, 0)));
         rays.add(new Ray(new Vector(-5, -5, 0, 0), new Vector(0, 5, 0, 0)));
         rays.add(new Ray(new Vector(-7, 8, 2, 0), new Vector(13, -7, 1, 0)));
         rays.add(new Ray(new Vector(-7, 8, 2, 0), new Vector(-13, 7, -1, 0)));
@@ -54,16 +54,21 @@ public class RayTest {
         rays.add(new Ray(new Vector(-3, 1.5, 5, 0), new Vector(2, 0, 0, 0)));
         rays.add(new Ray(new Vector(-3, 2, -1, 0), new Vector(2, -5, 5, 0)));
         rays.add(new Ray(new Vector(-3, 2, -1, 0), new Vector(-2, 5, -5, 0)));
-        rays.add(new Ray(new Vector(-3, 0, 6, 0), new Vector(2, 1.5, -2, 0)));
+        rays.add(new Ray(new Vector(-3, 0, 6, 0), new Vector(2, 1.5, -2, 0)));*/
 
         for (Ray r : rays) {
-            var coords = sphere.getFirstHitPoint(r);
+            Intersection coords = sphere.getFirstHitPoint(r);
             if (coords == null) {
                 System.out.println("NO HIT");
                 continue;
             }
 
-            System.out.printf("%f %f %f\n", coords.getEnter().getX(), coords.getEnter().getY(), coords.getEnter().getZ());
+            if (coords.getEnter() != null) {
+                System.out.printf("Enter: %f %f %f\t", coords.getEnter().getX(), coords.getEnter().getY(), coords.getEnter().getZ());
+            } else {
+                System.out.print("\t\t\t\t\t\t\t\t\t");
+            }
+            System.out.printf("Exit: %f %f %f\n", coords.getExit().getX(), coords.getExit().getY(), coords.getExit().getZ());
         }
     }
 

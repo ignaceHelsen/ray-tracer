@@ -20,7 +20,7 @@ public class TaperedCylinder extends Object {
         if (getTransformation() != null)
             ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
         else
-            ray = originalRay;
+            ray = originalRay.clone();
 
         double d = (this.ratio - 1)*ray.getDir().getZ();
         double f = 1+(this.ratio - 1)*ray.getS().getZ();

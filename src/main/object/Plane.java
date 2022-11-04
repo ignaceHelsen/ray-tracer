@@ -17,7 +17,7 @@ public class Plane extends Object {
         if (getTransformation() != null)
             ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
         else
-            ray = originalRay;
+            ray = originalRay.clone();
 
         double th = -(ray.getS().getZ() / ray.getDir().getZ());
 

@@ -1,6 +1,6 @@
 package main;
 
-public class Ray {
+public class Ray implements Cloneable {
     private Vector s; // origin
     private Vector dir; // direction
 
@@ -16,7 +16,6 @@ public class Ray {
 
         // normalize c
         this.dir = new Vector(Utility.normalize(dir.getCoords()));
-
     }
 
     public Vector getS() {
@@ -33,5 +32,15 @@ public class Ray {
 
     public void setDir(Vector dir) {
         this.dir = dir;
+    }
+
+    @Override
+    public Ray clone() {
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (Ray) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

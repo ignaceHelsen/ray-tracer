@@ -33,10 +33,10 @@ public class Main {
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{255, 255, 255});
-        //scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
-        //scene.addLightsource(lightsourceRed, new double[]{255, 0, 0});
-        //scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
-        //scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
+        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
+        scene.addLightsource(lightsourceRed, new double[]{255, 0, 0});
+        scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
+        scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
@@ -49,7 +49,7 @@ public class Main {
         Transformation rotate = new Rotation().rotateX(12).rotateY(30).rotateZ(54);
         Transformation rotateCone = new Rotation().rotateX(180);
         Transformation scaleSphereRuby = new Scale(30, 30, 30);
-        Transformation scaleCone = new Scale(300, 300, 300);
+        Transformation scaleCone = new Scale(3000, 300, 300);
         Transformation scaleSphereChrome = new Scale(50, 50, 50);
         Transformation translationPlane = new Translation(0, 0, 30);
 
@@ -76,17 +76,17 @@ public class Main {
         sphere.addTransformation(translationSphereRuby);
 
         sphere2.addTransformation(scaleSphereChrome);
-        //sphere2.addTransformation(translationSphereChrome);
+        sphere2.addTransformation(translationSphereChrome);
 
         cube.addTransformation(rotate);
         cube.addTransformation(scaleSphereRuby);
         cube.addTransformation(translationCubeCopper);
 
-        scene.addObject(plane);
         scene.addObject(sphere2);
-        //scene.addObject(sphere);
-        //scene.addObject(cube);
-        //scene.addObject(cone);
+        scene.addObject(plane);
+        scene.addObject(sphere);
+        scene.addObject(cube);
+        scene.addObject(cone);
 
         Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, CMAX, RMAX);
         renderer.setScene(scene);

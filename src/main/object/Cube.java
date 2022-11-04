@@ -28,7 +28,7 @@ public class Cube extends Object {
         if (getTransformation() != null)
             ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
         else
-            ray = originalRay;
+            ray = originalRay.clone();
 
         double tHit, numer, denom;
         double tIn = -10000, tOut = 10000;
