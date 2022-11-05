@@ -29,9 +29,9 @@ public class Sphere extends Object {
         double t1 = (-b - discRoot) / a; // time of hitpoint 1
         double t2 = (-b + discRoot) / a; // time of hitpoint 2
 
-        double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0.0001).toArray(); // timestamps need to be positive
+        if (t1 < 0 && t2 < 0) return null;
 
-        if (th.length == 0) return null;
+        double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0.0001).toArray(); // timestamps need to be positive
 
         // we got at least one hit, calculate x y & z
         double x = originalRay.getS().getX() + originalRay.getDir().getX() * th[0];
@@ -45,11 +45,11 @@ public class Sphere extends Object {
             // 1 hit found, the previous calculated x y & z are now the exit points
             // just regard it as an exit hit
             intersection.setExit(point);
-            intersection.setT2(th[0]);
+            intersection.setT2(th[0]*100);
         } else {
             // 2 hits found, the previous calculated x y & z are now the enter points
             intersection.setEnter(point);
-            intersection.setT1(th[0]);
+            intersection.setT1(th[0]*100);
 
             double xExit = originalRay.getS().getX() + originalRay.getDir().getX() * th[1];
             double yExit = originalRay.getS().getY() + originalRay.getDir().getY() * th[1];
@@ -57,7 +57,7 @@ public class Sphere extends Object {
 
             Vector exit = new Vector(xExit, yExit, zExit, 1);
             intersection.setExit(exit);
-            intersection.setT2(th[1]);
+            intersection.setT2(th[1]*100);
         }
 
         if (th.length == 1) intersection.setNormalVector(intersection.getExit().getCoords());

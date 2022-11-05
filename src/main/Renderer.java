@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class Renderer {
-    private static final double LIGHTSOURCEFACTOR = 0.004;
+    private static final double LIGHTSOURCEFACTOR = 0.01;
     private static final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -32,8 +32,9 @@ public class Renderer {
         this.cmax = cmax;
         this.rmax = rmax;
 
+        // Following code with thanks to Maarten Van Loo
         this.canvas = new Canvas();
-        buffer = new BufferedImage(((int) screenWidth), ((int) screenHeight), BufferedImage.TYPE_3BYTE_BGR);
+        this.buffer = new BufferedImage(((int) screenWidth), ((int) screenHeight), BufferedImage.TYPE_3BYTE_BGR);
         this.canvas.setSize(new Dimension((int) screenWidth + 1, (int) screenHeight + 1));
         this.canvas.setPreferredSize(new Dimension((int) screenWidth + 1, (int) screenHeight + 1));
         this.canvas.setIgnoreRepaint(true);
@@ -73,23 +74,24 @@ public class Renderer {
                 Intersection intersectionHit = null; // the closest intersection and which we will be using later on
 
                 for (Object currentObject : scene.getObjects()) {
-                    Intersection intersection = currentObject.getFirstHitPoint(ray);
+                    Intersection currentIntersection = currentObject.getFirstHitPoint(ray);
 
                     // we know that if only one hit is present this hit has been set at exit and the time at T2. (btw, if only one hit -> t1 has been set to -1)
                     // if, as normally, two hits are present (one enter and one exit) we know that T1 corresponds to the enter time and t2 to the exit time.
                     // there will always be a T2.
-                    // intersection times always have to be >= 0.
-                    if (intersection != null) {
-                        if (closestObject instanceof Sphere && currentObject instanceof Plane && intersection.getT2() >= 0 && intersection.getT2() < 470)
+                    // currentIntersection times always have to be >= 0.
+                    if (currentIntersection != null) {
+                        if (closestObject instanceof Sphere && currentObject instanceof Plane && currentIntersection.getT2() >= 0 && currentIntersection.getT2() < 470)
                             System.out.printf("");
-                        if ((intersection.getEnter() == null && intersection.getT2() >= 0 && intersection.getT2() < minIntersectionTime) || (intersection.getEnter() != null && intersection.getT1() >= 0 && intersection.getT1() < minIntersectionTime)) {
-                            intersectionHit = intersection;
+                        if ((currentIntersection.getEnter() == null && currentIntersection.getT2() >= 0 && currentIntersection.getT2() < minIntersectionTime) || (currentIntersection.getEnter() != null && currentIntersection.getT1() >= 0 && currentIntersection.getT1() < minIntersectionTime)) {
+                            // the current intersection is in front of the previous hit, which means we have to deal with this hit in further code
+                            intersectionHit = currentIntersection;
 
                             // for priorities with objects that are closer by and should be painted instead of objects behind it
-                            if (intersection.getEnter() == null) // set min as exit time (=T2)
-                                minIntersectionTime = intersection.getT2();
+                            if (currentIntersection.getEnter() == null) // set min as exit time (=T2) (since only an exit has been registered)
+                                minIntersectionTime = currentIntersection.getT2();
                             else
-                                minIntersectionTime = intersection.getT1();
+                                minIntersectionTime = currentIntersection.getT1();
 
                             closestObject = currentObject;
                         }

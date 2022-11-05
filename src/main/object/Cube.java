@@ -5,8 +5,6 @@ import main.Material;
 import main.Ray;
 import main.Vector;
 
-import java.awt.*;
-
 public class Cube extends Object {
     private final int[][] normalVectors;
 
@@ -36,34 +34,34 @@ public class Cube extends Object {
 
         for (int i = 0; i < 6; i++) {
             switch (i) {
-                case 0:
+                case 0 -> {
                     numer = 1.0 - ray.getS().getY();
                     denom = ray.getDir().getY();
-                    break;
-
-                case 1:
+                }
+                case 1 -> {
                     numer = 1.0 + ray.getS().getY();
                     denom = -ray.getDir().getY();
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     numer = 1.0 - ray.getS().getX();
                     denom = ray.getDir().getX();
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     numer = 1.0 + ray.getS().getX();
                     denom = -ray.getDir().getX();
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     numer = 1.0 - ray.getS().getZ();
                     denom = ray.getDir().getZ();
-                    break;
-                case 5:
+                }
+                case 5 -> {
                     numer = 1.0 + ray.getS().getZ();
                     denom = -ray.getDir().getZ();
-                    break;
-                default:
+                }
+                default -> {
                     numer = 0;
                     denom = 0;
+                }
             }
 
             if (Math.abs(denom) < 0.00001) { // parallel ray
