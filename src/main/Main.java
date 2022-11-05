@@ -46,7 +46,7 @@ public class Main {
         Transformation translationSphereChrome = new Translation(-50, 0, -50);
         Transformation translationCube = new Translation(120, 200, 0);
         Transformation translationCone = new Translation(-50, -50, -50);
-        Transformation translationPlane = new Translation(0, 0, 100);
+        Transformation translationPlane = new Translation(0, 0, 30);
         Transformation rotateCube = new Rotation().rotateX(12).rotateY(30).rotateZ(54);
         Transformation rotateCone = new Rotation().rotateX(180);
         Transformation scaleSphereRuby = new Scale(30, 30, 30);

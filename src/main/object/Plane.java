@@ -6,6 +6,8 @@ import main.Ray;
 import main.Vector;
 
 public class Plane extends Object {
+    private final double DIVISION_FACTOR = 100;
+
     public Plane(Material material) {
         super(material);
     }
@@ -27,6 +29,6 @@ public class Plane extends Object {
 
         Vector collision = new Vector(x, y, z, 1);
 
-        return new Intersection(null, collision, -1, th/100, new double[]{collision.getX(), collision.getY(), collision.getZ(), 0});
+        return new Intersection(null, collision, -1, th / DIVISION_FACTOR, new double[]{collision.getX(), collision.getY(), collision.getZ(), 0});
     }
 }
