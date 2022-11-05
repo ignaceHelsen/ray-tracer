@@ -45,11 +45,11 @@ public class Sphere extends Object {
             // 1 hit found, the previous calculated x y & z are now the exit points
             // just regard it as an exit hit
             intersection.setExit(point);
-            intersection.setT2(th[0]*100);
+            intersection.setT2(th[0]);
         } else {
             // 2 hits found, the previous calculated x y & z are now the enter points
             intersection.setEnter(point);
-            intersection.setT1(th[0]*100);
+            intersection.setT1(th[0]);
 
             double xExit = originalRay.getS().getX() + originalRay.getDir().getX() * th[1];
             double yExit = originalRay.getS().getY() + originalRay.getDir().getY() * th[1];
@@ -57,7 +57,7 @@ public class Sphere extends Object {
 
             Vector exit = new Vector(xExit, yExit, zExit, 1);
             intersection.setExit(exit);
-            intersection.setT2(th[1]*100);
+            intersection.setT2(th[1]);
         }
 
         if (th.length == 1) intersection.setNormalVector(intersection.getExit().getCoords());
