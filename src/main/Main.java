@@ -33,10 +33,10 @@ public class Main {
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{255, 255, 255});
-        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
-        scene.addLightsource(lightsourceRed, new double[]{255, 0, 0});
-        scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
-        scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
+        //scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
+        //scene.addLightsource(lightsourceRed, new double[]{255, 0, 0});
+        //scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
+        //scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
@@ -46,12 +46,12 @@ public class Main {
         Transformation translationSphereChrome = new Translation(-50, 0, -50);
         Transformation translationCubeCopper = new Translation(-120, 200, 0);
         Transformation translationConeGold = new Translation(-50, -50, -50);
+        Transformation translationPlane = new Translation(0, 0, 30);
         Transformation rotate = new Rotation().rotateX(12).rotateY(30).rotateZ(54);
         Transformation rotateCone = new Rotation().rotateX(180);
         Transformation scaleSphereRuby = new Scale(30, 30, 30);
         Transformation scaleCone = new Scale(3000, 300, 300);
-        Transformation scaleSphereChrome = new Scale(50, 50, 50);
-        Transformation translationPlane = new Translation(0, 0, 30);
+        Transformation scaleSphereChrome = new Scale(100, 100, 100);
 
         // MATERIALS
         Material ruby = new Material(new double[]{0.1745 * 15, 0.01175 * 10, 0.01175 * 10}, new double[]{0.61424 * 15, 0.04136 * 10, 0.04136 * 10}, new double[]{0.727811 * 15, 0.626959 * 10, 0.626959 * 10}, new double[]{1.762 * 1.2, 1.770 * 1.2, 1.778 * 1.2}, 0.2, new double[]{1, 0.5, 0.5});
@@ -76,7 +76,7 @@ public class Main {
         sphere.addTransformation(translationSphereRuby);
 
         sphere2.addTransformation(scaleSphereChrome);
-        sphere2.addTransformation(translationSphereChrome);
+        //sphere2.addTransformation(translationSphereChrome);
 
         cube.addTransformation(rotate);
         cube.addTransformation(scaleSphereRuby);
@@ -84,9 +84,9 @@ public class Main {
 
         scene.addObject(sphere2);
         scene.addObject(plane);
-        scene.addObject(sphere);
-        scene.addObject(cube);
-        scene.addObject(cone);
+        //scene.addObject(sphere);
+        //scene.addObject(cube);
+        //scene.addObject(cone);
 
         Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, CMAX, RMAX);
         renderer.setScene(scene);

@@ -2,6 +2,7 @@ package main.object;
 
 import main.*;
 import main.transformation.Transformation;
+import main.transformation.Translation;
 
 public abstract class Object {
     private Transformation transformation; // already the inverse!
@@ -15,11 +16,13 @@ public abstract class Object {
 
     public void addTransformation(Transformation transformation) {
         if (this.transformation == null) this.transformation = transformation;
-        else this.transformation.setTransformation(Utility.multiplyMatrices(this.transformation.getTransformation(), transformation.getTransformation()));
+        else
+            this.transformation.setTransformation(Utility.multiplyMatrices(this.transformation.getTransformation(), transformation.getTransformation()));
     }
 
     public Transformation getTransformation() {
-        return transformation;
+        if (this.transformation == null) return new Translation(0, 0, 0); // Could be anything really, as long as it does no transformation
+        else return transformation;
     }
 
     public Material getMaterial() {

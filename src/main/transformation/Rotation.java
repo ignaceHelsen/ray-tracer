@@ -8,16 +8,6 @@ public class Rotation extends Transformation {
         super();
     }
 
-    /**
-     * Will add an additional transformation to the current already applied transformation
-     * @param input: Vector
-     * @return inverse transformed vector.
-     */
-    @Override
-    public Vector transform(Vector input) {
-        return new Vector(Utility.multiplyMatrices(input.getCoords(), getTransformation()));
-    }
-
     public Rotation rotateX(double angle) {
         angle = Math.toRadians(angle);
 

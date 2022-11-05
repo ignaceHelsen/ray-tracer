@@ -16,9 +16,4 @@ public class Scale extends Transformation {
 
         setTransformation(transformation);
     }
-
-    @Override
-    public Vector transform(Vector input) {
-        return new Vector(Utility.multiplyMatrices(input.getCoords(), getTransformation()));
-    }
 }

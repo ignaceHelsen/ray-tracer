@@ -69,18 +69,18 @@ public class Renderer {
 
                 // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
                 double minIntersectionTime = Integer.MAX_VALUE;
-                Object objectHit = null; // object that was hit
+                Object closestObject = null; // object that was hit
                 Intersection intersectionHit = null; // the closest intersection and which we will be using later on
 
-                for (Object object : scene.getObjects()) {
-                    Intersection intersection = object.getFirstHitPoint(ray);
+                for (Object currentObject : scene.getObjects()) {
+                    Intersection intersection = currentObject.getFirstHitPoint(ray);
 
                     // we know that if only one hit is present this hit has been set at exit and the time at T2. (btw, if only one hit -> t1 has been set to -1)
                     // if, as normally, two hits are present (one enter and one exit) we know that T1 corresponds to the enter time and t2 to the exit time.
                     // there will always be a T2.
                     // intersection times always have to be >= 0.
                     if (intersection != null) {
-                        if (objectHit instanceof Sphere && object instanceof Plane && intersection.getT2() >= 0 && intersection.getT2() < 470)
+                        if (closestObject instanceof Sphere && currentObject instanceof Plane && intersection.getT2() >= 0 && intersection.getT2() < 470)
                             System.out.printf("");
                         if ((intersection.getEnter() == null && intersection.getT2() >= 0 && intersection.getT2() < minIntersectionTime) || (intersection.getEnter() != null && intersection.getT1() >= 0 && intersection.getT1() < minIntersectionTime)) {
                             intersectionHit = intersection;
@@ -91,18 +91,18 @@ public class Renderer {
                             else
                                 minIntersectionTime = intersection.getT1();
 
-                            objectHit = object;
+                            closestObject = currentObject;
                         }
                     }
                 }
 
-                if (objectHit != null) {
+                if (closestObject != null) {
                     // p 641
                     // shading
                     // Color: ambient, diffuse, specular
                     double[] rgb = new double[3];
 
-                    getShading(ray, objectHit, intersectionHit, rgb);
+                    getShading(ray, closestObject, intersectionHit, rgb);
 
                     rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
                     rgb = Arrays.stream(rgb).map(v -> {
@@ -176,9 +176,9 @@ public class Renderer {
             Vector start = new Vector(Utility.subtract(hitpoint.getCoords(), Utility.multiplyElementWise(EPSILON, ray.getDir().getCoords())));
             Vector dir = Utility.subtract(lightsource.getKey(), hitpoint);
 
-            if (isInShadow(start, dir) && objectHit instanceof Plane) {
+            /*if (isInShadow(start, dir) && objectHit instanceof Plane) {
                 continue; // skip diffusive and specular part
-            }
+            }*/
 
             // now onto diffuse and specular
 

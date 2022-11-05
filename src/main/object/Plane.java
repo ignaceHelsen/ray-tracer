@@ -21,6 +21,8 @@ public class Plane extends Object {
 
         double th = -(ray.getS().getZ() / ray.getDir().getZ());
 
+        if (th > 0 && th < 10)
+            System.out.printf("");
         double x = originalRay.getS().getX() + originalRay.getDir().getX() * th;
         double y = originalRay.getS().getY() + originalRay.getDir().getY() * th;
         double z = originalRay.getS().getZ() + originalRay.getDir().getZ() * th;
