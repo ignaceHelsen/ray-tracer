@@ -7,11 +7,13 @@ import main.transformation.Scale;
 import main.transformation.Transformation;
 import main.transformation.Translation;
 
+import java.io.IOException;
+
 public class Main {
     public static void main(String[] args) {
         final double SCREEN_WIDTH = 1920;
         final double SCREEN_HEIGHT = 1080;
-        final double FOCALLENGTH = 500;
+        final double FOCALLENGTH = 200;
         final double CMAX = 1920;
         final double RMAX = 1080;
 
@@ -44,7 +46,7 @@ public class Main {
 
         Transformation translationSphereRuby = new Translation(200, -100, -50);
         Transformation translationSphereChrome = new Translation(-50, 0, -50);
-        Transformation translationCube = new Translation(120, 200, 0);
+        Transformation translationCube = new Translation(120, 200, -50);
         Transformation translationCone = new Translation(-50, -50, -50);
         Transformation translationPlane = new Translation(0, 0, 30);
         Transformation rotateCube = new Rotation().rotateX(12).rotateY(30).rotateZ(54);
@@ -106,6 +108,12 @@ public class Main {
                 } catch (InterruptedException v) {
                     v.printStackTrace();
                 }
+            }
+
+            try {
+                renderer.saveBuffer();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
 

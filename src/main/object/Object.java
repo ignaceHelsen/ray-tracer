@@ -1,6 +1,9 @@
 package main.object;
 
-import main.*;
+import main.Intersection;
+import main.Material;
+import main.Ray;
+import main.Utility;
 import main.transformation.Transformation;
 import main.transformation.Translation;
 

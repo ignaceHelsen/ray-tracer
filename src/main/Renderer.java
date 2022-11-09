@@ -4,10 +4,13 @@ import main.object.Object;
 import main.object.Plane;
 import main.object.Sphere;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -187,7 +190,7 @@ public class Renderer {
             double dw = 1; // width lightbeam coming from source
 
             double[] s;
-            if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit Sphere@44
+            if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we know we have set as exit
                 s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), intersection.getExit().getCoords()));
             else
                 s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), intersection.getEnter().getCoords()));
@@ -274,5 +277,10 @@ public class Renderer {
 
     public void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    public void saveBuffer() throws IOException {
+        File outputfile = new File("image.png");
+        ImageIO.write(buffer, "png", outputfile);
     }
 }
