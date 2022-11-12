@@ -3,6 +3,7 @@ package main;
 import main.object.Object;
 import main.object.Plane;
 import main.object.Sphere;
+import main.object.TaperedCylinder;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,7 +18,7 @@ import java.util.Random;
 
 public class Renderer {
     private static final double LIGHTSOURCEFACTOR = 0.01;
-    private static final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
+    private static final double EPSILON = 0.01; // the difference that will be subtracted for shadowing
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
     private Scene scene;
@@ -69,6 +70,7 @@ public class Renderer {
                 //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
                 //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
 
+                // create unnormalized ray
                 Ray ray = new Ray(scene.getCamera().getLocation(), dir);
 
                 // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
@@ -77,15 +79,25 @@ public class Renderer {
                 Intersection intersectionHit = null; // the closest intersection and which we will be using later on
 
                 for (Object currentObject : scene.getObjects()) {
+                    // only use the normalized ray for non-plane objects
+                    if(!(currentObject instanceof Plane)) {
+                        // else, use the normalized ray
+                        // normalize direction
+                        ray.setDir(new Vector(Utility.normalize(dir.getCoords())));
+                    }
+
                     Intersection currentIntersection = currentObject.getFirstHitPoint(ray);
+
+                    // now, normalize every ray
+                    // to avoid unnecessary re-normalization, we filter again, but only for Plane
+                    if(currentObject instanceof Plane)
+                        ray.setDir(new Vector(Utility.normalize(dir.getCoords())));
 
                     // we know that if only one hit is present this hit has been set at exit and the time at T2. (btw, if only one hit -> t1 has been set to -1)
                     // if, as normally, two hits are present (one enter and one exit) we know that T1 corresponds to the enter time and t2 to the exit time.
                     // there will always be a T2.
                     // currentIntersection times always have to be >= 0.
                     if (currentIntersection != null) {
-                        if (closestObject instanceof Sphere && currentObject instanceof Plane && currentIntersection.getT2() >= 0 && currentIntersection.getT2() < 470)
-                            System.out.printf("");
                         if ((currentIntersection.getEnter() == null && currentIntersection.getT2() >= 0 && currentIntersection.getT2() < minIntersectionTime) || (currentIntersection.getEnter() != null && currentIntersection.getT1() >= 0 && currentIntersection.getT1() < minIntersectionTime)) {
                             // the current intersection is in front of the previous hit, which means we have to deal with this hit in further code
                             intersectionHit = currentIntersection;

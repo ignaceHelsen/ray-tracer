@@ -3,11 +3,19 @@ package main.transformation;
 import main.Utility;
 import main.Vector;
 
-public abstract class Transformation {
+public class Transformation {
     private double[][] transformation = {{1, 0, 0, 0},
             {0, 1, 0, 0},
             {0, 0, 1, 0},
             {0, 0, 0, 1}};
+
+    public Transformation(double[][] transformation) {
+        this.transformation = transformation;
+    }
+
+    public Transformation() {
+        
+    }
 
     /**
      * Will add an additional transformation to the current already applied transformation

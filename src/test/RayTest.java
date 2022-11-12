@@ -86,6 +86,5 @@ public class RayTest {
         }
 
         System.out.printf("%f %f %f\n", coords.getEnter().getX(), coords.getEnter().getY(), coords.getEnter().getZ());
-
     }
 }

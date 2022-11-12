@@ -4,8 +4,8 @@ import main.Intersection;
 import main.Material;
 import main.Ray;
 import main.Utility;
+import main.transformation.Scale;
 import main.transformation.Transformation;
-import main.transformation.Translation;
 
 public abstract class Object {
     private Transformation transformation; // already the inverse!
@@ -18,13 +18,12 @@ public abstract class Object {
     public abstract Intersection getFirstHitPoint(Ray ray);
 
     public void addTransformation(Transformation transformation) {
-        if (this.transformation == null) this.transformation = transformation;
-        else
-            this.transformation.setTransformation(Utility.multiplyMatrices(this.transformation.getTransformation(), transformation.getTransformation()));
+        if (this.transformation == null) this.transformation = new Transformation(transformation.getTransformation());
+        else this.transformation.setTransformation(Utility.multiplyMatrices(this.transformation.getTransformation(), transformation.getTransformation()));
     }
 
     public Transformation getTransformation() {
-        if (this.transformation == null) return new Translation(0, 0, 0); // Could be anything really, as long as it does no transformation
+        if (this.transformation == null) return new Scale(1,1,1); // Could be anything really, as long as it does no actual transformation
         else return transformation;
     }
 

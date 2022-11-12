@@ -7,15 +7,12 @@ public class Ray implements Cloneable {
     /**
      * Will also normalize the direction vector
      *
-     * @param s
-     * @param dir
+     * @param s: start point
+     * @param dir: direction
      */
     public Ray(Vector s, Vector dir) {
         this.s = s;
         this.dir = dir;
-
-        // normalize c
-        this.dir = new Vector(Utility.normalize(dir.getCoords()));
     }
 
     public Vector getS() {
