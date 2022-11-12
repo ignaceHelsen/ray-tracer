@@ -27,14 +27,14 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(-30, 0, -1000, 1); // location
+        Vector lightsourceWhite = new Vector(-30, 0, -2000, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1); // location
         Vector lightsourceRed = new Vector(0, -1000, -10, 1); // location
         Vector lightsourceOrange = new Vector(-1000, 1000, -100, 1); // location
         Vector lightsourcePink = new Vector(-100, -10, -100, 1); // location
 
         Scene scene = new Scene(); // light color
-        scene.addLightsource(lightsourceWhite, new double[]{150, 150, 150});
+        scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155});
         scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
         scene.addLightsource(lightsourceRed, new double[]{180, 0, 0});
         scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
@@ -46,8 +46,8 @@ public class Main {
 
         Transformation translationSphereRuby = new Translation(200, -100, -50);
         Transformation translationSphereRuby3 = new Translation(300, 100, -150);
-        Transformation translationSphereRuby4 = new Translation(400, -100, -10);
-        Transformation translationSphereChrome = new Translation(-6000, 0, -200);
+        Transformation translationSphereRuby4 = new Translation(300, -200, -50);
+        Transformation translationSphereChrome = new Translation(-800, 0, -400);
         Transformation translationCube = new Translation(120, 200, -50);
         Transformation translationCone = new Translation(0, 0, 0);
         Transformation translationPlane = new Translation(0, 0, 60);
@@ -55,7 +55,7 @@ public class Main {
         Transformation rotateCone = new Rotation().rotateX(180);
         Transformation scaleSphereRuby = new Scale(30, 30, 30);
         Transformation scaleCube = new Scale(30, 30, 30);
-        Transformation scaleCone = new Scale(300, 300, 300);
+        Transformation scaleCone = new Scale(30, 30, 30);
         Transformation scaleSphereChrome = new Scale(500, 500, 500);
 
         // MATERIALS
@@ -71,7 +71,7 @@ public class Main {
         Object sphere4 = new Sphere(ruby);
         Object cube = new Cube(copper);
         Object sphere2 = new Sphere(chrome);
-        Object cone = new TaperedCylinder(copper, 1);
+        Object cone = new TaperedCylinder(copper, 0.5);
 
         plane.addTransformation(translationPlane);
 

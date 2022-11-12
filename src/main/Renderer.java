@@ -70,8 +70,12 @@ public class Renderer {
                 //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
                 //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
 
+                // create rays
+                // create normalized ray
+                Vector normalizedDir = new Vector(Utility.normalize(dir.getCoords()));
+                Ray normalizedRay = new Ray(scene.getCamera().location, normalizedDir);
                 // create unnormalized ray
-                Ray ray = new Ray(scene.getCamera().getLocation(), dir);
+                Ray notNormalizedRay = new Ray(scene.getCamera().getLocation(), dir);
 
                 // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
                 double minIntersectionTime = Integer.MAX_VALUE;
@@ -79,19 +83,16 @@ public class Renderer {
                 Intersection intersectionHit = null; // the closest intersection and which we will be using later on
 
                 for (Object currentObject : scene.getObjects()) {
+                    Intersection currentIntersection;
+
                     // only use the normalized ray for non-plane objects
-                    if(!(currentObject instanceof Plane)) {
-                        // else, use the normalized ray
-                        // normalize direction
-                        ray.setDir(new Vector(Utility.normalize(dir.getCoords())));
+                    if(currentObject instanceof Plane) {
+                        // object is plane, use the not normalized ray
+                        currentIntersection = currentObject.getFirstHitPoint(notNormalizedRay);
+                    } else {
+                        // object is not a plane, use the normalized ray
+                        currentIntersection = currentObject.getFirstHitPoint(normalizedRay);
                     }
-
-                    Intersection currentIntersection = currentObject.getFirstHitPoint(ray);
-
-                    // now, normalize every ray
-                    // to avoid unnecessary re-normalization, we filter again, but only for Plane
-                    if(currentObject instanceof Plane)
-                        ray.setDir(new Vector(Utility.normalize(dir.getCoords())));
 
                     // we know that if only one hit is present this hit has been set at exit and the time at T2. (btw, if only one hit -> t1 has been set to -1)
                     // if, as normally, two hits are present (one enter and one exit) we know that T1 corresponds to the enter time and t2 to the exit time.
@@ -119,7 +120,10 @@ public class Renderer {
                     // Color: ambient, diffuse, specular
                     double[] rgb = new double[3];
 
-                    getShading(ray, closestObject, intersectionHit, rgb);
+                    if (closestObject instanceof Plane)
+                        getShading(notNormalizedRay, closestObject, intersectionHit, rgb);
+                    else
+                        getShading(normalizedRay, closestObject, intersectionHit, rgb);
 
                     rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
                     rgb = Arrays.stream(rgb).map(v -> {
