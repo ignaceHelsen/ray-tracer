@@ -31,7 +31,7 @@ public class Sphere extends Object {
 
         if (t1 < 0 && t2 < 0) return null;
 
-        double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0.0001).toArray(); // timestamps need to be positive
+        double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0).toArray(); // timestamps need to be positive
 
         // we got at least one hit, calculate x y & z
         double x = originalRay.getS().getX() + originalRay.getDir().getX() * th[0];

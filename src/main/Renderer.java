@@ -74,7 +74,7 @@ public class Renderer {
                 // create normalized ray
                 Vector normalizedDir = new Vector(Utility.normalize(dir.getCoords()));
                 Ray normalizedRay = new Ray(scene.getCamera().location, normalizedDir);
-                // create unnormalized ray
+                // create non-normalized ray
                 Ray notNormalizedRay = new Ray(scene.getCamera().getLocation(), dir);
 
                 // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
@@ -120,7 +120,7 @@ public class Renderer {
                     // Color: ambient, diffuse, specular
                     double[] rgb = new double[3];
 
-                    if (closestObject instanceof Plane)
+                    if (closestObject instanceof Plane || closestObject instanceof TaperedCylinder)
                         getShading(notNormalizedRay, closestObject, intersectionHit, rgb);
                     else
                         getShading(normalizedRay, closestObject, intersectionHit, rgb);
@@ -194,10 +194,10 @@ public class Renderer {
         // for each lightsource
         for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
             // check first for possible shadow spots
-            Vector start = new Vector(Utility.subtract(hitpoint.getCoords(), Utility.multiplyElementWise(EPSILON, ray.getDir().getCoords())));
+            /*Vector start = new Vector(Utility.subtract(hitpoint.getCoords(), Utility.multiplyElementWise(EPSILON, ray.getDir().getCoords())));
             Vector dir = Utility.subtract(lightsource.getKey(), hitpoint);
 
-            /*if (isInShadow(start, dir) && objectHit instanceof Plane) {
+            if (isInShadow(start, dir)) {
                 continue; // skip diffusive and specular part
             }*/
 
@@ -280,7 +280,7 @@ public class Renderer {
         Ray shadowFeeler = new Ray(start, dir);
         for (Object o : scene.getObjects()) {
             Intersection intersection = o.getFirstHitPoint(shadowFeeler); //shoot the ray and check if we got a hitpoint
-            if (intersection != null && intersection.getExit() != null)
+            if (intersection != null && intersection.getExit() != null && intersection.getT2() > 0)
                 return true;
         }
 

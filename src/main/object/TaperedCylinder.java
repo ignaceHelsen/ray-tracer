@@ -1,8 +1,10 @@
 package main.object;
 
-import main.*;
+import main.Intersection;
+import main.Material;
+import main.Ray;
+import main.Vector;
 
-import java.awt.*;
 import java.util.Arrays;
 
 public class TaperedCylinder extends Object {
@@ -17,22 +19,23 @@ public class TaperedCylinder extends Object {
     public Intersection getFirstHitPoint(Ray originalRay) {
         Ray ray;
 
+        if(originalRay.getDir().getZ() != 0)
+            System.out.printf("");
+
         if (getTransformation() != null)
             ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
         else
             ray = originalRay.clone();
 
-        double d = (this.ratio - 1)*ray.getDir().getZ();
-        double f = 1+(this.ratio - 1)*ray.getS().getZ();
+        double d = (this.ratio - 1) * ray.getDir().getZ();
+        double f = 1 + (this.ratio - 1) * ray.getS().getZ();
 
-        double a = Math.pow(ray.getDir().getX(), 2) + Math.pow(ray.getDir().getY(), 2) - d*d;
-        double b = ray.getS().getX()*ray.getDir().getX() + ray.getS().getY()*ray.getDir().getY() - f*d;
-        double c = Math.pow(ray.getS().getX(), 2) + Math.pow(ray.getS().getY(), 2) * f*f;
+        double a = Math.pow(ray.getDir().getX(), 2) + Math.pow(ray.getDir().getY(), 2) - d * d;
+        double b = ray.getS().getX() * ray.getDir().getX() + ray.getS().getY() * ray.getDir().getY() - f * d;
+        double c = Math.pow(ray.getS().getX(), 2) + Math.pow(ray.getS().getY(), 2) * f * f;
 
         double discrim = b * b - a * c;
         if (discrim < 0) return null;
-
-        // if z-component lies between 0 and 1: hit
 
         double discRoot = Math.sqrt(discrim);
         double t1 = (-b - discRoot) / a; // time of hitpoint 1
@@ -44,6 +47,8 @@ public class TaperedCylinder extends Object {
         // we got at least one hit, calculate x y & z
 
         double z = originalRay.getS().getZ() + originalRay.getDir().getZ() * th[0];
+
+        // if z-component lies between 0 and 1: hit
         if (z > 1 || z < 0) return null;
 
         double x = originalRay.getS().getX() + originalRay.getDir().getX() * th[0];
@@ -74,8 +79,8 @@ public class TaperedCylinder extends Object {
         if (th.length == 1) intersection.setNormalVector(intersection.getExit().getCoords());
         else intersection.setNormalVector(intersection.getEnter().getCoords());
 
-        // set type of ve
-        intersection.setNormalVector(new double[] {intersection.getNormalVector()[0], intersection.getNormalVector()[1], intersection.getNormalVector()[2], 0});
+        // set type of vector
+        intersection.setNormalVector(new double[]{intersection.getNormalVector()[0], intersection.getNormalVector()[1], intersection.getNormalVector()[2], 0});
 
         return intersection;
     }

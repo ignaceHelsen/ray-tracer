@@ -5,16 +5,16 @@ import main.Vector;
 
 public class Transformation {
     private double[][] transformation = {{1, 0, 0, 0},
-            {0, 1, 0, 0},
-            {0, 0, 1, 0},
-            {0, 0, 0, 1}};
+                                        {0, 1, 0, 0},
+                                        {0, 0, 1, 0},
+                                        {0, 0, 0, 1}};
 
     public Transformation(double[][] transformation) {
         this.transformation = transformation;
     }
 
     public Transformation() {
-        
+
     }
 
     /**

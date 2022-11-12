@@ -23,7 +23,7 @@ public abstract class Object {
     }
 
     public Transformation getTransformation() {
-        if (this.transformation == null) return new Scale(1,1,1); // Could be anything really, as long as it does no actual transformation
+        if (this.transformation == null) return new Transformation(); // Could be anything really, as long as it does no actual transformation
         else return transformation;
     }
 
