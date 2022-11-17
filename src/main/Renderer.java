@@ -88,7 +88,7 @@ public class Renderer {
                     // only use the normalized ray for non-plane objects
                     if(currentObject instanceof Plane) {
                         // object is plane, use the not normalized ray
-                        currentIntersection = currentObject.getFirstHitPoint(notNormalizedRay);
+                        currentIntersection = currentObject.getFirstHitPoint(normalizedRay);
                     } else {
                         // object is not a plane, use the normalized ray
                         currentIntersection = currentObject.getFirstHitPoint(normalizedRay);
