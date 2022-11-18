@@ -23,8 +23,8 @@ public class Cube extends Object {
     public Intersection getFirstHitPoint(Ray originalRay) {
         Ray ray;
 
-        if (getTransformation() != null)
-            ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
+        if (getInverseTransformation() != null)
+            ray = new Ray(getInverseTransformation().transformInverse(originalRay.getS()), getInverseTransformation().transformInverse(originalRay.getDir()));
         else
             ray = originalRay.clone();
 

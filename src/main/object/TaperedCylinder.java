@@ -22,8 +22,8 @@ public class TaperedCylinder extends Object {
         if(originalRay.getDir().getZ() != 0)
             System.out.printf("");
 
-        if (getTransformation() != null)
-            ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
+        if (getInverseTransformation() != null)
+            ray = new Ray(getInverseTransformation().transformInverse(originalRay.getS()), getInverseTransformation().transformInverse(originalRay.getDir()));
         else
             ray = originalRay.clone();
 

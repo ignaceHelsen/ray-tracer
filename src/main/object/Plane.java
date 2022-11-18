@@ -14,16 +14,16 @@ public class Plane extends Object {
     public Intersection getFirstHitPoint(Ray originalRay) {
         Ray ray;
 
-        if (getTransformation() != null)
-            ray = new Ray(getTransformation().transform(originalRay.getS()), getTransformation().transform(originalRay.getDir()));
+        if (getInverseTransformation() != null)
+            ray = new Ray(getInverseTransformation().transformInverse(originalRay.getS()), getInverseTransformation().transformInverse(originalRay.getDir()));
         else
             ray = originalRay.clone();
 
         double th = -(ray.getS().getZ() / ray.getDir().getZ());
 
-        double x = originalRay.getS().getX() + originalRay.getDir().getX() * th;
-        double y = originalRay.getS().getY() + originalRay.getDir().getY() * th;
-        double z = originalRay.getS().getZ() + originalRay.getDir().getZ() * th;
+        double x = ray.getS().getX() + ray.getDir().getX() * th;
+        double y = ray.getS().getY() + ray.getDir().getY() * th;
+        double z = ray.getS().getZ() + ray.getDir().getZ() * th;
 
         Vector collision = new Vector(x, y, z, 1);
 

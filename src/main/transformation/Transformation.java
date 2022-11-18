@@ -9,8 +9,14 @@ public class Transformation {
                                         {0, 0, 1, 0},
                                         {0, 0, 0, 1}};
 
-    public Transformation(double[][] transformation) {
+    private double[][] inverseTransformation = {{1, 0, 0, 0},
+                                                {0, 1, 0, 0},
+                                                {0, 0, 1, 0},
+                                                {0, 0, 0, 1}};
+
+    public Transformation(double[][] transformation, double[][] inverseTransformation) {
         this.transformation = transformation;
+        this.inverseTransformation = inverseTransformation;
     }
 
     public Transformation() {
@@ -21,10 +27,20 @@ public class Transformation {
      * Will add an additional transformation to the current already applied transformation
      *
      * @param input: Vector
-     * @return inverse transformed vector.
+     * @return transformed vector.
      */
     public Vector transform(Vector input) {
         return new Vector(Utility.multiplyMatrices(input.getCoords(), getTransformation()));
+    }
+
+    /**
+     * Will add an additional inverse transformation to the current already applied transformation
+     *
+     * @param input: Vector
+     * @return inverse transformed vector.
+     */
+    public Vector transformInverse(Vector input) {
+        return new Vector(Utility.multiplyMatrices(input.getCoords(), getInverseTransformation()));
     }
 
     public double[][] getTransformation() {
@@ -33,5 +49,13 @@ public class Transformation {
 
     public void setTransformation(double[][] transformation) {
         this.transformation = transformation;
+    }
+
+    public void setInverseTransformation(double[][] transformation) {
+        this.inverseTransformation = transformation;
+    }
+
+    public double[][] getInverseTransformation() {
+        return inverseTransformation;
     }
 }

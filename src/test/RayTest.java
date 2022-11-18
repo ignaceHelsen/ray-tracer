@@ -19,7 +19,7 @@ public class RayTest {
         Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49});
 
         Object plane = new Plane(emerald);
-        plane.addTransformation(new Translation(0, 0, 100));
+        plane.addInverseTransformation(new Translation(0, 0, 100));
 
         Ray ray = new Ray(new Vector(0, 0, 1000, 1), new Vector(0, 0, -1000, 0));
 

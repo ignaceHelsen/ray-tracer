@@ -4,6 +4,7 @@ import main.Utility;
 import main.Vector;
 
 public class Rotation extends Transformation {
+    // TODO: add inverse transformation
     public Rotation() {
         super();
     }
