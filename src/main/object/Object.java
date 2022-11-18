@@ -8,7 +8,6 @@ import main.transformation.Transformation;
 
 public abstract class Object {
     private Transformation transformation;
-    private Transformation inverseTransformation;
     private final Material material;
 
     public Object(Material material) {
@@ -17,24 +16,22 @@ public abstract class Object {
 
     public abstract Intersection getFirstHitPoint(Ray ray);
 
+    // Reverse order for transformation as for inverse
     public void addTransformation(Transformation transformation) {
-        if (this.transformation == null) this.transformation = new Transformation(transformation.getTransformation(), null);
-        else this.transformation.setTransformation(Utility.multiplyMatrices(this.transformation.getTransformation(), transformation.getTransformation()));
-    }
+        if (this.transformation == null) this.transformation = new Transformation();
 
-    public void addInverseTransformation(Transformation transformation) {
-        if (this.inverseTransformation == null) this.inverseTransformation = new Transformation(null, transformation.getInverseTransformation());
-        else this.inverseTransformation.setInverseTransformation(Utility.multiplyMatrices(this.inverseTransformation.getInverseTransformation(), transformation.getInverseTransformation()));
+        if (this.transformation.getTransformation() == null) this.transformation.setTransformation(transformation.getTransformation());
+        // A x B
+        else this.transformation.setTransformation(Utility.multiplyMatrices(transformation.getTransformation(), this.transformation.getTransformation()));
+
+        if (this.transformation.getInverseTransformation() == null) this.transformation.setInverseTransformation(transformation.getInverseTransformation());
+        // B x A
+        else this.transformation.setInverseTransformation(Utility.multiplyMatrices(this.transformation.getInverseTransformation(), transformation.getInverseTransformation()));
     }
 
     public Transformation getTransformation() {
         if (this.transformation == null) return new Transformation(); // Could be anything really, as long as it does no actual transformation
         else return transformation;
-    }
-
-    public Transformation getInverseTransformation() {
-        if (this.inverseTransformation == null) return new Transformation(); // Could be anything really, as long as it does no actual transformation
-        else return inverseTransformation;
     }
 
     public Material getMaterial() {

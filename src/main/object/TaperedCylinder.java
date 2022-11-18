@@ -19,11 +19,8 @@ public class TaperedCylinder extends Object {
     public Intersection getFirstHitPoint(Ray originalRay) {
         Ray ray;
 
-        if(originalRay.getDir().getZ() != 0)
-            System.out.printf("");
-
-        if (getInverseTransformation() != null)
-            ray = new Ray(getInverseTransformation().transformInverse(originalRay.getS()), getInverseTransformation().transformInverse(originalRay.getDir()));
+        if (getTransformation() != null)
+            ray = new Ray(getTransformation().transformInverse(originalRay.getS()), getTransformation().transformInverse(originalRay.getDir()));
         else
             ray = originalRay.clone();
 

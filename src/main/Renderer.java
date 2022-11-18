@@ -1,6 +1,7 @@
 package main;
 
 import main.object.Object;
+import main.object.Plane;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -148,7 +149,7 @@ public class Renderer {
 
         // m is the roughness of the material
         double mRoughness = currentObject.getMaterial().getRoughness();
-        double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), Utility.transpose(currentObject.getInverseTransformation().getInverseTransformation()));
+        double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), Utility.transpose(currentObject.getTransformation().getInverseTransformation()));
         normalVector = Utility.normalize(normalVector);
 
         // the fresnel coeff is the fraction that is reflected and will be higher with higher refractionindices
@@ -176,19 +177,23 @@ public class Renderer {
         else
             hitpoint = intersection.getEnter();
 
-        hitpoint = Utility.normalize(hitpoint);
         hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
+        //hitpoint = Utility.normalize(hitpoint);
 
         Vector start = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, ray.getDir()));
+        //start = Utility.normalize(start);
 
         // for each lightsource
         for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
-            System.out.println("\n\nLightsource location: " + Arrays.toString(lightsource.getKey().getCoords()));
+            System.out.println("\n\nHitpoint location: " + Arrays.toString(hitpoint.getCoords()));
+            System.out.println("Lightsource location: " + Arrays.toString(lightsource.getKey().getCoords()));
             // check first for possible shadow spots
-            Vector dir = Utility.normalize(Utility.subtract(Utility.normalize(lightsource.getKey()), hitpoint));
+            //Vector dir = Utility.normalize(Utility.subtract(lightsource.getKey(), hitpoint));
+            Vector dir = Utility.subtract(lightsource.getKey(), hitpoint);
+            //dir = Utility.normalize(dir);
 
             if (isInShadow(start, dir)) {
-                // rgb = new double[]{0, 0, 0};
+                rgb = new double[]{0, 0, 0};
                 break;
             }
 
@@ -268,14 +273,15 @@ public class Renderer {
     }
 
     private boolean isInShadow(Vector start, Vector dir) {
-        System.out.println("Hitpoint location: " + Arrays.toString(start.getCoords()));
         Ray shadowFeeler = new Ray(new Vector(Utility.normalize(start.getCoords())), new Vector(Utility.normalize(dir.getCoords())));
         for (Object o : scene.getObjects()) {
+            if(!(o instanceof Plane)) {
                 Intersection intersection = o.getFirstHitPoint(shadowFeeler); //shoot the ray and check if we got a hitpoint with any object
                 if (intersection != null) {
                     System.out.println("Hit with object: " + o.getClass());
                     return true;
                 }
+            }
         }
 
         return false;

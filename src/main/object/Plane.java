@@ -10,12 +10,13 @@ public class Plane extends Object {
         super(material);
     }
 
+    // TODO: cube, cilinder: originalRay -> ray & rotation: inverse and originalRay -> ray
     @Override
     public Intersection getFirstHitPoint(Ray originalRay) {
         Ray ray;
 
-        if (getInverseTransformation() != null)
-            ray = new Ray(getInverseTransformation().transformInverse(originalRay.getS()), getInverseTransformation().transformInverse(originalRay.getDir()));
+        if (getTransformation() != null)
+            ray = new Ray(getTransformation().transformInverse(originalRay.getS()), getTransformation().transformInverse(originalRay.getDir()));
         else
             ray = originalRay.clone();
 

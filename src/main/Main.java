@@ -27,7 +27,7 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(0, 0, -20, 1); // location
+        Vector lightsourceWhite = new Vector(0, 0, -200, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1); // location
         Vector lightsourceRed = new Vector(0, -1000, -10, 1); // location
         Vector lightsourceOrange = new Vector(-1000, 1000, -100, 1); // location
@@ -74,41 +74,25 @@ public class Main {
         Object cone = new TaperedCylinder(copper, 0.95);
 
         plane.addTransformation(translationPlane);
-        plane.addInverseTransformation(translationPlane);
 
         cone.addTransformation(scaleCone);
         cone.addTransformation(translationCone);
         cone.addTransformation(rotateCone);
-        cone.addInverseTransformation(scaleCone);
-        cone.addInverseTransformation(translationCone);
-        cone.addInverseTransformation(rotateCone);
 
         sphere.addTransformation(scaleSphereRuby);
         sphere.addTransformation(translationSphereRuby);
-        sphere.addInverseTransformation(scaleSphereRuby);
-        sphere.addInverseTransformation(translationSphereRuby);
-
         sphere2.addTransformation(scaleSphereChrome);
         sphere2.addTransformation(translationSphereChrome);
-        sphere2.addInverseTransformation(scaleSphereChrome);
-        sphere2.addInverseTransformation(translationSphereChrome);
 
         sphere3.addTransformation(scaleSphereRuby);
         sphere3.addTransformation(translationSphereRuby3);
-        sphere3.addInverseTransformation(scaleSphereRuby);
-        sphere3.addInverseTransformation(translationSphereRuby3);
 
         sphere4.addTransformation(scaleSphereRuby);
         sphere4.addTransformation(translationSphereRuby4);
-        sphere4.addInverseTransformation(scaleSphereRuby);
-        sphere4.addInverseTransformation(translationSphereRuby4);
 
         cube.addTransformation(rotateCube);
         cube.addTransformation(scaleCube);
         cube.addTransformation(translationCube);
-        cube.addInverseTransformation(rotateCube);
-        cube.addInverseTransformation(scaleCube);
-        cube.addInverseTransformation(translationCube);
 
         scene.addObject(plane);
         /*scene.addObject(sphere2);

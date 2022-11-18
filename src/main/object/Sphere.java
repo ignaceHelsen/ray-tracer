@@ -13,8 +13,8 @@ public class Sphere extends Object {
     public Intersection getFirstHitPoint(Ray originalRay) {
         Ray ray;
 
-        if (getInverseTransformation() != null)
-            ray = new Ray(getInverseTransformation().transformInverse(originalRay.getS()), getInverseTransformation().transformInverse(originalRay.getDir()));
+        if (getTransformation() != null)
+            ray = new Ray(getTransformation().transformInverse(originalRay.getS()), getTransformation().transformInverse(originalRay.getDir()));
         else
             ray = originalRay.clone();
 
@@ -34,9 +34,9 @@ public class Sphere extends Object {
         double[] th = Arrays.stream(new double[]{t1, t2}).filter(x -> x >= 0).toArray(); // timestamps need to be positive
 
         // we got at least one hit, calculate x y & z
-        double x = originalRay.getS().getX() + originalRay.getDir().getX() * th[0];
-        double y = originalRay.getS().getY() + originalRay.getDir().getY() * th[0];
-        double z = originalRay.getS().getZ() + originalRay.getDir().getZ() * th[0];
+        double x = ray.getS().getX() + ray.getDir().getX() * th[0];
+        double y = ray.getS().getY() + ray.getDir().getY() * th[0];
+        double z = ray.getS().getZ() + ray.getDir().getZ() * th[0];
 
         Intersection intersection = new Intersection();
         Vector point = new Vector(x, y, z, 1);
@@ -51,9 +51,9 @@ public class Sphere extends Object {
             intersection.setEnter(point);
             intersection.setT1(th[0]);
 
-            double xExit = originalRay.getS().getX() + originalRay.getDir().getX() * th[1];
-            double yExit = originalRay.getS().getY() + originalRay.getDir().getY() * th[1];
-            double zExit = originalRay.getS().getZ() + originalRay.getDir().getZ() * th[1];
+            double xExit = ray.getS().getX() + ray.getDir().getX() * th[1];
+            double yExit = ray.getS().getY() + ray.getDir().getY() * th[1];
+            double zExit = ray.getS().getZ() + ray.getDir().getZ() * th[1];
 
             Vector exit = new Vector(xExit, yExit, zExit, 1);
             intersection.setExit(exit);
