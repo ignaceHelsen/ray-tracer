@@ -2,6 +2,7 @@ package main;
 
 import main.object.Object;
 import main.object.Plane;
+import main.object.Sphere;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,7 +17,7 @@ import java.util.Random;
 
 public class Renderer {
     private static final double LIGHTSOURCEFACTOR = 0.01;
-    private static final double EPSILON = 0.01; // the difference that will be subtracted for shadowing
+    private static final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
     private Scene scene;
@@ -68,7 +69,8 @@ public class Renderer {
                 //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
                 //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
 
-                // create rays
+                // create ray
+                Ray notNormalizedRay = new Ray(scene.getCamera().location, dir);
                 // create normalized ray
                 Vector normalizedDir = new Vector(Utility.normalize(dir.getCoords()));
                 Ray normalizedRay = new Ray(scene.getCamera().location, normalizedDir);
@@ -109,7 +111,7 @@ public class Renderer {
                     // Color: ambient, diffuse, specular
                     double[] rgb = new double[3];
 
-                    getShading(normalizedRay, closestObject, intersectionHit, rgb);
+                    rgb = getShading(normalizedRay, closestObject, intersectionHit, rgb, notNormalizedRay);
 
                     // rgb is now a value between 0 and 1
                     rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
@@ -139,7 +141,7 @@ public class Renderer {
         System.out.println(endtime - starttime);
     }
 
-    private void getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb) {
+    private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, Ray notNormalizedRay) {
         double[] ambient = currentObject.getMaterial().getAmbient();
         double[] diffuse = currentObject.getMaterial().getDiffuse();
         double[] specular = currentObject.getMaterial().getSpecular();
@@ -185,16 +187,15 @@ public class Renderer {
 
         // for each lightsource
         for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
-            System.out.println("\n\nHitpoint location: " + Arrays.toString(hitpoint.getCoords()));
-            System.out.println("Lightsource location: " + Arrays.toString(lightsource.getKey().getCoords()));
             // check first for possible shadow spots
-            //Vector dir = Utility.normalize(Utility.subtract(lightsource.getKey(), hitpoint));
-            Vector dir = Utility.subtract(lightsource.getKey(), hitpoint);
+            Vector dir = new Vector(lightsource.getKey().getX() - hitpoint.getX(), lightsource.getKey().getY() - hitpoint.getY(), lightsource.getKey().getZ() - hitpoint.getZ(), 0);
             //dir = Utility.normalize(dir);
 
             if (isInShadow(start, dir)) {
-                rgb = new double[]{0, 0, 0};
-                break;
+                for (int i = 0; i < 3; i++) {
+                    rgb[i] -= rgb[i] * 50 * LIGHTSOURCEFACTOR; // dim the scene a bit
+                }
+                continue;
             }
 
             // now onto diffuse and specular
@@ -270,17 +271,16 @@ public class Renderer {
                 }
             }
         }
+
+        return rgb;
     }
 
     private boolean isInShadow(Vector start, Vector dir) {
-        Ray shadowFeeler = new Ray(new Vector(Utility.normalize(start.getCoords())), new Vector(Utility.normalize(dir.getCoords())));
-        for (Object o : scene.getObjects()) {
-            if(!(o instanceof Plane)) {
-                Intersection intersection = o.getFirstHitPoint(shadowFeeler); //shoot the ray and check if we got a hitpoint with any object
-                if (intersection != null) {
-                    System.out.println("Hit with object: " + o.getClass());
-                    return true;
-                }
+        Ray shadowFeeler = new Ray(start, dir);
+        for (Object o : scene.getObjects()) { //shoot the ray and check if we got a hit with any object
+            Intersection intersection = o.getFirstHitPoint(shadowFeeler);
+            if (intersection != null && intersection.getT1() >= 0 && intersection.getT2() >= 0) {
+                return true;
             }
         }
 
