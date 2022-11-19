@@ -11,11 +11,11 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        final double SCREEN_WIDTH = 3840;
-        final double SCREEN_HEIGHT = 2160;
+        final double SCREEN_WIDTH = 1920;
+        final double SCREEN_HEIGHT = 1080;
         final double FOCALLENGTH = 500;
-        final double CMAX = 3840;
-        final double RMAX = 2160;
+        final double CMAX = 1920;
+        final double RMAX = 1080;
 
         /*
             /----------y

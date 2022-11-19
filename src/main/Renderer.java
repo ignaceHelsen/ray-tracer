@@ -180,16 +180,13 @@ public class Renderer {
             hitpoint = intersection.getEnter();
 
         hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
-        //hitpoint = Utility.normalize(hitpoint);
 
         Vector start = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, ray.getDir()));
-        //start = Utility.normalize(start);
 
         // for each lightsource
         for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
             // check first for possible shadow spots
             Vector dir = new Vector(lightsource.getKey().getX() - hitpoint.getX(), lightsource.getKey().getY() - hitpoint.getY(), lightsource.getKey().getZ() - hitpoint.getZ(), 0);
-            //dir = Utility.normalize(dir);
 
             if (isInShadow(start, dir)) {
                 for (int i = 0; i < 3; i++) {
