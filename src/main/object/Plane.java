@@ -22,9 +22,9 @@ public class Plane extends Object {
 
         double th = -(ray.getS().getZ() / ray.getDir().getZ());
 
-        double x = ray.getS().getX() + ray.getDir().getX() * th;
-        double y = ray.getS().getY() + ray.getDir().getY() * th;
-        double z = ray.getS().getZ() + ray.getDir().getZ() * th;
+        double x = originalRay.getS().getX() + originalRay.getDir().getX() * th;
+        double y = originalRay.getS().getY() + originalRay.getDir().getY() * th;
+        double z = originalRay.getS().getZ() + originalRay.getDir().getZ() * th;
 
         Vector collision = new Vector(x, y, z, 1);
 

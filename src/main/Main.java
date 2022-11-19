@@ -11,11 +11,11 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        final double SCREEN_WIDTH = 1920;
-        final double SCREEN_HEIGHT = 1080;
+        final double SCREEN_WIDTH = 3840;
+        final double SCREEN_HEIGHT = 2160;
         final double FOCALLENGTH = 500;
-        final double CMAX = 1920;
-        final double RMAX = 1080;
+        final double CMAX = 3840;
+        final double RMAX = 2160;
 
         /*
             /----------y
@@ -27,7 +27,7 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(-1000, 0, -200, 1); // location
+        Vector lightsourceWhite = new Vector(-1000, 0, -2000, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1); // location
         Vector lightsourceRed = new Vector(0, -1000, -10, 1); // location
         Vector lightsourceOrange = new Vector(-1000, 1000, -100, 1); // location
@@ -35,27 +35,27 @@ public class Main {
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155});
-        //scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
-        //scene.addLightsource(lightsourceRed, new double[]{180, 0, 0});
-        //scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
-        //scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
+        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
+        scene.addLightsource(lightsourceRed, new double[]{180, 0, 0});
+        scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
+        scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
 
         // camera in center of screen
-        Camera camera = new Camera(FOCALLENGTH, 0, -20);
+        Camera camera = new Camera(FOCALLENGTH, 0, 0);
         scene.setCamera(camera);
 
-        Transformation translationSphereRuby = new Translation(200, -100, -70);
-        Transformation translationSphereRuby3 = new Translation(300, 220, -170);
-        Transformation translationSphereRuby4 = new Translation(450, -50, -5);
-        Transformation translationSphereChrome = new Translation(-800, 0, -420);
-        Transformation translationCube = new Translation(120, 200, -70);
-        Transformation translationCone = new Translation(1, 1, -30);
-        Transformation translationPlane = new Translation(0, 0, 0);
+        Transformation translationSphereRuby = new Translation(200, -100, -50);
+        Transformation translationSphereRuby3 = new Translation(300, 220, -150);
+        Transformation translationSphereRuby4 = new Translation(300, -200, 20);
+        Transformation translationSphereChrome = new Translation(-800, 0, -400);
+        Transformation translationCube = new Translation(120, 200, -50);
+        Transformation translationCone = new Translation(450, 50, -50);
+        Transformation translationPlane = new Translation(0, 0, 60);
         Transformation rotateCube = new Rotation().rotateX(12).rotateY(30).rotateZ(54);
         Transformation rotateCone = new Rotation().rotateX(45);
-        Transformation scaleSphereRuby = new Scale(10);
+        Transformation scaleSphereRuby = new Scale(50);
         Transformation scaleCube = new Scale(30);
-        Transformation scaleCone = new Scale(30, 30, 30);
+        Transformation scaleCone = new Scale(300, 300, 3000);
         Transformation scaleSphereChrome = new Scale(500);
 
         // MATERIALS
@@ -95,11 +95,11 @@ public class Main {
         cube.addTransformation(translationCube);
 
         scene.addObject(plane);
-        /*scene.addObject(sphere2);
+        scene.addObject(sphere2);
         scene.addObject(sphere);
         scene.addObject(cube);
         scene.addObject(cone);
-        scene.addObject(sphere3); */
+        scene.addObject(sphere3);
         scene.addObject(sphere4);
 
         Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, CMAX, RMAX);
