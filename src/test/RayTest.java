@@ -16,7 +16,7 @@ import java.util.List;
 public class RayTest {
     @Test
     public void testShadow() {
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49});
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6);
 
         Object plane = new Plane(emerald);
         plane.addTransformation(new Translation(0, 0, 100));
@@ -30,7 +30,7 @@ public class RayTest {
 
     @Test
     public void testSphere() {
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49});
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6);
 
         Object sphere = new Sphere(emerald);
 
@@ -74,7 +74,7 @@ public class RayTest {
 
     @Test
     public void testPlane() {
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49});
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6);
 
         Object plane = new Plane(emerald);
 

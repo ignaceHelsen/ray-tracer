@@ -1,8 +1,7 @@
 package main;
 
 import main.object.Object;
-import main.object.Plane;
-import main.object.Sphere;
+import main.object.Tuple;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,6 +17,7 @@ import java.util.Random;
 public class Renderer {
     private static final double LIGHTSOURCEFACTOR = 0.01;
     private static final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
+    private static final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
     private Scene scene;
@@ -69,41 +69,14 @@ public class Renderer {
                 //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
                 //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
 
-                // create ray
-                Ray notNormalizedRay = new Ray(scene.getCamera().location, dir);
                 // create normalized ray
                 Vector normalizedDir = new Vector(Utility.normalize(dir.getCoords()));
                 Ray normalizedRay = new Ray(scene.getCamera().location, normalizedDir);
 
-                // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
-                double minIntersectionTime = Integer.MAX_VALUE;
-                Object closestObject = null; // object that was hit
-                Intersection intersectionHit = null; // the closest intersection and which we will be using later on
+                Tuple<Object, Intersection> objectIntersection = getHit(normalizedRay);
 
-                for (Object currentObject : scene.getObjects()) {
-                    Intersection currentIntersection;
-
-                    currentIntersection = currentObject.getFirstHitPoint(normalizedRay);
-
-                    // we know that if only one hit is present this hit has been set at exit and the time at T2. (btw, if only one hit -> t1 has been set to -1)
-                    // if, as normally, two hits are present (one enter and one exit) we know that T1 corresponds to the enter time and t2 to the exit time.
-                    // there will always be a T2.
-                    // currentIntersection times always have to be >= 0.
-                    if (currentIntersection != null) {
-                        if ((currentIntersection.getEnter() == null && currentIntersection.getT2() >= 0 && currentIntersection.getT2() < minIntersectionTime) || (currentIntersection.getEnter() != null && currentIntersection.getT1() >= 0 && currentIntersection.getT1() < minIntersectionTime)) {
-                            // the current intersection is in front of the previous hit, which means we have to deal with this hit in further code
-                            intersectionHit = currentIntersection;
-
-                            // for priorities with objects that are closer by and should be painted instead of objects behind it
-                            if (currentIntersection.getEnter() == null) // set min as exit time (=T2) (since only an exit has been registered)
-                                minIntersectionTime = currentIntersection.getT2();
-                            else
-                                minIntersectionTime = currentIntersection.getT1();
-
-                            closestObject = currentObject;
-                        }
-                    }
-                }
+                Object closestObject = objectIntersection.getObject();
+                Intersection intersectionHit = objectIntersection.getIntersection();
 
                 if (closestObject != null) {
                     // p 641
@@ -111,7 +84,8 @@ public class Renderer {
                     // Color: ambient, diffuse, specular
                     double[] rgb = new double[3];
 
-                    rgb = getShading(normalizedRay, closestObject, intersectionHit, rgb, notNormalizedRay);
+                    int recurseLevel = 0;
+                    getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel);
 
                     // rgb is now a value between 0 and 1
                     rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
@@ -141,7 +115,41 @@ public class Renderer {
         System.out.println(endtime - starttime);
     }
 
-    private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, Ray notNormalizedRay) {
+    private Tuple<Object, Intersection> getHit(Ray normalizedRay) {
+        // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
+        double minIntersectionTime = Integer.MAX_VALUE;
+        Object closestObject = null; // object that was hit
+        Intersection intersectionHit = null; // the closest intersection and which we will be using later on
+
+        for (Object currentObject : scene.getObjects()) {
+            Intersection currentIntersection;
+
+            currentIntersection = currentObject.getFirstHitPoint(normalizedRay);
+
+            // we know that if only one hit is present this hit has been set at exit and the time at T2. (btw, if only one hit -> t1 has been set to -1)
+            // if, as normally, two hits are present (one enter and one exit) we know that T1 corresponds to the enter time and t2 to the exit time.
+            // there will always be a T2.
+            // currentIntersection times always have to be >= 0.
+            if (currentIntersection != null) {
+                if ((currentIntersection.getEnter() == null && currentIntersection.getT2() >= 0 && currentIntersection.getT2() < minIntersectionTime) || (currentIntersection.getEnter() != null && currentIntersection.getT1() >= 0 && currentIntersection.getT1() < minIntersectionTime)) {
+                    // the current intersection is in front of the previous hit, which means we have to deal with this hit in further code
+                    intersectionHit = currentIntersection;
+
+                    // for priorities with objects that are closer by and should be painted instead of objects behind it
+                    if (currentIntersection.getEnter() == null) // set min as exit time (=T2) (since only an exit has been registered)
+                        minIntersectionTime = currentIntersection.getT2();
+                    else
+                        minIntersectionTime = currentIntersection.getT1();
+
+                    closestObject = currentObject;
+                }
+            }
+        }
+
+        return new Tuple<>(closestObject, intersectionHit);
+    }
+
+    private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, int recurseLevel) {
         double[] ambient = currentObject.getMaterial().getAmbient();
         double[] diffuse = currentObject.getMaterial().getDiffuse();
         double[] specular = currentObject.getMaterial().getSpecular();
@@ -178,9 +186,9 @@ public class Renderer {
             hitpoint = intersection.getExit();
         else
             hitpoint = intersection.getEnter();
-
         hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
 
+        // shadows
         Vector start = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, ray.getDir()));
 
         // for each lightsource
@@ -195,7 +203,8 @@ public class Renderer {
                 continue;
             }
 
-            // now onto diffuse and specular
+
+            // continue onto diffuse and specular
 
             double dw = 1; // width lightbeam coming from source
 
@@ -216,7 +225,6 @@ public class Renderer {
                 /*
                   DIFFUSE
                 */
-
                 double lambert = Math.max(0, mDots / (Utility.norm(s) * Utility.norm(normalVector)));
                 for (int i = 0; i < 3; i++) {
                     rgb[i] += specular[i] * dw * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * LIGHTSOURCEFACTOR);
@@ -225,7 +233,6 @@ public class Renderer {
                 /*
                 SPECULAR
                  */
-
                 // angle between h and m (normal vector)
                 // h: halfway vector (between incoming light and ray)
                 double[] h = Utility.normalize(Utility.sum(Utility.normalize(v), s));
@@ -265,6 +272,45 @@ public class Renderer {
                     for (int i = 0; i < 3; i++) {
                         rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * dw * phongSpecularRGB[i];
                     }
+                }
+
+                /*
+                    REFLECTION
+                 */
+
+                if (recurseLevel != MAXRECURSELEVEL) {
+                    if (currentObject.getMaterial().getShininess() >= 0.6) {
+                        // spawn ray from hitpoint and call getShade()
+                        double[] r = new double[4];
+                        Vector normalVectorVector = new Vector(normalVector);
+                        for (int i = 0; i < r.length; i++) {
+                            r[i] = ray.getDir().getCoords()[i] - 2 * (Utility.dot(ray.getDir(), normalVectorVector)) * normalVector[i];
+                        }
+
+                        Vector newDir = new Vector(r);
+                        Ray newRay = new Ray(start, newDir);
+
+                        Tuple<Object, Intersection> objectIntersection = getHit(newRay);
+
+                        Object reflectedObjectHit = objectIntersection.getObject();
+                        Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
+
+                        if (reflectedObjectHit != null) {
+                            recurseLevel++;
+                            double[] reflectedColors = getShading(newRay, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel);
+
+                            for (int i = 0; i < 3; i++) {
+                                if (!Double.isNaN(reflectedColors[i]))
+                                    rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
+                            }
+                        }
+                    }
+
+                    /* TODO
+                    if (currentObject.getMaterial().getTransparancy() >= 0.6) {
+
+
+                    } */
                 }
             }
         }

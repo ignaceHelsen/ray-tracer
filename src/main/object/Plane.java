@@ -10,7 +10,6 @@ public class Plane extends Object {
         super(material);
     }
 
-    // TODO: cube, cilinder: originalRay -> ray & rotation: inverse and originalRay -> ray
     @Override
     public Intersection getFirstHitPoint(Ray originalRay) {
         Ray ray;

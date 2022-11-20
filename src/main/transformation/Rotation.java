@@ -4,7 +4,6 @@ import main.Utility;
 import main.Vector;
 
 public class Rotation extends Transformation {
-    // TODO: add inverse transformation
     public Rotation() {
         super();
     }
@@ -18,7 +17,7 @@ public class Rotation extends Transformation {
                                 {0, Math.sin(angle), Math.cos(angle), 0},
                                 {0, 0, 0, 1}};
 
-        setTransformation(Utility.multiplyMatrices(getTransformation(), rotation));
+        setTransformation(Utility.multiplyMatrices(rotation, getTransformation()));
 
         // inverse
         double[][] inverseRotation = { {1, 0, 0, 0},
@@ -40,7 +39,7 @@ public class Rotation extends Transformation {
                                 {-Math.sin(angle), 0, Math.cos(angle), 0},
                                 {0, 0, 0, 1}};
 
-        setTransformation(Utility.multiplyMatrices(getTransformation(), rotation));
+        setTransformation(Utility.multiplyMatrices(rotation, getTransformation()));
 
         // inverse
         double[][] inverseRotation = {  {Math.cos(angle), 0, -Math.sin(angle), 0},
@@ -63,7 +62,7 @@ public class Rotation extends Transformation {
                                 {0, 0, 1, 0},
                                 {0, 0, 0, 1}};
 
-        setTransformation(Utility.multiplyMatrices(getTransformation(), rotation));
+        setTransformation(Utility.multiplyMatrices(rotation, getTransformation()));
 
         // inverse
         double[][] inverseRotation = {  {Math.cos(angle), 0, Math.sin(angle), 0},
