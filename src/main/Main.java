@@ -59,10 +59,10 @@ public class Main {
         Transformation scaleSphereChrome = new Scale(500);
 
         // MATERIALS
-        Material ruby = new Material(new double[]{0.1745 * 15, 0.01175 * 15, 0.01175 * 15}, new double[]{0.61424 * 15, 0.04136 * 15, 0.04136 * 15}, new double[]{0.727811 * 15, 0.626959 * 15, 0.626959 * 15}, new double[]{1.762 * 1.2, 1.770 * 1.2, 1.778 * 1.2}, 0.2, new double[]{1, 0.5, 0.5}, 0.6);
+        Material ruby = new Material(new double[]{0.1745, 0.01175, 0.01175}, new double[]{0.61424, 0.04136, 0.04136}, new double[]{0.727811, 0.626959, 0.626959}, new double[]{1.762, 1.770, 1.778}, 0.2, new double[]{1, 0.5, 0.5}, 0.6);
         Material copper = new Material(new double[]{0.19125, 0.0735, 0.0225}, new double[]{0.7038, 0.27048, 0.0828}, new double[]{0.256777, 0.137622, 0.086014}, new double[]{fresnelToRefr(0.755), fresnelToRefr(0.49), fresnelToRefr(0.095)}, 0.2, new double[]{1, 0.5, 0.5}, 0.1);
-        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812 * 2, 3.1812 * 2, 3.1812 * 2}, 0.2, new double[]{1, 0.5, 0.5}, 0.6);
-        Material gold = new Material(new double[]{0.54725, 0.4995, 0.3745}, new double[]{0.95164, 0.80648, 0.52648}, new double[]{0.928281, 0.855802, 0.666065}, new double[]{fresnelToRefr(0.989) * 1.5, fresnelToRefr(0.876) * 1.5, fresnelToRefr(0.399) * 1.5}, 0.2, new double[]{1, 0.5, 0.5}, 0.4);
+        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812, 3.1812, 3.1812}, 0.2, new double[]{1, 0.5, 0.5}, 0.6);
+        Material gold = new Material(new double[]{0.54725, 0.4995, 0.3745}, new double[]{0.95164, 0.80648, 0.52648}, new double[]{0.928281, 0.855802, 0.666065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{1, 0.5, 0.5}, 0.4);
 
         // OBJECTS
         Object plane = new Plane(gold);
@@ -95,6 +95,7 @@ public class Main {
         cube.addTransformation(translationCube);
 
         scene.addObject(plane);
+        scene.addObject(sphere3);
         scene.addObject(sphere2);
         scene.addObject(sphere);
         scene.addObject(cube);

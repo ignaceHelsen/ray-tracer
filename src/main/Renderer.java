@@ -1,6 +1,7 @@
 package main;
 
 import main.object.Object;
+import main.object.Sphere;
 import main.object.Tuple;
 
 import javax.imageio.ImageIO;
@@ -15,9 +16,11 @@ import java.util.Map;
 import java.util.Random;
 
 public class Renderer {
-    private static final double LIGHTSOURCEFACTOR = 0.01;
-    private static final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
-    private static final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
+    private final double LIGHTSOURCEFACTOR = 0.01;
+    private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
+    private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
+    private final double DW = 1; // width lightbeam coming from source
+
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
     private Scene scene;
@@ -150,8 +153,10 @@ public class Renderer {
     }
 
     private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, int recurseLevel) {
+        double[] previousRgb = rgb.clone();
+
         double[] ambient = currentObject.getMaterial().getAmbient();
-        double[] diffuse = currentObject.getMaterial().getDiffuse();
+        double[] diffuse = currentObject.getMaterial().getDiffuse(); // We don't use this one anymore
         double[] specular = currentObject.getMaterial().getSpecular();
 
         double[] v = ray.getDir().getCoords().clone();
@@ -159,7 +164,14 @@ public class Renderer {
 
         // m is the roughness of the material
         double mRoughness = currentObject.getMaterial().getRoughness();
-        double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), Utility.transpose(currentObject.getTransformation().getInverseTransformation()));
+        double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), Utility.transpose(currentObject.getTransformation().getTransformation()));
+        if (currentObject instanceof Sphere) {
+            //normalvector - center of sphere
+            double[] center = new double[]{0, 0, 0, 1};
+            center = Utility.multiplyMatrices(center, Utility.transpose(currentObject.getTransformation().getTransformation()));
+            normalVector = Utility.subtract(normalVector, center);
+        }
+
         normalVector = Utility.normalize(normalVector);
 
         // the fresnel coeff is the fraction that is reflected and will be higher with higher refractionindices
@@ -198,15 +210,13 @@ public class Renderer {
 
             if (isInShadow(start, dir)) {
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] -= rgb[i] * 50 * LIGHTSOURCEFACTOR; // dim the scene a bit
+                    rgb[i] -= rgb[i] * 30 * LIGHTSOURCEFACTOR; // dim the scene a bit
                 }
                 continue;
             }
 
-
             // continue onto diffuse and specular
 
-            double dw = 1; // width lightbeam coming from source
 
             double[] s;
             if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we know we have set as exit
@@ -227,7 +237,7 @@ public class Renderer {
                 */
                 double lambert = Math.max(0, mDots / (Utility.norm(s) * Utility.norm(normalVector)));
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] += specular[i] * dw * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * LIGHTSOURCEFACTOR);
+                    rgb[i] += specular[i] * DW * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * LIGHTSOURCEFACTOR);
                 }
 
                 /*
@@ -241,6 +251,9 @@ public class Renderer {
                 if (mDoth > 0.0001) {
                     // angle between h and transposedNormalVector
                     double angle = getAngle(normalVector, h);
+                    if (Double.isNaN(angle)) {
+                        getAngle(normalVector, h);
+                    }
                     double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
 
                     // G will scale the strength of the specular component
@@ -270,13 +283,16 @@ public class Renderer {
                     }
 
                     for (int i = 0; i < 3; i++) {
-                        rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * dw * phongSpecularRGB[i];
+                        rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * phongSpecularRGB[i];
                     }
                 }
-
                 /*
                     REFLECTION
                  */
+
+
+                if (Double.isNaN(rgb[0]))
+                    getShading(ray, currentObject, intersection, previousRgb, recurseLevel);
 
                 if (recurseLevel != MAXRECURSELEVEL) {
                     if (currentObject.getMaterial().getShininess() >= 0.6) {
@@ -299,9 +315,13 @@ public class Renderer {
                             recurseLevel++;
                             double[] reflectedColors = getShading(newRay, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel);
 
+                            if (Double.isNaN(reflectedColors[0]))
+                                System.out.printf("");
+
                             for (int i = 0; i < 3; i++) {
                                 if (!Double.isNaN(reflectedColors[i]))
                                     rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
+
                             }
                         }
                     }
@@ -330,8 +350,17 @@ public class Renderer {
         return false;
     }
 
+    /**
+     * Get angle between two vectors (in Radians)
+     *
+     * @param vectorOne: 1st vectot
+     * @param vectorTwo: 2nd vector
+     * @return Double: angle in Radians
+     */
     private double getAngle(double[] vectorOne, double[] vectorTwo) {
-        return Math.acos(Utility.dot(vectorOne, vectorTwo) / Utility.norm(vectorOne) * Utility.norm(vectorTwo));
+        // TODO
+        double cosine = Utility.dot(vectorOne, vectorTwo) / (Utility.norm(vectorOne) * Utility.norm(vectorTwo));
+        return Math.acos(cosine);
     }
 
     public void setScene(Scene scene) {

@@ -138,13 +138,8 @@ public class Utility {
     }
 
     public static double[] subtract(double[] vectorOne, double[] vectorTwo) {
-        double[] result = new double[vectorOne.length];
-
-        for (int i = 0; i < vectorOne.length; i++) {
-            result[i] = vectorOne[i] - vectorTwo[i];
-        }
-
-        return result;
+        // same as vectorone + (-vectortwo)
+        return sum(vectorOne, new double[]{vectorTwo[0]*-1, vectorTwo[1]*-1, vectorTwo[2]*-1, vectorTwo[3]*-1});
     }
 
     public static double norm(double[] vector) {

@@ -21,12 +21,12 @@ public class Plane extends Object {
 
         double th = -(ray.getS().getZ() / ray.getDir().getZ());
 
-        double x = originalRay.getS().getX() + originalRay.getDir().getX() * th;
-        double y = originalRay.getS().getY() + originalRay.getDir().getY() * th;
-        double z = originalRay.getS().getZ() + originalRay.getDir().getZ() * th;
+        double x = ray.getS().getX() + ray.getDir().getX() * th;
+        double y = ray.getS().getY() + ray.getDir().getY() * th;
+        double z = ray.getS().getZ() + ray.getDir().getZ() * th;
 
         Vector collision = new Vector(x, y, z, 1);
 
-        return new Intersection(null, collision, -1, th, new double[]{collision.getX(), collision.getY(), collision.getZ(), 0});
+        return new Intersection(null, collision, -1, th, new double[]{0, 0, 1, 0});
     }
 }
