@@ -27,7 +27,7 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(-1000, 0, -2000, 1); // location
+        Vector lightsourceWhite = new Vector(-1000, 0, -20000, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1); // location
         Vector lightsourceRed = new Vector(0, -1000, -10, 1); // location
         Vector lightsourceOrange = new Vector(-1000, 1000, -100, 1); // location
@@ -45,7 +45,7 @@ public class Main {
         scene.setCamera(camera);
 
         Transformation translationSphereRuby = new Translation(200, -100, -50);
-        Transformation translationSphereRuby3 = new Translation(300, 220, -150);
+        Transformation translationSphereRuby3 = new Translation(300, 220, -10);
         Transformation translationSphereRuby4 = new Translation(300, -200, 20);
         Transformation translationSphereChrome = new Translation(-800, 0, -400);
         Transformation translationCube = new Translation(120, 200, -50);

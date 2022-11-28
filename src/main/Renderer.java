@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Random;
 
 public class Renderer {
-    private final double LIGHTSOURCEFACTOR = 0.01;
+    private final double LIGHTSOURCEFACTOR = 0.1;
     private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
+    private final int MAXRECURSELEVEL = 2; // TODO: move to SDL parameter
     private final double DW = 1; // width lightbeam coming from source
 
     private final JFrame frame;
@@ -153,8 +153,6 @@ public class Renderer {
     }
 
     private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, int recurseLevel) {
-        double[] previousRgb = rgb.clone();
-
         double[] ambient = currentObject.getMaterial().getAmbient();
         double[] diffuse = currentObject.getMaterial().getDiffuse(); // We don't use this one anymore
         double[] specular = currentObject.getMaterial().getSpecular();
@@ -162,16 +160,14 @@ public class Renderer {
         double[] v = ray.getDir().getCoords().clone();
         v = Arrays.stream(v).map(value -> value * -1).toArray();
 
-        // m is the roughness of the material
         double mRoughness = currentObject.getMaterial().getRoughness();
+
         double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), Utility.transpose(currentObject.getTransformation().getTransformation()));
         if (currentObject instanceof Sphere) {
             //normalvector - center of sphere
-            double[] center = new double[]{0, 0, 0, 1};
-            center = Utility.multiplyMatrices(center, Utility.transpose(currentObject.getTransformation().getTransformation()));
+            double[] center = new double[]{0, 0, 0, 1}; // a point
             normalVector = Utility.subtract(normalVector, center);
         }
-
         normalVector = Utility.normalize(normalVector);
 
         // the fresnel coeff is the fraction that is reflected and will be higher with higher refractionindices
@@ -209,9 +205,9 @@ public class Renderer {
             Vector dir = new Vector(lightsource.getKey().getX() - hitpoint.getX(), lightsource.getKey().getY() - hitpoint.getY(), lightsource.getKey().getZ() - hitpoint.getZ(), 0);
 
             if (isInShadow(start, dir)) {
-                for (int i = 0; i < 3; i++) {
-                    rgb[i] -= rgb[i] * 30 * LIGHTSOURCEFACTOR; // dim the scene a bit
-                }
+                /*for (int i = 0; i < 3; i++) {
+                    rgb[i] -= rgb[i] * LIGHTSOURCEFACTOR; // dim the scene a bit
+                }*/
                 continue;
             }
 
@@ -251,9 +247,6 @@ public class Renderer {
                 if (mDoth > 0.0001) {
                     // angle between h and transposedNormalVector
                     double angle = getAngle(normalVector, h);
-                    if (Double.isNaN(angle)) {
-                        getAngle(normalVector, h);
-                    }
                     double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
 
                     // G will scale the strength of the specular component
@@ -286,53 +279,52 @@ public class Renderer {
                         rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * phongSpecularRGB[i];
                     }
                 }
-                /*
-                    REFLECTION
-                 */
 
-
-                if (Double.isNaN(rgb[0]))
-                    getShading(ray, currentObject, intersection, previousRgb, recurseLevel);
-
-                if (recurseLevel != MAXRECURSELEVEL) {
-                    if (currentObject.getMaterial().getShininess() >= 0.6) {
-                        // spawn ray from hitpoint and call getShade()
-                        double[] r = new double[4];
-                        Vector normalVectorVector = new Vector(normalVector);
-                        for (int i = 0; i < r.length; i++) {
-                            r[i] = ray.getDir().getCoords()[i] - 2 * (Utility.dot(ray.getDir(), normalVectorVector)) * normalVector[i];
-                        }
-
-                        Vector newDir = new Vector(r);
-                        Ray newRay = new Ray(start, newDir);
-
-                        Tuple<Object, Intersection> objectIntersection = getHit(newRay);
-
-                        Object reflectedObjectHit = objectIntersection.getObject();
-                        Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
-
-                        if (reflectedObjectHit != null) {
-                            recurseLevel++;
-                            double[] reflectedColors = getShading(newRay, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel);
-
-                            if (Double.isNaN(reflectedColors[0]))
-                                System.out.printf("");
-
-                            for (int i = 0; i < 3; i++) {
-                                if (!Double.isNaN(reflectedColors[i]))
-                                    rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
-
-                            }
-                        }
-                    }
-
-                    /* TODO
-                    if (currentObject.getMaterial().getTransparancy() >= 0.6) {
-
-
-                    } */
-                }
             }
+        }
+
+        /*
+            REFLECTION & TRANSPARENCY
+        */
+
+        if (Double.isNaN(rgb[0])) {
+            //getShading(ray, currentObject, intersection, previousRgb, recurseLevel);
+            System.out.println("Nan Found");
+        }
+
+        if (recurseLevel <= MAXRECURSELEVEL && currentObject.getMaterial().getShininess() >= 0.6) {
+            // spawn ray from hitpoint and call getShade()
+            double[] r = new double[4];
+            Vector vectorNormalVector = new Vector(normalVector);
+            double dirDotNormalvector = Utility.dot(ray.getDir(), vectorNormalVector);
+            for (int i = 0; i < r.length; i++) {
+                r[i] = ray.getDir().getCoords()[i] - 2 * dirDotNormalvector * normalVector[i];
+            }
+
+            Vector newDir = new Vector(r);
+            Ray newRay = new Ray(Utility.normalize(start), newDir);
+
+            Tuple<Object, Intersection> objectIntersection = getHit(newRay);
+
+            Object reflectedObjectHit = objectIntersection.getObject();
+            Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
+
+            if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
+                recurseLevel++;
+                double[] reflectedColors = getShading(newRay, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel);
+
+                if (Double.isNaN(reflectedColors[0]))
+                    System.out.println("Nan found");
+
+                for (int i = 0; i < 3; i++)
+                    rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
+            }
+
+            /* TODO
+            if (currentObject.getMaterial().getTransparancy() >= 0.6) {
+
+
+             } */
         }
 
         return rgb;
