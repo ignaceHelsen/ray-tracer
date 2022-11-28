@@ -1,6 +1,7 @@
 package main;
 
 import main.object.Object;
+import main.object.Plane;
 import main.object.Sphere;
 import main.object.Tuple;
 
@@ -16,10 +17,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class Renderer {
-    private final double LIGHTSOURCEFACTOR = 0.1;
+    private final double LIGHTSOURCEFACTOR = 0.02;
     private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 2; // TODO: move to SDL parameter
-    private final double DW = 1; // width lightbeam coming from source
+    private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
+    private final double DW = 0.5; // width lightbeam coming from source
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -205,14 +206,13 @@ public class Renderer {
             Vector dir = new Vector(lightsource.getKey().getX() - hitpoint.getX(), lightsource.getKey().getY() - hitpoint.getY(), lightsource.getKey().getZ() - hitpoint.getZ(), 0);
 
             if (isInShadow(start, dir)) {
-                /*for (int i = 0; i < 3; i++) {
-                    rgb[i] -= rgb[i] * LIGHTSOURCEFACTOR; // dim the scene a bit
-                }*/
+                for (int i = 0; i < 3; i++) {
+                    rgb[i] -= rgb[i] * 2 * LIGHTSOURCEFACTOR; // dim the scene a bit
+                }
                 continue;
             }
 
             // continue onto diffuse and specular
-
 
             double[] s;
             if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we know we have set as exit
@@ -279,9 +279,21 @@ public class Renderer {
                         rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * phongSpecularRGB[i];
                     }
                 }
-
             }
         }
+
+        /*
+        TEXTURES
+         */
+
+        /*if(currentObject instanceof Plane) {
+            int jump = ((int)(hitpoint.getX()/start.getX()) + (int)(hitpoint.getY()/start.getY()) + (int)(hitpoint.getZ()/start.getZ())) % 2;
+
+            if (jump == 1)
+                for (int i = 0; i < rgb.length; i++) {
+                    rgb[i] *= 0;
+                }
+        }*/
 
         /*
             REFLECTION & TRANSPARENCY

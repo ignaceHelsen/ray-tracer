@@ -1,0 +1,28 @@
+translate 0 0 60
+plane
+
+translate 450 50 -50
+scale 300 300 3000
+rotate 45 0 0
+taperedcylinder
+
+translate 200 -100 -50
+scale 50 0 0
+sphere
+
+translate -500 0 -400
+scale 500 0 0
+sphere
+
+translate 300 220 -10
+scale 50 0 0
+sphere
+
+translate 300 -200 20
+scale 50 0 0
+sphere
+
+translate 120 200 -50
+scale 30 0 0
+rotate 12 30 54
+cube

@@ -2,6 +2,7 @@ package main;
 
 import main.object.Object;
 import main.object.*;
+import main.sdl.SDL;
 import main.transformation.Rotation;
 import main.transformation.Scale;
 import main.transformation.Transformation;
@@ -27,7 +28,7 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(-1000, 0, -20000, 1); // location
+        Vector lightsourceWhite = new Vector(-1000, 0, -200000, 1); // location
         Vector lightsourceBlue = new Vector(500, 0, -1, 1); // location
         Vector lightsourceRed = new Vector(0, -1000, -10, 1); // location
         Vector lightsourceOrange = new Vector(-1000, 1000, -100, 1); // location
@@ -44,19 +45,11 @@ public class Main {
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
         scene.setCamera(camera);
 
-        Transformation translationSphereRuby = new Translation(200, -100, -50);
-        Transformation translationSphereRuby3 = new Translation(300, 220, -10);
-        Transformation translationSphereRuby4 = new Translation(300, -200, 20);
-        Transformation translationSphereChrome = new Translation(-800, 0, -400);
-        Transformation translationCube = new Translation(120, 200, -50);
-        Transformation translationCone = new Translation(450, 50, -50);
-        Transformation translationPlane = new Translation(0, 0, 60);
-        Transformation rotateCube = new Rotation().rotateX(12).rotateY(30).rotateZ(54);
-        Transformation rotateCone = new Rotation().rotateX(45);
-        Transformation scaleSphereRuby = new Scale(50);
-        Transformation scaleCube = new Scale(30);
-        Transformation scaleCone = new Scale(300, 300, 3000);
-        Transformation scaleSphereChrome = new Scale(500);
+        try {
+            scene.addObjects(SDL.parse("sdl.sdl"));
+        } catch (IOException e) {
+            System.out.print("Problem reading sdl");
+        }
 
         // MATERIALS
         Material ruby = new Material(new double[]{0.1745, 0.01175, 0.01175}, new double[]{0.61424, 0.04136, 0.04136}, new double[]{0.727811, 0.626959, 0.626959}, new double[]{1.762, 1.770, 1.778}, 0.2, new double[]{1, 0.5, 0.5}, 0.6);
@@ -65,43 +58,6 @@ public class Main {
         Material gold = new Material(new double[]{0.54725, 0.4995, 0.3745}, new double[]{0.95164, 0.80648, 0.52648}, new double[]{0.928281, 0.855802, 0.666065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{1, 0.5, 0.5}, 0.4);
 
         // OBJECTS
-        Object plane = new Plane(gold);
-        Object sphere = new Sphere(ruby);
-        Object sphere3 = new Sphere(ruby);
-        Object sphere4 = new Sphere(ruby);
-        Object cube = new Cube(copper);
-        Object sphere2 = new Sphere(chrome);
-        Object cone = new TaperedCylinder(copper, 0.95);
-
-        plane.addTransformation(translationPlane);
-
-        cone.addTransformation(scaleCone);
-        cone.addTransformation(translationCone);
-        cone.addTransformation(rotateCone);
-
-        sphere.addTransformation(scaleSphereRuby);
-        sphere.addTransformation(translationSphereRuby);
-        sphere2.addTransformation(scaleSphereChrome);
-        sphere2.addTransformation(translationSphereChrome);
-
-        sphere3.addTransformation(scaleSphereRuby);
-        sphere3.addTransformation(translationSphereRuby3);
-
-        sphere4.addTransformation(scaleSphereRuby);
-        sphere4.addTransformation(translationSphereRuby4);
-
-        cube.addTransformation(rotateCube);
-        cube.addTransformation(scaleCube);
-        cube.addTransformation(translationCube);
-
-        scene.addObject(plane);
-        scene.addObject(sphere3);
-        scene.addObject(sphere2);
-        scene.addObject(sphere);
-        scene.addObject(cube);
-        scene.addObject(cone);
-        scene.addObject(sphere3);
-        scene.addObject(sphere4);
 
         Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, CMAX, RMAX);
         renderer.setScene(scene);

@@ -42,4 +42,8 @@ public class Scene {
     public Map<Vector, double[]> getLightsources() {
         return this.lightsources;
     }
+
+    public void addObjects(List<java.lang.Object> objects) {
+        objects.forEach(o -> addObject((Object) o));
+    }
 }
