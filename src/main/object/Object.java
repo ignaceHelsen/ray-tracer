@@ -8,7 +8,7 @@ import main.transformation.Transformation;
 
 public abstract class Object {
     private Transformation transformation;
-    private final Material material;
+    private Material material;
 
     public Object(Material material) {
         this.material = material;
@@ -36,5 +36,9 @@ public abstract class Object {
 
     public Material getMaterial() {
         return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 }

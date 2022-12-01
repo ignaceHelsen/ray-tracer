@@ -46,10 +46,11 @@ public class SDL {
                 object = new Cube(ruby);
             } else if (instruction.equals("taperedcylinder")) {
                 // TODO: get ratio from SDL!
-                object = new TaperedCylinder(ruby, 0.9);
+                object = new TaperedCylinder(ruby, 0.95);
             } else if (instruction.equals("plane")) {
                 object = new Plane(ruby);
             } else {
+                // currentline is a transformation
                 double[] coords = getCoords(currentLine.trim());
 
                 if (instruction.startsWith("translate")) {
@@ -62,16 +63,20 @@ public class SDL {
             }
 
             if (object != null) {
-                object.addTransformation(translation);
                 object.addTransformation(scale);
+                object.addTransformation(translation);
                 object.addTransformation(rotation);
+                if(object instanceof Plane) {
+                    Material gold = new Material(new double[]{0.54725, 0.4995, 0.3745}, new double[]{0.95164, 0.80648, 0.52648}, new double[]{0.928281, 0.855802, 0.666065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{1, 0.5, 0.5}, 0.4);
+                    object.setMaterial(gold);
+                }
                 objects.add(object);
 
                 // clear object and transformations again (only when object has actually been added
                 object = null;
                 translation = new Transformation();
                 scale = new Transformation();
-                rotation = new Rotation();
+                rotation = new Transformation();
             }
         }
 
@@ -95,5 +100,11 @@ public class SDL {
         int z = new Scanner(textStartingWithZ).nextInt();
 
         return new double[]{x, y, z};
+    }
+
+
+    public static double fresnelToRefr(double fresnel) {
+        double sqrt = Math.sqrt(fresnel);
+        return (1 + sqrt) / (1 - sqrt);
     }
 }

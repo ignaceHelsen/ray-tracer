@@ -17,10 +17,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class Renderer {
-    private final double LIGHTSOURCEFACTOR = 0.02;
+    private final double LIGHTSOURCEFACTOR = 0.04;
     private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
     private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
-    private final double DW = 0.5; // width lightbeam coming from source
+    private final double DW = 1; // width lightbeam coming from source
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -111,7 +111,6 @@ public class Renderer {
                         buffer.setRGB((int) c, (int) r, 0);
                     }
                 }
-
             }
         }
 
