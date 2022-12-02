@@ -1,14 +1,12 @@
 package main.object;
 
-import main.Intersection;
-import main.Material;
-import main.Ray;
-import main.Utility;
+import main.*;
 import main.transformation.Transformation;
 
 public abstract class Object {
     private Transformation transformation;
     private Material material;
+    private Texture texture;
 
     public Object(Material material) {
         this.material = material;
@@ -40,5 +38,13 @@ public abstract class Object {
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }

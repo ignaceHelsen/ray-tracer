@@ -1,4 +1,5 @@
 translate 0 0 60
+CHECKERBOARD
 plane
 
 translate 450 50 -50
@@ -10,7 +11,7 @@ translate 200 -100 -50
 scale 50 50 50
 sphere
 
-translate -800 0 -400
+translate -800 -100 -400
 scale 500 500 500
 sphere
 

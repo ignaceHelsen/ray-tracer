@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class Renderer {
-    private final double LIGHTSOURCEFACTOR = 0.04;
+    private final double LIGHTSOURCEFACTOR = 0.4;
     private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
     private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
     private final double DW = 1; // width lightbeam coming from source
@@ -165,7 +165,7 @@ public class Renderer {
         double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), Utility.transpose(currentObject.getTransformation().getTransformation()));
         if (currentObject instanceof Sphere) {
             //normalvector - center of sphere
-            double[] center = new double[]{0, 0, 0, 1}; // a point
+            double[] center = new double[]{0, 0, 0, 1}; // the center of the circle (a point)
             normalVector = Utility.subtract(normalVector, center);
         }
         normalVector = Utility.normalize(normalVector);
@@ -180,6 +180,14 @@ public class Renderer {
             fresnelCoefficient0RGB[i] = Math.pow((currentObject.getMaterial().getRefractionIndex()[i] - 1), 2) / Math.pow((currentObject.getMaterial().getRefractionIndex()[i] + 1), 2);
         }
 
+        //re-transform the hitpoint
+        Vector hitpoint;
+        if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit
+            hitpoint = intersection.getExit();
+        else
+            hitpoint = intersection.getEnter();
+        hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
+
         /*
           AMBIENT
         */
@@ -188,13 +196,13 @@ public class Renderer {
             rgb[i] += ambient[i] * currentObject.getMaterial().getkDistribution()[0] * fresnelCoefficient0RGB[i];
         }
 
-        //now re-transform the hitpoint
-        Vector hitpoint;
-        if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit
-            hitpoint = intersection.getExit();
-        else
-            hitpoint = intersection.getEnter();
-        hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
+        /*
+            TEXTURE
+         */
+        double[] textureRgb = getTexture(currentObject.getTexture(), hitpoint.getX(), hitpoint.getY(), hitpoint.getZ());
+        for (int i = 0; i < 3; i++) {
+            rgb[i] *= textureRgb[i];
+        }
 
         // shadows
         Vector start = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, ray.getDir()));
@@ -206,7 +214,7 @@ public class Renderer {
 
             if (isInShadow(start, dir)) {
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] -= rgb[i] * 2 * LIGHTSOURCEFACTOR; // dim the scene a bit
+                    rgb[i] -= rgb[i] * LIGHTSOURCEFACTOR; // dim the scene a bit
                 }
                 continue;
             }
@@ -222,15 +230,13 @@ public class Renderer {
             double mDots = Utility.dot(s, normalVector);
             double cRefraction = mDots;
 
-            // first calculate the Fresnel coeff
-            double angleOfIncidence = getAngle(normalVector, s);
-
             if (mDots > 0.0001) {
                 // hitpoint is pointed towards the light
+
                 /*
                   DIFFUSE
                 */
-                double lambert = Math.max(0, mDots / (Utility.norm(s) * Utility.norm(normalVector)));
+                double lambert = mDots;
                 for (int i = 0; i < 3; i++) {
                     rgb[i] += specular[i] * DW * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * LIGHTSOURCEFACTOR);
                 }
@@ -238,14 +244,17 @@ public class Renderer {
                 /*
                 SPECULAR
                  */
-                // angle between h and m (normal vector)
                 // h: halfway vector (between incoming light and ray)
                 double[] h = Utility.normalize(Utility.sum(Utility.normalize(v), s));
 
+                // angle between h and m (normal vector)
                 double mDoth = Utility.dot(h, normalVector);
+
                 if (mDoth > 0.0001) {
                     // angle between h and transposedNormalVector
                     double angle = getAngle(normalVector, h);
+                    if (Double.isNaN(angle))
+                        getAngle(normalVector, h);
                     double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
 
                     // G will scale the strength of the specular component
@@ -254,6 +263,9 @@ public class Renderer {
                     // fraction of light that is not masked.
                     double gm = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, s)) / Utility.dot(h, s);
                     double g = Math.min(Math.min(1, gm), gs);
+
+                    // calculate the Fresnel coeff
+                    double angleOfIncidence = getAngle(normalVector, s);
 
                     // gRefractionSquaredRGB = g² = η² + c² - 1
                     double[] gRefractionSquaredRGB = new double[3];
@@ -300,7 +312,7 @@ public class Renderer {
 
         if (Double.isNaN(rgb[0])) {
             //getShading(ray, currentObject, intersection, previousRgb, recurseLevel);
-            System.out.println("Nan Found");
+            System.out.println("Nan shading Found");
         }
 
         if (recurseLevel <= MAXRECURSELEVEL && currentObject.getMaterial().getShininess() >= 0.6) {
@@ -324,9 +336,6 @@ public class Renderer {
                 recurseLevel++;
                 double[] reflectedColors = getShading(newRay, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel);
 
-                if (Double.isNaN(reflectedColors[0]))
-                    System.out.println("Nan found");
-
                 for (int i = 0; i < 3; i++)
                     rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
             }
@@ -337,15 +346,33 @@ public class Renderer {
 
              } */
         }
-
         return rgb;
+    }
+
+    private double[] getTexture(Texture texture, double x, double y, double z) {
+        if (texture == Texture.NONE) return new double[] {1, 1, 1};
+
+        if (texture == Texture.CHECKERBOARD) {
+            boolean u = ((int)x/40) % 2 == 0;
+            boolean v = ((int)y/40) % 2 == 0;
+            boolean w = ((int)z/40) % 2 == 0;
+
+            if (u ^ v ^ w)
+                if ((x < 0 && y > 0) || (x > 0 && y < 0)) return new double[] {0, 0, 0};
+                else return new double[] {1, 1, 1};
+            else
+                if ((x < 0 && y > 0) || (x > 0 && y < 0)) return new double[] {1, 1, 1};
+                else return new double[] {0, 0, 0};
+        }
+
+        return new double[] {1, 1, 1};
     }
 
     private boolean isInShadow(Vector start, Vector dir) {
         Ray shadowFeeler = new Ray(start, dir);
         for (Object o : scene.getObjects()) { //shoot the ray and check if we got a hit with any object
             Intersection intersection = o.getFirstHitPoint(shadowFeeler);
-            if (intersection != null && intersection.getT1() >= 0 && intersection.getT2() >= 0) {
+            if (intersection != null && intersection.getT1() >= 0.1 && intersection.getT2() >= 0.1) {
                 return true;
             }
         }
@@ -361,7 +388,6 @@ public class Renderer {
      * @return Double: angle in Radians
      */
     private double getAngle(double[] vectorOne, double[] vectorTwo) {
-        // TODO
         double cosine = Utility.dot(vectorOne, vectorTwo) / (Utility.norm(vectorOne) * Utility.norm(vectorTwo));
         return Math.acos(cosine);
     }
