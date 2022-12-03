@@ -54,7 +54,7 @@ public class SDL {
                 // TODO: get ratio from SDL!
                 object = new TaperedCylinder(ruby, 0.99);
             } else if (instruction.equals("plane")) {
-                object = new Plane(ruby);
+                object = new Plane(chrome);
             } else if (instruction.equals(instruction.toUpperCase())) {
                 // textures are always written in caps
                 texture = Texture.valueOf(instruction);

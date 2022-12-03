@@ -58,8 +58,6 @@ public class Main {
         Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812, 3.1812, 3.1812}, 0.2, new double[]{0.3, 0.3, 0.3}, 0.6);
         Material gold = new Material(new double[]{0.54725, 0.4995, 0.3745}, new double[]{0.95164, 0.80648, 0.52648}, new double[]{0.928281, 0.855802, 0.666065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{0.3, 0.3, 0.3}, 0.4);
 
-        // OBJECTS
-
         Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, CMAX, RMAX);
         renderer.setScene(scene);
 
@@ -67,8 +65,7 @@ public class Main {
         render.start();
 
         Thread show = new Thread(() -> {
-            while (render.isAlive() || true) {
-            //while (true) {
+            while (render.isAlive()) {
                 try {
                     Thread.sleep(420);
 

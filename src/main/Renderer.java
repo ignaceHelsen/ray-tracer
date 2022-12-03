@@ -1,9 +1,7 @@
 package main;
 
+import main.object.*;
 import main.object.Object;
-import main.object.Plane;
-import main.object.Sphere;
-import main.object.Tuple;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,10 +15,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class Renderer {
-    private final double LIGHTSOURCEFACTOR = 0.4;
+    private final double LIGHTSOURCEFACTOR = 0.6; // or a bit of contrast
     private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
-    private final double DW = 1; // width lightbeam coming from source
+    private final int MAXRECURSELEVEL = 1; // TODO: move to SDL parameter
+    private final double DW = 0.5; // width lightbeam coming from source
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -166,6 +164,7 @@ public class Renderer {
         if (currentObject instanceof Sphere) {
             //normalvector - center of sphere
             double[] center = new double[]{0, 0, 0, 1}; // the center of the circle (a point)
+            center = Utility.multiplyMatrices(center, Utility.transpose(currentObject.getTransformation().getTransformation()));
             normalVector = Utility.subtract(normalVector, center);
         }
         normalVector = Utility.normalize(normalVector);
@@ -220,7 +219,6 @@ public class Renderer {
             }
 
             // continue onto diffuse and specular
-
             double[] s;
             if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we know we have set as exit
                 s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), intersection.getExit().getCoords()));
@@ -252,10 +250,8 @@ public class Renderer {
 
                 if (mDoth > 0.0001) {
                     // angle between h and transposedNormalVector
-                    double angle = getAngle(normalVector, h);
-                    if (Double.isNaN(angle))
-                        getAngle(normalVector, h);
-                    double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(Math.cos(angle), 4));
+                    double angle = mDoth;
+                    double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(angle, 4));
 
                     // G will scale the strength of the specular component
                     // fraction of light that is not shadowed.
@@ -292,19 +288,6 @@ public class Renderer {
                 }
             }
         }
-
-        /*
-        TEXTURES
-         */
-
-        /*if(currentObject instanceof Plane) {
-            int jump = ((int)(hitpoint.getX()/start.getX()) + (int)(hitpoint.getY()/start.getY()) + (int)(hitpoint.getZ()/start.getZ())) % 2;
-
-            if (jump == 1)
-                for (int i = 0; i < rgb.length; i++) {
-                    rgb[i] *= 0;
-                }
-        }*/
 
         /*
             REFLECTION & TRANSPARENCY
@@ -383,7 +366,7 @@ public class Renderer {
     /**
      * Get angle between two vectors (in Radians)
      *
-     * @param vectorOne: 1st vectot
+     * @param vectorOne: 1st vector
      * @param vectorTwo: 2nd vector
      * @return Double: angle in Radians
      */
