@@ -143,7 +143,7 @@ public class Utility {
     }
 
     public static double norm(double[] vector) {
-        return Math.sqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[2]*vector[2]);
+        return Math.sqrt(dot(vector, vector));
     }
 
     public static double[] normalize(double[] vector) {
