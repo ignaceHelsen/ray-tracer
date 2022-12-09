@@ -24,6 +24,9 @@ public class SDL {
 
         // TODO: material in SDL!
         Material ruby = new Material(new double[]{0.1745, 0.01175, 0.01175}, new double[]{0.61424, 0.04136, 0.04136}, new double[]{0.727811, 0.626959, 0.626959}, new double[]{1.762, 1.770, 1.778}, 0.2, new double[]{0.05, 5, 0.001}, 0.6);
+        Material perfectMirror = new Material(new double[]{0, 0, 0}, new double[]{0, 0, 0}, new double[]{1, 1, 1}, new double[]{1, 1, 1}, 0.2, new double[]{0.5, 0.499, 0.0001}, 1);
+        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812, 3.1812, 3.1812}, 0.2, new double[]{0.4, 0.099, 0.0001}, 0.6);
+        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{0.4, 0.299, 0.0001}, 0.3);
 
         BufferedReader reader = new BufferedReader(new FileReader(sourcePath));
 
@@ -32,10 +35,6 @@ public class SDL {
         Transformation scale = new Transformation();
         Transformation rotation = new Transformation();
         Texture texture = Texture.NONE;
-
-        Material perfectMirror = new Material(new double[]{0, 0, 0}, new double[]{0, 0, 0}, new double[]{1, 1, 1}, new double[]{1, 1, 1}, 0.2, new double[]{0.4, 0.599, 0.0001}, 1);
-        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812, 3.1812, 3.1812}, 0.2, new double[]{0.4, 0.599, 0.0001}, 0.6);
-        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{0.4, 0.599, 0.0001}, 0.6);
 
         while (reader.ready()) {
             String currentLine = reader.readLine();
@@ -49,12 +48,12 @@ public class SDL {
             if (instruction.equals("sphere")) {
                 object = new Sphere(ruby);
             } else if (instruction.equals("cube")) {
-                object = new Cube(ruby);
+                object = new Cube(chrome);
             } else if (instruction.equals("taperedcylinder")) {
                 // TODO: get ratio from SDL!
-                object = new TaperedCylinder(ruby, 0.99);
+                object = new TaperedCylinder(ruby, 0.95);
             } else if (instruction.equals("plane")) {
-                object = new Plane(chrome);
+                object = new Plane(gold);
             } else if (instruction.equals(instruction.toUpperCase())) {
                 // textures are always written in caps
                 texture = Texture.valueOf(instruction);

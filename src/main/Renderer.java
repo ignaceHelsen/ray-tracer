@@ -17,7 +17,7 @@ import java.util.Random;
 public class Renderer {
     private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
     private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 0; // TODO: move to SDL parameter
+    private final int MAXRECURSELEVEL = 1; // TODO: move to SDL parameter
     private final double DW = 0.1; // width lightbeam coming from source
 
     private final JFrame frame;
@@ -202,6 +202,8 @@ public class Renderer {
             TEXTURE
          */
         double[] textureRgb = getTexture(currentObject.getTexture(), hitpoint.getX(), hitpoint.getY(), hitpoint.getZ());
+        if (recurseLevel == 1)
+            def = 0;
         for (int i = 0; i < 3; i++) {
             rgb[i] *= textureRgb[i];
         }
@@ -216,7 +218,7 @@ public class Renderer {
 
             if (isInShadow(start, dir)) {
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] -= rgb[i] * 0.5 * LIGHTSOURCEFACTOR; // dim the scene a bit
+                    rgb[i] -= rgb[i] * LIGHTSOURCEFACTOR; // dim the scene a bit
                 }
                 continue;
             }
@@ -290,9 +292,6 @@ public class Renderer {
                 for (int i = 0; i < 3; i++) {
                     rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * phongSpecularRGB[i];
                 }
-
-                if(rgb[0]>=0.99&&rgb[1]>=0.99&&rgb[2]>=0.99)
-                    def = 1;
             }
         }
 
@@ -305,26 +304,28 @@ public class Renderer {
             System.out.println("Nan shading Found");
         }
 
+        // REFLECTION
         if (recurseLevel + 1 <= MAXRECURSELEVEL && currentObject.getMaterial().getShininess() >= 0.6) {
             // spawn ray from hitpoint and call getShade()
             double[] r = new double[4];
             Vector vectorNormalVector = new Vector(normalVector);
             double dirDotNormalvector = Utility.dot(ray.getDir(), vectorNormalVector);
+
             for (int i = 0; i < r.length; i++) {
                 r[i] = ray.getDir().getCoords()[i] - 2 * dirDotNormalvector * normalVector[i];
             }
 
-            Vector newDir = new Vector(r);
-            Ray newRay = new Ray(Utility.normalize(start), newDir);
+            Vector newDir = new Vector(Utility.normalize(r));
+            Ray reflection = new Ray(Utility.normalize(start), newDir);
 
-            Tuple<Object, Intersection> objectIntersection = getHit(newRay);
+            Tuple<Object, Intersection> objectIntersection = getHit(reflection);
 
             Object reflectedObjectHit = objectIntersection.getObject();
             Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
 
             if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
                 recurseLevel++;
-                double[] reflectedColors = getShading(newRay, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel);
+                double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel);
 
                 for (int i = 0; i < 3; i++)
                     rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
@@ -343,9 +344,9 @@ public class Renderer {
         if (texture == Texture.NONE) return new double[]{1, 1, 1};
 
         if (texture == Texture.CHECKERBOARD) {
-            boolean u = ((int) x / 40) % 2 == 0;
-            boolean v = ((int) y / 40) % 2 == 0;
-            boolean w = ((int) z / 40) % 2 == 0;
+            boolean u = ((int) (x * 0.25)) % 2 == 0;
+            boolean v = ((int) (y * 0.25)) % 2 == 0;
+            boolean w = ((int) (z * 0.25)) % 2 == 0;
 
             if (u ^ v ^ w)
                 if ((x < 0 && y > 0) || (x > 0 && y < 0)) return new double[]{0, 0, 0};

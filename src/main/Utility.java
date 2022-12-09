@@ -3,7 +3,7 @@ package main;
 public class Utility {
     // TODO: add checks on lenghts/sizes
     public static double dot(Vector v1, Vector v2) {
-        return v1.getX()*v2.getX() + v1.getY()*v2.getY() + v1.getZ()*v2.getZ();
+        return v1.getX() * v2.getX() + v1.getY() * v2.getY() + v1.getZ() * v2.getZ();
     }
 
     public static double dot(double[] v1, double[] v2) {
@@ -18,6 +18,7 @@ public class Utility {
 
     /**
      * Will element-wise mulitply two matrixes. This is not the mathematical matrix multiplication.
+     *
      * @param factor: factor
      * @param vector: vector to multiply
      * @return Element-wise multiplication
@@ -35,6 +36,7 @@ public class Utility {
 
     /**
      * Will element-wise mulitply two matrixes. This is not the mathematical matrix multiplication.
+     *
      * @param factor: factor
      * @param vector: vector to multiply
      * @return Element-wise multiplication
@@ -52,7 +54,8 @@ public class Utility {
 
     /**
      * Will element-wise mulitply two matrixes. This is not the mathematical matrix multiplication.
-     * @param input: matrix
+     *
+     * @param input:    matrix
      * @param multiply: matrix
      * @return Element-wise multiplication
      */
@@ -108,8 +111,8 @@ public class Utility {
     public static double[][] transpose(double[][] matrix) {
         double[][] transposed = new double[matrix.length][matrix[0].length];
 
-        for(int i = 0; i < matrix.length; i++) {
-            for(int j = 0; j < matrix[0].length; j++) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
                 transposed[i][j] = matrix[j][i];
             }
         }
@@ -139,7 +142,7 @@ public class Utility {
 
     public static double[] subtract(double[] vectorOne, double[] vectorTwo) {
         // same as vectorone + (-vectortwo)
-        return sum(vectorOne, new double[]{vectorTwo[0]*-1, vectorTwo[1]*-1, vectorTwo[2]*-1, vectorTwo[3]*-1});
+        return sum(vectorOne, new double[]{vectorTwo[0] * -1, vectorTwo[1] * -1, vectorTwo[2] * -1, vectorTwo[3] * -1});
     }
 
     public static double norm(double[] vector) {
