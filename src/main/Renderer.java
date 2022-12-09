@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class Renderer {
-    private final double LIGHTSOURCEFACTOR = 0.9; // or a bit of contrast
+    private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
     private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
     private final int MAXRECURSELEVEL = 0; // TODO: move to SDL parameter
-    private final double DW = 1; // width lightbeam coming from source
+    private final double DW = 0.1; // width lightbeam coming from source
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -151,8 +151,6 @@ public class Renderer {
     }
 
     private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, int recurseLevel) {
-        double[] previousRgb = rgb.clone();
-
         double[] ambient = currentObject.getMaterial().getAmbient();
         double[] diffuse = currentObject.getMaterial().getDiffuse(); // We don't use this one anymore
         double[] specular = currentObject.getMaterial().getSpecular();
@@ -164,7 +162,7 @@ public class Renderer {
 
         int def;
 
-        double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), Utility.transpose(currentObject.getTransformation().getTransformation()));
+        double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), currentObject.getTransformation().getTransformation());
         if (currentObject instanceof Sphere) {
             //normalvector - center of sphere
             double[] center = new double[]{0, 0, 0, 1}; // the center of the circle (a point)
@@ -224,80 +222,77 @@ public class Renderer {
             }
 
             // continue onto diffuse and specular
-            //double[] lightSourceLocation = Arrays.stream(lightsource.getKey().getCoords()).map(value -> value*-1).toArray();
-            //lightSourceLocation[3] = 1;
             double[] s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), hitpoint.getCoords()));
 
             double mDots = Utility.dot(s, normalVector);
             double cRefraction = mDots;
 
-            if(currentObject instanceof Plane)
-                def = 0;
-
-            if (mDots > 0.0001) {
+            if (mDots >= 0.0001) {
                 // hitpoint is pointed towards the light
 
-                /*
-                  DIFFUSE
-                */
                 double lambert = mDots;
                 for (int i = 0; i < 3; i++) {
                     rgb[i] += specular[i] * DW * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * LIGHTSOURCEFACTOR);
                 }
+            }
 
-                /*
-                SPECULAR
-                    */
-                // h: halfway vector (between incoming light and ray)
-                double[] h = Utility.normalize(Utility.sum(Utility.normalize(v), s));
+            /*
+            SPECULAR
+            */
 
-                // angle between h and m (normal vector)
-                double mDoth = Utility.dot(h, normalVector);
+            // h: halfway vector (between incoming light and ray)
+            double[] h = Utility.normalize(Utility.sum(v, s));
 
-                if (mDoth > 0.0001) {
-                    // angle between h and transposedNormalVector
-                    double angle = getAngle(normalVector, h);
-                    if(Double.isNaN(angle))
-                        def = 0;
+            // angle between h and m (normal vector)
+            double mDoth = Utility.dot(h, normalVector);
 
-                    double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(angle, 4));
+            if (mDoth >= 0.0001) {
+                // angle between h and normalVector
+                double angle = getAngle(normalVector, h);
+                if (Double.isNaN(angle))
+                    System.out.println("Nan found");
 
-                    // G will scale the strength of the specular component
-                    // fraction of light that is not shadowed.
-                    double gs = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, v)) / Utility.dot(h, s);
-                    // fraction of light that is not masked.
-                    double gm = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, s)) / Utility.dot(h, s);
-                    double g = Math.min(Math.min(1, gm), gs);
+                double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(angle, 4));
 
-                    // calculate the Fresnel coeff
-                    double angleOfIncidence = getAngle(s, normalVector);
+                // G will scale the strength of the specular component
+                // fraction of light that is not shadowed.
+                double gs = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, v)) / Utility.dot(h, s);
+                // fraction of light that is not masked.
+                double gm = (2 * Utility.dot(normalVector, h) * Utility.dot(normalVector, s)) / Utility.dot(h, s);
+                double g = Math.min(Math.min(1, gm), gs);
 
-                    if(Double.isNaN(angleOfIncidence))
-                        def = 0;
+                // calculate the Fresnel coeff
+                double angleOfIncidence = getAngle(s, normalVector);
 
-                    // gRefractionSquaredRGB = g² = η² + c² - 1
-                    double[] gRefractionSquaredRGB = new double[3];
-                    for (int i = 0; i < 3; i++) {
-                        gRefractionSquaredRGB[i] = Math.pow(currentObject.getMaterial().getRefractionIndex()[i], 2) + angleOfIncidence * angleOfIncidence - 1;
-                    }
+                if (Double.isNaN(angleOfIncidence))
+                    def = 0;
 
-                    double[] gRefraction = Arrays.stream(gRefractionSquaredRGB).map(Math::sqrt).toArray();
-
-                    // now we need the fresnel coeff at the angle non-zero
-                    double[] fresnelCoefficientAngleRGB = new double[3];
-                    for (int i = 0; i < 3; i++) {
-                        fresnelCoefficientAngleRGB[i] = 0.5 * (Math.pow(gRefraction[i] - cRefraction, 2) / Math.pow(gRefraction[i] + cRefraction, 2)) * (1 + Math.pow((cRefraction * (gRefraction[i] + cRefraction) - 1) / (cRefraction * (gRefraction[i] - cRefraction) + 1), 2));
-                    }
-
-                    double[] phongSpecularRGB = new double[3];
-                    for (int i = 0; i < 3; i++) {
-                        phongSpecularRGB[i] = (fresnelCoefficientAngleRGB[i] * d * g) / (Utility.dot(normalVector, v));
-                    }
-
-                    for (int i = 0; i < 3; i++) {
-                        rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * phongSpecularRGB[i];
-                    }
+                // gRefractionSquaredRGB = g² = η² + c² - 1
+                double[] gRefractionSquaredRGB = new double[3];
+                for (int i = 0; i < 3; i++) {
+                    gRefractionSquaredRGB[i] = Math.pow(currentObject.getMaterial().getRefractionIndex()[i], 2) + angleOfIncidence * angleOfIncidence - 1;
                 }
+
+                double[] gRefraction = Arrays.stream(gRefractionSquaredRGB).map(Math::sqrt).toArray();
+
+                // now we need the fresnel coeff at the angle non-zero
+                double[] fresnelCoefficientAngleRGB = new double[3];
+                for (int i = 0; i < 3; i++) {
+                    fresnelCoefficientAngleRGB[i] = 0.5 * (Math.pow(gRefraction[i] - cRefraction, 2) / Math.pow(gRefraction[i] + cRefraction, 2)) * (1 + Math.pow((cRefraction * (gRefraction[i] + cRefraction) - 1) / (cRefraction * (gRefraction[i] - cRefraction) + 1), 2));
+                }
+
+                double[] phongSpecularRGB = new double[3];
+                double mDotV = Utility.dot(normalVector, v);
+                for (int i = 0; i < 3; i++) {
+                    phongSpecularRGB[i] = (fresnelCoefficientAngleRGB[i] * d * g) / mDotV;
+                }
+
+                for (int i = 0; i < 3; i++) {
+                    rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * phongSpecularRGB[i];
+                }
+
+                if(rgb[0]>=0.99&&rgb[1]>=0.99&&rgb[2]>=0.99)
+                    def = 1;
             }
         }
 
@@ -306,7 +301,7 @@ public class Renderer {
         */
 
         if (Double.isNaN(rgb[0])) {
-            getShading(ray, currentObject, intersection, previousRgb, recurseLevel);
+            //getShading(ray, currentObject, intersection, previousRgb, recurseLevel);
             System.out.println("Nan shading Found");
         }
 

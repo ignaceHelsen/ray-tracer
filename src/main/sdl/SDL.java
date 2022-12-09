@@ -23,7 +23,7 @@ public class SDL {
         List<Object> objects = new ArrayList<>();
 
         // TODO: material in SDL!
-        Material ruby = new Material(new double[]{0.1745, 0.01175, 0.01175}, new double[]{0.61424, 0.04136, 0.04136}, new double[]{0.727811, 0.626959, 0.626959}, new double[]{1.762, 1.770, 1.778}, 0.2, new double[]{(double)1/3, (double)1/3, (double)1/3}, 0.6);
+        Material ruby = new Material(new double[]{0.1745, 0.01175, 0.01175}, new double[]{0.61424, 0.04136, 0.04136}, new double[]{0.727811, 0.626959, 0.626959}, new double[]{1.762, 1.770, 1.778}, 0.2, new double[]{0.05, 5, 0.001}, 0.6);
 
         BufferedReader reader = new BufferedReader(new FileReader(sourcePath));
 
@@ -33,17 +33,17 @@ public class SDL {
         Transformation rotation = new Transformation();
         Texture texture = Texture.NONE;
 
-        Material perfectMirror = new Material(new double[] {0, 0, 0}, new double[] {0, 0, 0}, new double[] {1, 1, 1}, new double[] {1, 1, 1}, 0.2, new double[] {(double)1/3, (double)1/3, (double)1/3}, 1);
-        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812, 3.1812, 3.1812}, 0.2, new double[]{(double)1/3, (double)1/3, (double)1/3}, 0.6);
-        Material gold = new Material(new double[]{0.54725, 0.4995, 0.3745}, new double[]{0.95164, 0.80648, 0.52648}, new double[]{0.928281, 0.855802, 0.666065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{(double)1/3, (double)1/3, (double)1/3}, 0.4);
+        Material perfectMirror = new Material(new double[]{0, 0, 0}, new double[]{0, 0, 0}, new double[]{1, 1, 1}, new double[]{1, 1, 1}, 0.2, new double[]{0.4, 0.599, 0.0001}, 1);
+        Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812, 3.1812, 3.1812}, 0.2, new double[]{0.4, 0.599, 0.0001}, 0.6);
+        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{0.4, 0.599, 0.0001}, 0.6);
 
         while (reader.ready()) {
             String currentLine = reader.readLine();
-            if(currentLine.equals("")) continue;
+            if (currentLine.equals("")) continue;
 
             String instruction = currentLine.trim();
 
-            // first check for object, than for transformation
+            // first check for object, then for transformation
 
             // currentline is an object
             if (instruction.equals("sphere")) {
@@ -76,7 +76,7 @@ public class SDL {
                 object.addTransformation(translation);
                 object.addTransformation(rotation);
                 object.setTexture(texture);
-                if(object instanceof Plane) {
+                if (object instanceof Plane) {
                     object.setMaterial(gold);
                 }
                 objects.add(object);

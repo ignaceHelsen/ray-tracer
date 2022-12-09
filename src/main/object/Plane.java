@@ -27,6 +27,6 @@ public class Plane extends Object {
 
         Vector collision = new Vector(x, y, z, 1);
 
-        return new Intersection(null, collision, -1, th, new double[]{0, 0, 1, 0});
+        return new Intersection(null, collision, -1, th, new double[]{0, 0, -1, 0});
     }
 }

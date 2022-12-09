@@ -1,2 +1,7 @@
+translate 0 300 0
 scale 300 300 300
 sphere
+
+translate 0 0 60
+CHECKERBOARD
+plane
