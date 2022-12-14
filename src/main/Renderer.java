@@ -218,7 +218,7 @@ public class Renderer {
 
             if (isInShadow(start, dir)) {
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] -= rgb[i] * LIGHTSOURCEFACTOR; // dim the scene a bit
+                    rgb[i] -= rgb[i] * 0.1 * LIGHTSOURCEFACTOR; // dim the scene a bit
                 }
                 continue;
             }
@@ -344,9 +344,9 @@ public class Renderer {
         if (texture == Texture.NONE) return new double[]{1, 1, 1};
 
         if (texture == Texture.CHECKERBOARD) {
-            boolean u = ((int) (x * 0.25)) % 2 == 0;
-            boolean v = ((int) (y * 0.25)) % 2 == 0;
-            boolean w = ((int) (z * 0.25)) % 2 == 0;
+            boolean u = ((int) (x * 0.125)) % 2 == 0;
+            boolean v = ((int) (y * 0.125)) % 2 == 0;
+            boolean w = ((int) (z * 0.125)) % 2 == 0;
 
             if (u ^ v ^ w)
                 if ((x < 0 && y > 0) || (x > 0 && y < 0)) return new double[]{0, 0, 0};
@@ -362,7 +362,7 @@ public class Renderer {
         Ray shadowFeeler = new Ray(start, dir);
         for (Object o : scene.getObjects()) { //shoot the ray and check if we got a hit with any object
             Intersection intersection = o.getFirstHitPoint(shadowFeeler);
-            if (intersection != null && intersection.getT1() >= 0.1 && intersection.getT2() >= 0.1) {
+            if (intersection != null && intersection.getT1() >= 0.0001 && intersection.getT2() >= 0.0001) {
                 return true;
             }
         }

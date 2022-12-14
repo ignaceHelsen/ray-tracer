@@ -22,26 +22,26 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(-100, 0, -20000, 1); // location
-        Vector lightsourceBlue = new Vector(500, 0, -1000, 1); // location
-        Vector lightsourceRed = new Vector(500, 0, -1000, 1); // location
+        Vector lightsourceWhite = new Vector(-1000, 0, -2000, 1); // location
+        Vector lightsourceBlue = new Vector(5000, -500, -1000, 1); // location
+        Vector lightsourceRed = new Vector(5000, 500, -1000, 1); // location
         Vector lightsourceOrange = new Vector(-1000, 1000, -100, 1); // location
-        Vector lightsourcePink = new Vector(310, 400, -200, 1); // location
+        Vector lightsourcePink = new Vector(0, 400, -200, 1); // location
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155});
         scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
         scene.addLightsource(lightsourceRed, new double[]{180, 0, 0});
-        /*scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
+        scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
         scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
-*/
+
 
        // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
         scene.setCamera(camera);
 
         try {
-            scene.addObjects(SDL.parse("sdlRow.sdl"));
+            scene.addObjects(SDL.parse("sdlAllObjects.sdl"));
         } catch (IOException e) {
             System.out.print("Problem reading sdl");
         }

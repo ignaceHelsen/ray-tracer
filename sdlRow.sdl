@@ -5,15 +5,3 @@ plane
 translate 0 -300 -100
 scale 100 100 100
 sphere
-
-translate 0 -100 -100
-scale 100 100 100
-sphere
-
-translate 0 100 -100
-scale 100 100 100
-sphere
-
-translate 0 300 -100
-scale 100 100 100
-sphere

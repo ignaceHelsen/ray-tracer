@@ -26,7 +26,7 @@ public class SDL {
         Material ruby = new Material(new double[]{0.1745, 0.01175, 0.01175}, new double[]{0.61424, 0.04136, 0.04136}, new double[]{0.727811, 0.626959, 0.626959}, new double[]{1.762, 1.770, 1.778}, 0.2, new double[]{0.05, 5, 0.001}, 0.6);
         Material perfectMirror = new Material(new double[]{0, 0, 0}, new double[]{0, 0, 0}, new double[]{1, 1, 1}, new double[]{1, 1, 1}, 0.2, new double[]{0.5, 0.499, 0.0001}, 1);
         Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812, 3.1812, 3.1812}, 0.2, new double[]{0.4, 0.099, 0.0001}, 0.6);
-        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.75164, 0.60648, 0.22648}, new double[]{0.628281, 0.555802, 0.366065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{0.4, 0.299, 0.0001}, 0.3);
+        Material gold = new Material(new double[]{0.24725, 0.1995, 0.0745}, new double[]{0.85164, 0.70648, 0.32648}, new double[]{0.628281, 0.555802, 0.366065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{0.3, 0.399, 0.001}, 0.6);
 
         BufferedReader reader = new BufferedReader(new FileReader(sourcePath));
 
