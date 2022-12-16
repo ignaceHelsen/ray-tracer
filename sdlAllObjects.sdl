@@ -1,29 +1,36 @@
 translate 0 0 60
+gold
 CHECKERBOARD
 plane
 
 translate 450 50 -50
-scale 300 300 3000
+scale 5 5 50
 rotate 45 0 0
+ruby
 taperedcylinder
 
 translate 200 -100 -50
 scale 50 50 50
+ruby
 sphere
 
 translate -800 -100 -400
 scale 500 500 500
+ruby
 sphere
 
 translate 300 220 -10
 scale 50 50 50
+ruby
 sphere
 
 translate 300 -200 20
 scale 50 50 50
+ruby
 sphere
 
 translate 120 200 -200
 scale 30 30 30
 rotate 12 30 54
+copper
 cube

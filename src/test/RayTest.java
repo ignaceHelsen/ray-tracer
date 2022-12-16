@@ -1,9 +1,6 @@
 package test;
 
-import main.Intersection;
-import main.Material;
-import main.Ray;
-import main.Vector;
+import main.*;
 import main.object.Object;
 import main.object.Plane;
 import main.object.Sphere;
@@ -16,7 +13,7 @@ import java.util.List;
 public class RayTest {
     @Test
     public void testShadow() {
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6);
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6, 0.5, 0.6249);
 
         Object plane = new Plane(emerald);
         plane.addTransformation(new Translation(0, 0, 100));
@@ -30,7 +27,7 @@ public class RayTest {
 
     @Test
     public void testSphere() {
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6);
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6, 0.5,0.6249);
 
         Object sphere = new Sphere(emerald);
 
@@ -74,7 +71,7 @@ public class RayTest {
 
     @Test
     public void testPlane() {
-        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6);
+        Material emerald = new Material(new double[]{0.0215, 0.1745, 0.0215}, new double[]{0.07568, 0.61424, 0.07568}, new double[]{0.633, 0.727811, 0.633}, new double[]{2.417, 2.417, 2.417}, 0.2, new double[]{0.2, 0.49, 0.49}, 0.6, 0.5,0.6249);
 
         Object plane = new Plane(emerald);
 
@@ -86,5 +83,34 @@ public class RayTest {
         }
 
         System.out.printf("%f %f %f\n", coords.getEnter().getX(), coords.getEnter().getY(), coords.getEnter().getZ());
+    }
+
+    @Test
+    public void testRefraction() {
+        Material ruby = new Material(new double[]{0.1745, 0.01175, 0.01175}, new double[]{0.61424, 0.04136, 0.04136}, new double[]{0.727811, 0.626959, 0.626959}, new double[]{1.762, 1.770, 1.778}, 0.2, new double[]{0.05, 5, 0.001}, 0.6, 0.9, 0.6138);
+
+        double[] t = new double[4];
+        Vector vectorNormalVector = new Vector(0, 0, -1, 0);
+        Vector dir = new Vector(0, 0, 1, 0);
+        double dirDotNormalvector = Utility.dot(dir, vectorNormalVector);
+
+        double c1 = 299_792_458 * 0.9997; // previous object is air
+        double c2 = 299_792_458 * 0.9997;
+        double factor = c2 / c1;
+        double thetaOne = getAngle(dir.getCoords(), vectorNormalVector.getCoords());
+        double thetaTwo = Math.asin(Math.sin(thetaOne) * factor);
+
+        for (int i = 0; i < t.length; i++) {
+            t[i] = factor * dir.getCoords()[i] + (factor * dirDotNormalvector - Math.cos(thetaTwo)) * vectorNormalVector.getCoords()[i];
+        }
+
+        t = Utility.normalize(t);
+
+        System.out.println();
+    }
+
+    private double getAngle(double[] vectorOne, double[] vectorTwo) {
+        double cosine = Utility.dot(vectorOne, vectorTwo) / (Utility.norm(vectorOne) * Utility.norm(vectorTwo));
+        return Math.acos(cosine);
     }
 }

@@ -27,9 +27,9 @@ public class TaperedCylinder extends Object {
         double d = (this.ratio - 1) * ray.getDir().getZ();
         double f = 1 + (this.ratio - 1) * ray.getS().getZ();
 
-        double a = Math.pow(ray.getDir().getX(), 2) + Math.pow(ray.getDir().getY(), 2) - d * d;
+        double a = Math.pow(ray.getDir().getX(), 2) + Math.pow(ray.getDir().getY(), 2) - (d * d);
         double b = ray.getS().getX() * ray.getDir().getX() + ray.getS().getY() * ray.getDir().getY() - f * d;
-        double c = Math.pow(ray.getS().getX(), 2) + Math.pow(ray.getS().getY(), 2) * f * f;
+        double c = Math.pow(ray.getS().getX(), 2) + Math.pow(ray.getS().getY(), 2) - (f * f);
 
         double discrim = b * b - a * c;
         if (discrim < 0) return null;
@@ -46,7 +46,7 @@ public class TaperedCylinder extends Object {
         double z = ray.getS().getZ() + ray.getDir().getZ() * th[0];
 
         // if z-component lies between 0 and 1: hit
-        if (z > 1 || z < 0) return null;
+        if (z >= 1 || z <= 0) return null;
 
         double x = ray.getS().getX() + ray.getDir().getX() * th[0];
         double y = ray.getS().getY() + ray.getDir().getY() * th[0];

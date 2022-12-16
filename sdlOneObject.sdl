@@ -1,7 +1,9 @@
-translate 0 300 0
-scale 300 300 300
+translate 1700 0 -50
+scale 50 50 50
+perfectMirror
 sphere
 
-translate 0 0 60
+translate 0 0 1
+gold
 CHECKERBOARD
 plane

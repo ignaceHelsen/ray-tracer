@@ -21,6 +21,8 @@ public class Plane extends Object {
 
         double th = -(ray.getS().getZ() / ray.getDir().getZ());
 
+        if (th < 0) return null;
+
         double x = ray.getS().getX() + ray.getDir().getX() * th;
         double y = ray.getS().getY() + ray.getDir().getY() * th;
         double z = ray.getS().getZ() + ray.getDir().getZ() * th;

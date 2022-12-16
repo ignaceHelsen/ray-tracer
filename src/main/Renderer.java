@@ -87,7 +87,8 @@ public class Renderer {
                     double[] rgb = new double[3];
 
                     int recurseLevel = 0;
-                    getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel);
+                    double air = 299_792_458 * 0.9997;
+                    getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
 
                     // rgb is now a value between 0 and 1
                     rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
@@ -147,10 +148,23 @@ public class Renderer {
             }
         }
 
+        if (intersectionHit != null)
+            intersectionHit.setExit(new Vector(Utility.normalize(Utility.multiplyMatrices(intersectionHit.getExit().getCoords(), closestObject.getTransformation().getTransformation()))));
+
         return new Tuple<>(closestObject, intersectionHit);
     }
 
-    private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, int recurseLevel) {
+    /**
+     * Will calculate the shading of a ray hitting an object. Will recursively spawn rays for reflection and refraction. Will also take into account shadow.
+     * @param ray: the ray that hit an object.
+     * @param currentObject: the object that the ray hit;
+     * @param intersection: the intersection of the ray.
+     * @param rgb: the current rgb value.
+     * @param recurseLevel: the level of ray.
+     * @param previousObject: the speed of light in the previous object.
+     * @return: updated rgb value.
+     */
+    private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, int recurseLevel, double previousObject) {
         double[] ambient = currentObject.getMaterial().getAmbient();
         double[] diffuse = currentObject.getMaterial().getDiffuse(); // We don't use this one anymore
         double[] specular = currentObject.getMaterial().getSpecular();
@@ -160,7 +174,7 @@ public class Renderer {
 
         double mRoughness = currentObject.getMaterial().getRoughness();
 
-        int def;
+        int debug;
 
         double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), currentObject.getTransformation().getTransformation());
         if (currentObject instanceof Sphere) {
@@ -202,8 +216,11 @@ public class Renderer {
             TEXTURE
          */
         double[] textureRgb = getTexture(currentObject.getTexture(), hitpoint.getX(), hitpoint.getY(), hitpoint.getZ());
+        if (currentObject instanceof Plane) {
+            debug = 0;
+        }
         if (recurseLevel == 1)
-            def = 0;
+            debug = 0;
         for (int i = 0; i < 3; i++) {
             rgb[i] *= textureRgb[i];
         }
@@ -267,7 +284,7 @@ public class Renderer {
                 double angleOfIncidence = getAngle(s, normalVector);
 
                 if (Double.isNaN(angleOfIncidence))
-                    def = 0;
+                    debug = 0;
 
                 // gRefractionSquaredRGB = g² = η² + c² - 1
                 double[] gRefractionSquaredRGB = new double[3];
@@ -305,38 +322,68 @@ public class Renderer {
         }
 
         // REFLECTION
-        if (recurseLevel + 1 <= MAXRECURSELEVEL && currentObject.getMaterial().getShininess() >= 0.6) {
-            // spawn ray from hitpoint and call getShade()
-            double[] r = new double[4];
+        if (recurseLevel + 1 <= MAXRECURSELEVEL) {
             Vector vectorNormalVector = new Vector(normalVector);
             double dirDotNormalvector = Utility.dot(ray.getDir(), vectorNormalVector);
 
-            for (int i = 0; i < r.length; i++) {
-                r[i] = ray.getDir().getCoords()[i] - 2 * dirDotNormalvector * normalVector[i];
+            recurseLevel++;
+
+            if (currentObject.getMaterial().getShininess() >= 0.6) {
+                // spawn ray from hitpoint and call getShade()
+                double[] r = new double[4];
+
+                for (int i = 0; i < r.length; i++) {
+                    r[i] = ray.getDir().getCoords()[i] - 2 * dirDotNormalvector * normalVector[i];
+                }
+
+                Vector newDir = new Vector(Utility.normalize(r));
+                Ray reflection = new Ray(Utility.normalize(start), newDir);
+
+                Tuple<Object, Intersection> objectIntersection = getHit(reflection);
+
+                Object reflectedObjectHit = objectIntersection.getObject();
+                Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
+
+                if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
+                    double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
+
+                    for (int i = 0; i < 3; i++)
+                        rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
+                }
             }
 
-            Vector newDir = new Vector(Utility.normalize(r));
-            Ray reflection = new Ray(Utility.normalize(start), newDir);
+            /* REFRACTION */ // Inside the object (hit enter) and outside (hit exit)
+            /*if (currentObject.getMaterial().getTransparency() > 0.1) {
+                // spawn ray from hitpoint and call getShade()
+                double[] t = new double[4];
 
-            Tuple<Object, Intersection> objectIntersection = getHit(reflection);
+                double c1 = previousObject;
+                double c2 = currentObject.getMaterial().getSpeedOfLight();
+                double factor = c2 / c1;
+                double thetaOne = getAngle(ray.getDir().getCoords(), normalVector);
+                double thetaTwo = Math.asin(Math.sin(thetaOne) * factor);
 
-            Object reflectedObjectHit = objectIntersection.getObject();
-            Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
+                for (int i = 0; i < t.length; i++) {
+                    t[i] = factor * ray.getDir().getCoords()[i] + (factor * dirDotNormalvector - Math.cos(thetaTwo)) * normalVector[i];
+                }
 
-            if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
-                recurseLevel++;
-                double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel);
+                Vector newDir = new Vector(Utility.normalize(Utility.normalize(t)));
+                Ray refraction = new Ray(Utility.normalize(start), newDir);
 
-                for (int i = 0; i < 3; i++)
-                    rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
-            }
+                Tuple<Object, Intersection> objectIntersection = getHit(refraction);
 
-            /* TODO
-            if (currentObject.getMaterial().getTransparancy() >= 0.6) {
+                Object refractedObjectHit = objectIntersection.getObject();
+                Intersection refractedIntersectionHit = objectIntersection.getIntersection();
 
+                if (refractedObjectHit != null && refractedObjectHit != currentObject) {
+                    double[] reflectedColors = getShading(refraction, refractedObjectHit, refractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
-             } */
+                    for (int i = 0; i < 3; i++)
+                        rgb[i] += currentObject.getMaterial().getTransparency() * reflectedColors[i];
+                }
+            }*/
         }
+
         return rgb;
     }
 
@@ -344,9 +391,9 @@ public class Renderer {
         if (texture == Texture.NONE) return new double[]{1, 1, 1};
 
         if (texture == Texture.CHECKERBOARD) {
-            boolean u = ((int) (x * 0.125)) % 2 == 0;
-            boolean v = ((int) (y * 0.125)) % 2 == 0;
-            boolean w = ((int) (z * 0.125)) % 2 == 0;
+            boolean u = ((int) (x * 0.25)) % 2 == 0;
+            boolean v = ((int) (y * 0.25)) % 2 == 0;
+            boolean w = ((int) (z * 0.25)) % 2 == 0;
 
             if (u ^ v ^ w)
                 if ((x < 0 && y > 0) || (x > 0 && y < 0)) return new double[]{0, 0, 0};

@@ -1,7 +1,24 @@
 translate 0 0 60
 CHECKERBOARD
+ruby
 plane
 
 translate 0 -300 -100
 scale 100 100 100
+ruby
+sphere
+
+translate 0 -100 -100
+scale 100 100 100
+ruby
+sphere
+
+translate 0 100 -100
+scale 100 100 100
+ruby
+sphere
+
+translate 0 300 -100
+scale 100 100 100
+ruby
 sphere

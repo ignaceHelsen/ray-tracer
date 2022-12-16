@@ -1,0 +1,14 @@
+translate 450 0 -15
+scale 30 30 30
+perfectMirror
+sphere
+
+translate 450 0 -15
+scale 30 30 30
+ruby
+sphere
+
+translate 0 0 10
+CHECKERBOARD
+gold
+plane
