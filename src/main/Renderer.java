@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class Renderer {
     private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
-    private final double EPSILON = 0.1; // the difference that will be subtracted for shadowing
+    private final double EPSILON = 0.01; // the difference that will be subtracted for shadowing
     private final int MAXRECURSELEVEL = 1; // TODO: move to SDL parameter
     private final double DW = 0.1; // width lightbeam coming from source
 
@@ -148,9 +148,6 @@ public class Renderer {
             }
         }
 
-        /*if (intersectionHit != null)
-            intersectionHit.setExit(new Vector(Utility.normalize(Utility.multiplyMatrices(intersectionHit.getExit().getCoords(), closestObject.getTransformation().getTransformation()))));
-*/
         return new Tuple<>(closestObject, intersectionHit);
     }
 
@@ -165,6 +162,8 @@ public class Renderer {
      * @return: updated rgb value.
      */
     private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, int recurseLevel, double previousObject) {
+        //double[] previousRgb = rgb.clone(); // debug purposes
+
         double[] ambient = currentObject.getMaterial().getAmbient();
         double[] diffuse = currentObject.getMaterial().getDiffuse(); // We don't use this one anymore
         double[] specular = currentObject.getMaterial().getSpecular();
@@ -185,6 +184,7 @@ public class Renderer {
         }
 
         normalVector = Utility.normalize(normalVector);
+        //normalVector[3] = 0;
 
         // the fresnel coeff is the fraction that is reflected and will be higher with higher refractionindices
 
@@ -202,6 +202,7 @@ public class Renderer {
             hitpoint = intersection.getExit();
         else
             hitpoint = intersection.getEnter();
+
         hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
 
         /*
@@ -216,11 +217,7 @@ public class Renderer {
             TEXTURE
          */
         double[] textureRgb = getTexture(currentObject.getTexture(), hitpoint.getX(), hitpoint.getY(), hitpoint.getZ());
-        if (currentObject instanceof Plane) {
-            debug = 0;
-        }
-        if (recurseLevel == 1)
-            debug = 0;
+
         for (int i = 0; i < 3; i++) {
             rgb[i] *= textureRgb[i];
         }
@@ -300,14 +297,17 @@ public class Renderer {
                     fresnelCoefficientAngleRGB[i] = 0.5 * (Math.pow(gRefraction[i] - cRefraction, 2) / Math.pow(gRefraction[i] + cRefraction, 2)) * (1 + Math.pow((cRefraction * (gRefraction[i] + cRefraction) - 1) / (cRefraction * (gRefraction[i] - cRefraction) + 1), 2));
                 }
 
-                double[] phongSpecularRGB = new double[3];
+                double[] torranceSpecularRGB = new double[3];
                 double mDotV = Utility.dot(normalVector, v);
+                if (mDotV == 0)
+                    mDotV = 0.0001; // for when we are looking straight to an object. (when normalvector dot v == 0) we can't use this in the denominator up next.
+
                 for (int i = 0; i < 3; i++) {
-                    phongSpecularRGB[i] = (fresnelCoefficientAngleRGB[i] * d * g) / mDotV;
+                    torranceSpecularRGB[i] = (fresnelCoefficientAngleRGB[i] * d * g) / mDotV;
                 }
 
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * phongSpecularRGB[i];
+                    rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * torranceSpecularRGB[i];
                 }
             }
         }
@@ -317,7 +317,7 @@ public class Renderer {
         */
 
         if (Double.isNaN(rgb[0])) {
-            //getShading(ray, currentObject, intersection, previousRgb, recurseLevel);
+            //getShading(ray, currentObject, intersection, previousRgb, recurseLevel, previousObject);
             System.out.println("Nan shading Found");
         }
 
@@ -348,7 +348,7 @@ public class Renderer {
                     double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
                     for (int i = 0; i < 3; i++)
-                        rgb[i] += currentObject.getMaterial().getShininess() * reflectedColors[i];
+                        rgb[i] += (float)(1/recurseLevel) * currentObject.getMaterial().getShininess() * reflectedColors[i];
                 }
             }
 

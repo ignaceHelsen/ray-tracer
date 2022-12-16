@@ -1,6 +1,8 @@
 package main.object;
 
-public class Tuple<Object, Intersection> {
+import main.Intersection;
+
+public class Tuple<I, T> {
     private main.object.Object object;
     private Intersection intersection;
 
