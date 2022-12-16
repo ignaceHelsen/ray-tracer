@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         final double SCREEN_WIDTH = 1920;
         final double SCREEN_HEIGHT = 1080;
-        final double FOCALLENGTH = 1920;
+        final double FOCALLENGTH = 500;
         final double CMAX = 1920;
         final double RMAX = 1080;
 
@@ -40,7 +40,7 @@ public class Main {
         scene.setCamera(camera);
 
         try {
-            scene.addObjects(SDL.parse("sdlOneObject.sdl"));
+            scene.addObjects(SDL.parse("sdlAllObjects.sdl"));
         } catch (IOException e) {
             System.out.println("Problem reading sdl");
         }

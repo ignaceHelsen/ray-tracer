@@ -148,9 +148,9 @@ public class Renderer {
             }
         }
 
-        if (intersectionHit != null)
+        /*if (intersectionHit != null)
             intersectionHit.setExit(new Vector(Utility.normalize(Utility.multiplyMatrices(intersectionHit.getExit().getCoords(), closestObject.getTransformation().getTransformation()))));
-
+*/
         return new Tuple<>(closestObject, intersectionHit);
     }
 
@@ -226,7 +226,7 @@ public class Renderer {
         }
 
         // shadows
-        Vector start = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, ray.getDir()));
+        Vector start = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, new Vector(normalVector)));
 
         // for each lightsource
         for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
