@@ -1,0 +1,8 @@
+translate 1910 0 -1
+perfectMirror
+sphere
+
+translate 0 0 15
+gold
+CHECKERBOARD
+plane

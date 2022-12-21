@@ -15,7 +15,7 @@ scale 50 50 50
 ruby
 sphere
 
-translate -800 -100 -400
+translate -800 0 -400
 scale 500 500 500
 ruby
 sphere

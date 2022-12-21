@@ -77,8 +77,7 @@ public class SDL {
                         rotation = new Rotation().rotateX(coords[0]).rotateY(coords[1]).rotateZ(coords[2]);
                     }
                 } catch(Exception e) {
-                    // probably the ratio of a taperedcylinder
-                    ratio = Double.parseDouble(instruction);
+                    System.out.println("No coords found on line: " + instruction);
                 }
             }
 
@@ -111,15 +110,15 @@ public class SDL {
         System.out.println(currentLine);
         int indexOfFirstSpace = currentLine.indexOf(" ");
         String textWithoutTransformationWord = currentLine.substring(indexOfFirstSpace);
-        int x = Integer.parseInt(new Scanner(textWithoutTransformationWord).next());
+        double x = Double.parseDouble(new Scanner(textWithoutTransformationWord).next());
 
         String nextPart = currentLine.substring(indexOfFirstSpace).trim();
         // TODO: error when scaling with only one number (when scaling in all directions so we only pass one number in the sd) (: 30 instead of 30 30 30)
         String textStartingWithY = nextPart.substring(nextPart.indexOf(" ")).trim();
-        int y = new Scanner(textStartingWithY).nextInt();
+        double y = new Scanner(textStartingWithY).nextDouble();
 
         String textStartingWithZ = textStartingWithY.substring(textStartingWithY.indexOf(" ")).trim();
-        int z = new Scanner(textStartingWithZ).nextInt();
+        double z = Double.parseDouble(textStartingWithZ);
 
         return new double[]{x, y, z};
     }
