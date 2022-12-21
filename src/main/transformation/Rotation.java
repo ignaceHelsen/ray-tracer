@@ -1,8 +1,5 @@
 package main.transformation;
 
-import main.Utility;
-import main.Vector;
-
 public class Rotation extends Transformation {
     public Rotation() {
         super();
@@ -17,14 +14,16 @@ public class Rotation extends Transformation {
                                 {0, Math.sin(angle), Math.cos(angle), 0},
                                 {0, 0, 0, 1}};
 
-        setTransformation(Utility.multiplyMatrices(rotation, getTransformation()));
+
+        addTransformation(rotation);
 
         // inverse
         double[][] inverseRotation = { {1, 0, 0, 0},
                                         {0, Math.cos(angle), Math.sin(angle), 0},
                                         {0, -Math.sin(angle), Math.cos(angle), 0},
                                         {0, 0, 0, 1}};
-        setInverseTransformation(Utility.multiplyMatrices(getInverseTransformation(), inverseRotation));
+
+        addInverseTransformation(inverseRotation);
 
         return this;
     }
@@ -39,7 +38,7 @@ public class Rotation extends Transformation {
                                 {-Math.sin(angle), 0, Math.cos(angle), 0},
                                 {0, 0, 0, 1}};
 
-        setTransformation(Utility.multiplyMatrices(rotation, getTransformation()));
+        addTransformation(rotation);
 
         // inverse
         double[][] inverseRotation = {  {Math.cos(angle), 0, -Math.sin(angle), 0},
@@ -47,7 +46,7 @@ public class Rotation extends Transformation {
                                         {Math.sin(angle), 0, Math.cos(angle), 0},
                                         {0, 0, 0, 1}};
 
-        setInverseTransformation(Utility.multiplyMatrices(getInverseTransformation(), inverseRotation));
+        addInverseTransformation(inverseRotation);
 
         return this;
     }
@@ -62,15 +61,15 @@ public class Rotation extends Transformation {
                                 {0, 0, 1, 0},
                                 {0, 0, 0, 1}};
 
-        setTransformation(Utility.multiplyMatrices(rotation, getTransformation()));
+        addTransformation(rotation);
 
         // inverse
-        double[][] inverseRotation = {  {Math.cos(angle), 0, Math.sin(angle), 0},
-                                        {0, 1, 0, 0},
-                                        {-Math.sin(angle), 0, Math.cos(angle), 0},
-                                        {0, 0, 0, 1}};
+        double[][] inverseRotation = {{Math.cos(angle), Math.sin(angle), 0, 0},
+                                    {-Math.sin(angle), Math.cos(angle), 0, 0},
+                                    {0, 0, 1, 0},
+                                    {0, 0, 0, 1}};
 
-        setInverseTransformation(Utility.multiplyMatrices(getInverseTransformation(), inverseRotation));
+        addInverseTransformation(inverseRotation);
 
         return this;
     }

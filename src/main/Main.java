@@ -40,7 +40,7 @@ public class Main {
         scene.setCamera(camera);
 
         try {
-            scene.addObjects(SDL.parse("scenes/sdlOneObject.sdl"));
+            scene.addObjects(SDL.parse("scenes/sdlAllObjects.sdl"));
         } catch (IOException e) {
             System.out.println("Problem reading sdl");
         }

@@ -44,7 +44,7 @@ public class SDL {
 
         while (reader.ready()) {
             String currentLine = reader.readLine();
-            if (currentLine.equals("")) continue;
+            if (currentLine.equals("") || currentLine.startsWith("#")) continue;
 
             String instruction = currentLine.trim().toLowerCase();
 
@@ -76,7 +76,8 @@ public class SDL {
                     } else if (instruction.startsWith("rotate")) {
                         rotation = new Rotation().rotateX(coords[0]).rotateY(coords[1]).rotateZ(coords[2]);
                     }
-                } catch(Exception e) {
+
+                } catch (Exception e) {
                     // probably the ratio of a taperedcylinder
                     ratio = Double.parseDouble(instruction);
                 }
@@ -84,10 +85,10 @@ public class SDL {
 
             if (object != null) {
                 object.addTransformation(scale);
+                object.addTransformation(rotation);
                 if (object instanceof TaperedCylinder)
                     ((TaperedCylinder) object).setRatio(ratio);
                 object.addTransformation(translation);
-                object.addTransformation(rotation);
                 object.setTexture(texture);
                 object.setMaterial(material);
                 objects.add(object);
@@ -111,12 +112,12 @@ public class SDL {
         System.out.println(currentLine);
         int indexOfFirstSpace = currentLine.indexOf(" ");
         String textWithoutTransformationWord = currentLine.substring(indexOfFirstSpace);
-        double x = Double.parseDouble(new Scanner(textWithoutTransformationWord).next());
+        double x = Double.parseDouble(new Scanner(textWithoutTransformationWord).useLocale(Locale.US).next());
 
         String nextPart = currentLine.substring(indexOfFirstSpace).trim();
         // TODO: error when scaling with only one number (when scaling in all directions so we only pass one number in the sd) (: 30 instead of 30 30 30)
         String textStartingWithY = nextPart.substring(nextPart.indexOf(" ")).trim();
-        double y = new Scanner(textStartingWithY).nextDouble();
+        double y = new Scanner(textStartingWithY).useLocale(Locale.US).nextDouble();
 
         String textStartingWithZ = textStartingWithY.substring(textStartingWithY.indexOf(" ")).trim();
         double z = Double.parseDouble(textStartingWithZ);

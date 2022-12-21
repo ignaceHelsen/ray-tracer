@@ -1,10 +1,10 @@
-translate 1800 0 -10
+translate 1800 0 -30
 scale 10 10 10
-rotate 0 45 0
-perfectMirror
+rotate 45 45 0
+ruby
 cube
 
-translate 0 0 2
+translate 0 0 20
 gold
 CHECKERBOARD
 plane

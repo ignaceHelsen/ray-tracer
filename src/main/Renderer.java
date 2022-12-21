@@ -388,9 +388,9 @@ public class Renderer {
 
     private double[] getTexture(Texture texture, double x, double y, double z) {
         if (texture == Texture.CHECKERBOARD) {
-            boolean u = ((int) (x * 0.125)) % 2 == 0;
-            boolean v = ((int) (y * 0.125)) % 2 == 0;
-            boolean w = ((int) (z * 0.125)) % 2 == 0;
+            boolean u = ((int) (x * 0.0125)) % 2 == 0;
+            boolean v = ((int) (y * 0.0125)) % 2 == 0;
+            boolean w = ((int) (z * 0.0125)) % 2 == 0;
 
             if (u ^ v ^ w) {
                 if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
