@@ -77,7 +77,8 @@ public class SDL {
                         rotation = new Rotation().rotateX(coords[0]).rotateY(coords[1]).rotateZ(coords[2]);
                     }
                 } catch(Exception e) {
-                    System.out.println("No coords found on line: " + instruction);
+                    // probably the ratio of a taperedcylinder
+                    ratio = Double.parseDouble(instruction);
                 }
             }
 
