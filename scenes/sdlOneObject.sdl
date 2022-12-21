@@ -1,0 +1,10 @@
+translate 1800 0 -10
+scale 10 10 10
+rotate 0 45 0
+perfectMirror
+cube
+
+translate 0 0 2
+gold
+CHECKERBOARD
+plane

@@ -7,6 +7,7 @@ translate 450 50 -50
 scale 5 5 50
 rotate 45 0 0
 ruby
+0
 taperedcylinder
 
 translate 200 -100 -50

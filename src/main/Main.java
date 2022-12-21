@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         final double SCREEN_WIDTH = 1920;
         final double SCREEN_HEIGHT = 1080;
-        final double FOCALLENGTH = 500;
+        final double FOCALLENGTH = 1920;
         final double CMAX = 1920;
         final double RMAX = 1080;
 
@@ -30,17 +30,17 @@ public class Main {
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155});
-        /*scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
+        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
         scene.addLightsource(lightsourceRed, new double[]{180, 0, 0});
         scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
         //scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
-*/
+
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
         scene.setCamera(camera);
 
         try {
-            scene.addObjects(SDL.parse("sdlAllObjects.sdl"));
+            scene.addObjects(SDL.parse("scenes/sdlOneObject.sdl"));
         } catch (IOException e) {
             System.out.println("Problem reading sdl");
         }

@@ -8,10 +8,14 @@ import main.Vector;
 import java.util.Arrays;
 
 public class TaperedCylinder extends Object {
-    private final double ratio; // closer to 1: cylinder, closer to 0: cone
+    private double ratio; // closer to 1: cylinder, closer to 0: cone
 
     public TaperedCylinder(Material material, double ratio) {
         super(material);
+        this.ratio = ratio;
+    }
+
+    public void setRatio(double ratio) {
         this.ratio = ratio;
     }
 

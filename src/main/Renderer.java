@@ -156,11 +156,12 @@ public class Renderer {
 
     /**
      * Will calculate the shading of a ray hitting an object. Will recursively spawn rays for reflection and refraction. Will also take into account shadow.
-     * @param ray: the ray that hit an object.
-     * @param currentObject: the object that the ray hit;
-     * @param intersection: the intersection of the ray.
-     * @param rgb: the current rgb value.
-     * @param recurseLevel: the level of ray.
+     *
+     * @param ray:            the ray that hit an object.
+     * @param currentObject:  the object that the ray hit;
+     * @param intersection:   the intersection of the ray.
+     * @param rgb:            the current rgb value.
+     * @param recurseLevel:   the level of ray.
      * @param previousObject: the speed of light in the previous object.
      * @return: updated rgb value.
      */
@@ -176,6 +177,13 @@ public class Renderer {
 
         int debug;
 
+        //re-transform the hitpoint
+        Vector hitpoint;
+        if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit
+            hitpoint = intersection.getExit();
+        else
+            hitpoint = intersection.getEnter();
+
         double[] normalVector = Utility.multiplyMatrices(intersection.getNormalVector(), currentObject.getTransformation().getTransformation());
         if (currentObject instanceof Sphere) {
             //normalvector - center of sphere
@@ -183,8 +191,9 @@ public class Renderer {
             center = Utility.multiplyMatrices(center, Utility.transpose(currentObject.getTransformation().getTransformation())); // will always remain 0 0 0 1
             normalVector = Utility.subtract(normalVector, center);
         }
-
         normalVector = Utility.normalize(normalVector);
+
+        hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
 
         // the fresnel coeff is the fraction that is reflected and will be higher with higher refractionindices
 
@@ -195,14 +204,6 @@ public class Renderer {
         for (int i = 0; i < 3; i++) {
             fresnelCoefficient0RGB[i] = Math.pow((currentObject.getMaterial().getRefractionIndex()[i] - 1), 2) / Math.pow((currentObject.getMaterial().getRefractionIndex()[i] + 1), 2);
         }
-
-        //re-transform the hitpoint
-        Vector hitpoint;
-        if (intersection.getEnter() == null) // tangent hit or only exit hit ==> only one hitpoint which we have set as exit
-            hitpoint = intersection.getExit();
-        else
-            hitpoint = intersection.getEnter();
-        hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
 
         /*
           AMBIENT
@@ -215,12 +216,8 @@ public class Renderer {
         /*
             TEXTURE
          */
+
         double[] textureRgb = getTexture(currentObject.getTexture(), hitpoint.getX(), hitpoint.getY(), hitpoint.getZ());
-        if (currentObject instanceof Plane) {
-            debug = 0;
-        }
-        if (recurseLevel == 1)
-            debug = 0;
         for (int i = 0; i < 3; i++) {
             rgb[i] *= textureRgb[i];
         }
@@ -388,18 +385,24 @@ public class Renderer {
     }
 
     private double[] getTexture(Texture texture, double x, double y, double z) {
-        if (texture == Texture.NONE) return new double[]{1, 1, 1};
-
         if (texture == Texture.CHECKERBOARD) {
-            boolean u = ((int) (x * 0.25)) % 2 == 0;
-            boolean v = ((int) (y * 0.25)) % 2 == 0;
-            boolean w = ((int) (z * 0.25)) % 2 == 0;
+            boolean u = ((int) (x * 0.125)) % 2 == 0;
+            boolean v = ((int) (y * 0.125)) % 2 == 0;
+            boolean w = ((int) (z * 0.125)) % 2 == 0;
 
-            if (u ^ v ^ w)
-                if ((x < 0 && y > 0) || (x > 0 && y < 0)) return new double[]{0, 0, 0};
-                else return new double[]{1, 1, 1};
-            else if ((x < 0 && y > 0) || (x > 0 && y < 0)) return new double[]{1, 1, 1};
-            else return new double[]{0, 0, 0};
+            if (u ^ v ^ w) {
+                if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
+                    return new double[]{0, 0, 0};
+                }
+                else {
+                    return new double[]{1, 1, 1};
+                }
+            } else if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
+                return new double[]{1, 1, 1};
+            }
+            else {
+                return new double[]{0, 0, 0};
+            }
         }
 
         return new double[]{1, 1, 1};
