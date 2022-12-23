@@ -329,14 +329,9 @@ public class Renderer {
 
             if (currentObject.getMaterial().getShininess() >= 0.6) {
                 // spawn ray from hitpoint and call getShade()
-                double[] r = new double[4];
+                Vector r = Utility.subtract(ray.getDir(), Utility.multiplyElementWise(2*dirDotNormalvector, vectorNormalVector));
 
-                for (int i = 0; i < r.length; i++) {
-                    r[i] = ray.getDir().getCoords()[i] - 2 * dirDotNormalvector * normalVector[i];
-                }
-
-                Vector newDir = new Vector(Utility.normalize(r));
-                Ray reflection = new Ray(Utility.normalize(start), newDir);
+                Ray reflection = new Ray(Utility.normalize(start), r);
 
                 Tuple<Object, Intersection> objectIntersection = getHit(reflection);
 
@@ -344,7 +339,7 @@ public class Renderer {
                 Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
 
                 if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
-                    double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
+                        double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
                     for (int i = 0; i < 3; i++)
                         rgb[i] += (float)(1/recurseLevel) * currentObject.getMaterial().getShininess() * reflectedColors[i];
@@ -388,9 +383,9 @@ public class Renderer {
 
     private double[] getTexture(Texture texture, double x, double y, double z) {
         if (texture == Texture.CHECKERBOARD) {
-            boolean u = ((int) (x * 0.0125)) % 2 == 0;
-            boolean v = ((int) (y * 0.0125)) % 2 == 0;
-            boolean w = ((int) (z * 0.0125)) % 2 == 0;
+            boolean u = ((int) (x * 0.125)) % 2 == 0;
+            boolean v = ((int) (y * 0.125)) % 2 == 0;
+            boolean w = ((int) (z * 0.125)) % 2 == 0;
 
             if (u ^ v ^ w) {
                 if ((x < 0 && y > 0) || (x > 0 && y < 0)) {

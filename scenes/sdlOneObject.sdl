@@ -1,7 +1,7 @@
-translate 1800 0 -30
+translate 1800 0 10
 scale 10 10 10
-rotate 45 45 0
-ruby
+rotate 0 45 0
+perfectmirror
 cube
 
 translate 0 0 20

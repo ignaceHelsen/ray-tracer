@@ -30,17 +30,17 @@ public class Main {
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155});
-        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
+       /* scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
         scene.addLightsource(lightsourceRed, new double[]{180, 0, 0});
         scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
         //scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
-
+*/
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
         scene.setCamera(camera);
 
         try {
-            scene.addObjects(SDL.parse("scenes/sdlAllObjects.sdl"));
+            scene.addObjects(SDL.parse("scenes/sdlOneObject.sdl"));
         } catch (IOException e) {
             System.out.println("Problem reading sdl");
         }

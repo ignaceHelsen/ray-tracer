@@ -12,7 +12,6 @@ taperedcylinder
 
 translate 1500 -100 -50
 scale 50 50 50
-rotate 45 45 45
 ruby
 sphere
 
