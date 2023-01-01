@@ -30,8 +30,8 @@ scale 50 50 50
 ruby
 sphere
 
-translate 1500 30 -100
+translate 1500 30 10
 scale 30 30 30
 rotate 45 45 45
-copper
+gold
 cube

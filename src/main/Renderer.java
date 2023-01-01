@@ -17,7 +17,7 @@ import java.util.Random;
 public class Renderer {
     private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
     private final double EPSILON = 0.01; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 1; // TODO: move to SDL parameter
+    private final int MAXRECURSELEVEL = 2; // TODO: move to SDL parameter
     private final double DW = 0.1; // width lightbeam coming from source
 
     private final JFrame frame;
@@ -189,7 +189,6 @@ public class Renderer {
             normalVector = Utility.subtract(normalVector, center);
         }
         normalVector = Utility.normalize(normalVector);
-        //normalVector[3] = 0;
 
         hitpoint = new Vector(Utility.multiplyMatrices(hitpoint.getCoords(), currentObject.getTransformation().getTransformation()));
 
@@ -231,7 +230,7 @@ public class Renderer {
 
             if (isInShadow(start, dir)) {
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] -= rgb[i] * 0.1 * LIGHTSOURCEFACTOR; // dim the scene a bit
+                    rgb[i] -= rgb[i] * 0.01 * LIGHTSOURCEFACTOR; // dim the scene a bit
                 }
                 continue;
             }
@@ -327,11 +326,11 @@ public class Renderer {
 
             recurseLevel++;
 
-            if (currentObject.getMaterial().getShininess() >= 0.6) {
+            if (currentObject.getMaterial().getShininess() >= 0.6 && !(currentObject instanceof Plane)) {
                 // spawn ray from hitpoint and call getShade()
-                Vector r = Utility.subtract(ray.getDir(), Utility.multiplyElementWise(2*dirDotNormalvector, vectorNormalVector));
+                Vector r = Utility.subtract(ray.getDir(), Utility.multiplyElementWise(2 * dirDotNormalvector, vectorNormalVector));
 
-                Ray reflection = new Ray(Utility.normalize(start), r);
+                Ray reflection = new Ray(start, r);
 
                 Tuple<Object, Intersection> objectIntersection = getHit(reflection);
 
@@ -339,10 +338,12 @@ public class Renderer {
                 Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
 
                 if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
-                        double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
+                    double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
                     for (int i = 0; i < 3; i++)
-                        rgb[i] += (float)(1/recurseLevel) * currentObject.getMaterial().getShininess() * reflectedColors[i];
+                        rgb[i] += (float) (1 / recurseLevel) * currentObject.getMaterial().getShininess() * reflectedColors[i];
+                } else {
+                    debug = 0;
                 }
             }
 
@@ -390,14 +391,12 @@ public class Renderer {
             if (u ^ v ^ w) {
                 if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
                     return new double[]{0, 0, 0};
-                }
-                else {
+                } else {
                     return new double[]{1, 1, 1};
                 }
             } else if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
                 return new double[]{1, 1, 1};
-            }
-            else {
+            } else {
                 return new double[]{0, 0, 0};
             }
         }

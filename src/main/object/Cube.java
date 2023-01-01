@@ -6,17 +6,17 @@ import main.Ray;
 import main.Vector;
 
 public class Cube extends Object {
-    private final int[][] normalVectors;
+    private final double[][] normalVectors;
 
     public Cube(Material material) {
         super(material);
-        this.normalVectors = new int[6][4];
-        normalVectors[0] = new int[]{0, 1, 0, 0};
-        normalVectors[1] = new int[]{0, -1, 0, 0};
-        normalVectors[2] = new int[]{1, 0, 0, 0};
-        normalVectors[3] = new int[]{-1, 0, 0, 0};
-        normalVectors[4] = new int[]{0, 0, 1, 0};
-        normalVectors[5] = new int[]{0, 0, -1, 0};
+        this.normalVectors = new double[6][4];
+        normalVectors[0] = new double[]{0, 0, -1, 0};
+        normalVectors[1] = new double[]{0, 0, 1, 0};
+        normalVectors[2] = new double[]{0, 1, 0, 0};
+        normalVectors[3] = new double[]{0, -1, 0, 0};
+        normalVectors[4] = new double[]{1, 0, 0, 0};
+        normalVectors[5] = new double[]{-1, 0, 0, 0};
     }
 
     @Override
@@ -97,6 +97,6 @@ public class Cube extends Object {
 
         Vector secondCollisionPoint = new Vector(xExit, yExit, zExit, 1);
 
-        return new Intersection(firstCollisionPoint, secondCollisionPoint, tIn, tOut, new double[]{normalVectors[inSurf][0], normalVectors[inSurf][1], normalVectors[inSurf][2], normalVectors[inSurf][3]});
+        return new Intersection(firstCollisionPoint, secondCollisionPoint, tIn, tOut, normalVectors[inSurf]);
     }
 }

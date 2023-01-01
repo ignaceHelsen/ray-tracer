@@ -130,6 +130,16 @@ public class Utility {
         return sum;
     }
 
+    public static Vector sum(Vector vectorOne, Vector vectorTwo) {
+        double[] sum = new double[vectorOne.getCoords().length];
+
+        for (int i = 0; i < vectorOne.getCoords().length; i++) {
+            sum[i] = vectorOne.getCoords()[i] + vectorTwo.getCoords()[i];
+        }
+
+        return new Vector(sum);
+    }
+
     public static Vector subtract(Vector vectorOne, Vector vectorTwo) {
         double[] result = new double[vectorOne.getCoords().length];
 
