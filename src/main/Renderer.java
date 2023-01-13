@@ -16,9 +16,10 @@ import java.util.Random;
 
 public class Renderer {
     private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
-    private final double EPSILON = 0.01; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 2; // TODO: move to SDL parameter
+    private final double EPSILON = 700; // the difference that will be subtracted for shadowing
+    private final int MAXRECURSELEVEL = 1; // TODO: move to SDL parameter
     private final double DW = 0.1; // width lightbeam coming from source
+    private final boolean shadowsEnabled = false;
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -228,11 +229,13 @@ public class Renderer {
             // check first for possible shadow spots
             Vector dir = new Vector(lightsource.getKey().getX() - hitpoint.getX(), lightsource.getKey().getY() - hitpoint.getY(), lightsource.getKey().getZ() - hitpoint.getZ(), 0);
 
-            if (isInShadow(start, dir)) {
-                for (int i = 0; i < 3; i++) {
-                    rgb[i] -= rgb[i] * 0.01 * LIGHTSOURCEFACTOR; // dim the scene a bit
+            if (shadowsEnabled) {
+                if (isInShadow(start, dir)) {
+                    for (int i = 0; i < 3; i++) {
+                        rgb[i] -= rgb[i] * 0.01 * LIGHTSOURCEFACTOR; // dim the scene a bit
+                    }
+                    continue;
                 }
-                continue;
             }
 
             // continue onto diffuse and specular
@@ -326,17 +329,21 @@ public class Renderer {
 
             recurseLevel++;
 
-            if (currentObject.getMaterial().getShininess() >= 0.6 && !(currentObject instanceof Plane)) {
+            if (currentObject.getMaterial().getShininess() >= 0.6) {
                 // spawn ray from hitpoint and call getShade()
                 Vector r = Utility.subtract(ray.getDir(), Utility.multiplyElementWise(2 * dirDotNormalvector, vectorNormalVector));
 
-                Ray reflection = new Ray(start, r);
+                r.setType(0);
+                Ray reflection = new Ray(start, Utility.normalize(r));
 
                 Tuple<Object, Intersection> objectIntersection = getHit(reflection);
 
                 Object reflectedObjectHit = objectIntersection.getObject();
                 Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
 
+                if (currentObject instanceof Sphere) {
+                    debug = 0;
+                }
                 if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
                     double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 

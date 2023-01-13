@@ -1,6 +1,6 @@
-translate 1800 0 0
-scale 10 10 10
-rotate 0 25 0
+translate 1750 0 -10
+scale 25 25 25
+rotate 45 45 45
 perfectmirror
 cube
 

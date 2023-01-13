@@ -20,7 +20,7 @@ public class Transformation {
     }
 
     public Transformation() {
-        // just creates the identity matrices
+        // Just creates the identity matrices
     }
 
     /**
@@ -47,16 +47,16 @@ public class Transformation {
         return transformation;
     }
 
+    public double[][] getInverseTransformation() {
+        return inverseTransformation;
+    }
+
     public void setTransformation(double[][] transformation) {
         this.transformation = transformation;
     }
 
     public void setInverseTransformation(double[][] transformation) {
         this.inverseTransformation = transformation;
-    }
-
-    public double[][] getInverseTransformation() {
-        return inverseTransformation;
     }
 
     public void addTransformation(double[][] transformation) {
