@@ -1,8 +1,7 @@
 translate 1750 0 -10
 scale 25 25 25
-rotate 45 45 45
 perfectmirror
-cube
+sphere
 
 translate 0 0 20
 gold

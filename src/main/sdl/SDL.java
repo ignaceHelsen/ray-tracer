@@ -85,10 +85,10 @@ public class SDL {
 
             if (object != null) {
                 object.addTransformation(scale);
+                object.addTransformation(translation);
                 object.addTransformation(rotation);
                 if (object instanceof TaperedCylinder)
                     ((TaperedCylinder) object).setRatio(ratio);
-                object.addTransformation(translation);
                 object.setTexture(texture);
                 object.setMaterial(material);
                 objects.add(object);

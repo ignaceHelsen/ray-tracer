@@ -16,10 +16,10 @@ import java.util.Random;
 
 public class Renderer {
     private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
-    private final double EPSILON = 700; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 1; // TODO: move to SDL parameter
+    private final double EPSILON = 0.01; // the difference that will be subtracted for shadowing
+    private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
     private final double DW = 0.1; // width lightbeam coming from source
-    private final boolean shadowsEnabled = false;
+    private final boolean shadowsEnabled = true;
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -222,7 +222,7 @@ public class Renderer {
         }
 
         // shadows
-        Vector start = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, new Vector(normalVector)));
+        Vector start = Utility.sum(hitpoint, Utility.multiplyElementWise(EPSILON, new Vector(normalVector)));
 
         // for each lightsource
         for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
@@ -281,9 +281,6 @@ public class Renderer {
                 // calculate the Fresnel coeff
                 double angleOfIncidence = getAngle(s, normalVector);
 
-                if (Double.isNaN(angleOfIncidence))
-                    debug = 0;
-
                 // gRefractionSquaredRGB = g² = η² + c² - 1
                 double[] gRefractionSquaredRGB = new double[3];
                 for (int i = 0; i < 3; i++) {
@@ -341,16 +338,11 @@ public class Renderer {
                 Object reflectedObjectHit = objectIntersection.getObject();
                 Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
 
-                if (currentObject instanceof Sphere) {
-                    debug = 0;
-                }
                 if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
                     double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
                     for (int i = 0; i < 3; i++)
                         rgb[i] += (float) (1 / recurseLevel) * currentObject.getMaterial().getShininess() * reflectedColors[i];
-                } else {
-                    debug = 0;
                 }
             }
 
