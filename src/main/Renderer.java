@@ -20,6 +20,8 @@ public class Renderer {
     private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
     private final double DW = 0.1; // width lightbeam coming from source
     private final boolean shadowsEnabled = true;
+    private final boolean reflection = true;
+    private final boolean refraction = false;
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -326,7 +328,7 @@ public class Renderer {
 
             recurseLevel++;
 
-            if (currentObject.getMaterial().getShininess() >= 0.6) {
+            if (currentObject.getMaterial().getShininess() >= 0.6 && reflection) {
                 // spawn ray from hitpoint and call getShade()
                 Vector r = Utility.subtract(ray.getDir(), Utility.multiplyElementWise(2 * dirDotNormalvector, vectorNormalVector));
 
@@ -347,7 +349,7 @@ public class Renderer {
             }
 
             /* REFRACTION */ // Inside the object (hit enter) and outside (hit exit)
-            /*if (currentObject.getMaterial().getTransparency() > 0.1) {
+            if (currentObject.getMaterial().getTransparency() > 0.1 && refraction) {
                 // spawn ray from hitpoint and call getShade()
                 double[] t = new double[4];
 
@@ -375,7 +377,7 @@ public class Renderer {
                     for (int i = 0; i < 3; i++)
                         rgb[i] += currentObject.getMaterial().getTransparency() * reflectedColors[i];
                 }
-            }*/
+            }
         }
 
         return rgb;
@@ -383,9 +385,9 @@ public class Renderer {
 
     private double[] getTexture(Texture texture, double x, double y, double z) {
         if (texture == Texture.CHECKERBOARD) {
-            boolean u = ((int) (x * 0.125)) % 2 == 0;
-            boolean v = ((int) (y * 0.125)) % 2 == 0;
-            boolean w = ((int) (z * 0.125)) % 2 == 0;
+            boolean u = ((int) (x * 0.0125)) % 2 == 0;
+            boolean v = ((int) (y * 0.0125)) % 2 == 0;
+            boolean w = ((int) (z * 0.0125)) % 2 == 0;
 
             if (u ^ v ^ w) {
                 if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
