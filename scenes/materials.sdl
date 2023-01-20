@@ -1,0 +1,58 @@
+ruby 
+ambient 75 0.01175 1.01175
+diffuse 75.81424 0.04136 1.04136
+specular 0.827811 0.626959 0.626959
+refraction 1.762 1.770 1.778
+roughness 0.2
+kdistribution 0.05 5 0.001
+shininess 0.6
+transparency 0.6
+lightspeed 0.2222
+
+
+mirror
+ambient 0 0 0
+diffuse 0 0 0
+specular 1 1 1
+refraction 1 1 1
+roughness 0.2
+kdistribution 0.5 0.499 0.0001
+shininess 0.8
+transparency 1
+lightspeed 0.5220
+
+
+chrome
+ambient 0.25 0.25 0.25
+diffuse 0.4 0.4 0.4
+specular 3.1812 3.1812 3.1812
+refraction 3.1812 3.1812 3.1812
+roughness 0.2
+kdistribution 0.4 0.099 0.0001
+shininess 0.6
+transparency 0
+lightspeed 0
+
+
+gold
+ambient 0.24725 0.1995 0.0745
+diffuse 0.85164 0.70648 0.32648
+specular 0.628281 0.555802 0.366065
+refraction 361.6335984065703 30.224979299093643 4.429831839913978
+roughness 0.2
+kdistribution 0.3 0.399 0.001
+shininess 0.6
+transparency 0
+lightspeed 0
+
+
+copper
+ambient 0.19125 0.0735 0.0225
+diffuse 0.7038 0.27048 0.0828
+specular 0.256777 0.137622 0.086014
+refraction 14.256386611013376 5.666666666666666 1.8910954699413236
+roughness 0.2
+kdistribution 0.6 0.3 0.1
+shininess 0.1
+transparency 0
+lightspeed 0

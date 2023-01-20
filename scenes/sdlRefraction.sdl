@@ -1,0 +1,14 @@
+translate 1750 0 0
+scale 10 25 25
+mirror
+cube
+
+translate 1000 0 -10
+scale 25 25 25
+ruby
+sphere
+
+translate 0 0 20
+gold
+CHECKERBOARD
+plane

@@ -20,12 +20,10 @@ public abstract class Object {
 
         // NORMAL transformation
         if (this.transformation.getTransformation() == null) this.transformation.setTransformation(transformation.getTransformation());
-        // A x B
         else this.transformation.setTransformation(Utility.multiplyMatrices(transformation.getTransformation(), this.transformation.getTransformation()));
 
         // INVERSE transformation
         if (this.transformation.getInverseTransformation() == null) this.transformation.setInverseTransformation(transformation.getInverseTransformation());
-        // B x A
         else this.transformation.setInverseTransformation(Utility.multiplyMatrices(this.transformation.getInverseTransformation(), transformation.getInverseTransformation()));
     }
 

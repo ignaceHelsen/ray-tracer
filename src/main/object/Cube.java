@@ -11,13 +11,12 @@ public class Cube extends Object {
     public Cube(Material material) {
         super(material);
         this.normalVectors = new double[6][4];
-        normalVectors[0] = new double[]{0, 1, 0, 0}; // top
-        normalVectors[1] = new double[]{0, -1, 0, 0}; // bottom
-        normalVectors[2] = new double[]{1, 0, 0, 0}; // right
-        normalVectors[3] = new double[]{-1, 0, 0, 0}; // left
-        normalVectors[4] = new double[]{0, 0, 1, 0}; // front
-        normalVectors[5] = new double[]{0, 0, -1, 0}; // back
-
+        normalVectors[0] = new double[]{0, 1, 0, 0}; // right
+        normalVectors[1] = new double[]{0, -1, 0, 0}; // left
+        normalVectors[2] = new double[]{1, 0, 0, 0}; // bottom
+        normalVectors[3] = new double[]{-1, 0, 0, 0}; // top
+        normalVectors[4] = new double[]{0, 1, 0, 0}; // front
+        normalVectors[5] = new double[]{0, -1, 0, 0}; // back
 
         /*normalVectors[0] = new double[]{0, 0, -1, 0}; // top
         normalVectors[1] = new double[]{0, 0, 1, 0}; // bottom
@@ -39,6 +38,9 @@ public class Cube extends Object {
         double tHit, numer, denom;
         double tIn = -10000, tOut = 10000;
         int inSurf = 0, outSurf = 0; // the surface which is hit
+
+        Vector firstCollisionPoint = null;
+        Vector secondCollisionPoint = null;
 
         for (int i = 0; i < 6; i++) {
             switch (i) {
@@ -88,22 +90,28 @@ public class Cube extends Object {
                     }
                 }
             }
-            if (tIn >= tOut) return null;
+            if (tIn >= tOut)
+                return null;
         }
 
-        if (tIn < 0.00001) return null;
+        if (tOut < 0.00001) return null;
 
-        double xEnter = ray.getS().getX() + ray.getDir().getX() * tIn;
-        double yEnter = ray.getS().getY() + ray.getDir().getY() * tIn;
-        double zEnter = ray.getS().getZ() + ray.getDir().getZ() * tIn;
+        if (tOut > 0.00001) {
+            // only an exit hit, so the ray started from inside the cube
+            double xExit = ray.getS().getX() + ray.getDir().getX() * tOut;
+            double yExit = ray.getS().getY() + ray.getDir().getY() * tOut;
+            double zExit = ray.getS().getZ() + ray.getDir().getZ() * tOut;
 
-        Vector firstCollisionPoint = new Vector(xEnter, yEnter, zEnter, 1);
+            secondCollisionPoint = new Vector(xExit, yExit, zExit, 1);
+        }
 
-        double xExit = ray.getS().getX() + ray.getDir().getX() * tOut;
-        double yExit = ray.getS().getY() + ray.getDir().getY() * tOut;
-        double zExit = ray.getS().getZ() + ray.getDir().getZ() * tOut;
+        if (tIn > 0.00001) {
+            double xEnter = ray.getS().getX() + ray.getDir().getX() * tIn;
+            double yEnter = ray.getS().getY() + ray.getDir().getY() * tIn;
+            double zEnter = ray.getS().getZ() + ray.getDir().getZ() * tIn;
 
-        Vector secondCollisionPoint = new Vector(xExit, yExit, zExit, 1);
+            firstCollisionPoint = new Vector(xEnter, yEnter, zEnter, 1);
+        }
 
         return new Intersection(firstCollisionPoint, secondCollisionPoint, tIn, tOut, normalVectors[inSurf]);
     }

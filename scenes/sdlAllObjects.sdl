@@ -3,13 +3,6 @@ gold
 CHECKERBOARD
 plane
 
-translate 1770 50 -10
-scale 5 5 50
-rotate -45 0 0
-ruby
-0
-taperedcylinder
-
 translate 1500 -100 -50
 scale 50 50 50
 ruby
@@ -17,7 +10,8 @@ sphere
 
 translate 120 0 -250
 scale 300 300 300
-ruby
+rotate 45 45 45
+chrome
 sphere
 
 translate 1500 220 -10
@@ -30,7 +24,7 @@ scale 50 50 50
 ruby
 sphere
 
-translate 1500 30 10
+translate 1500 60 -50
 scale 30 30 30
 rotate 45 45 45
 gold

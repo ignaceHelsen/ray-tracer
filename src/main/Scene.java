@@ -2,19 +2,20 @@ package main;
 
 import main.object.Object;
 
-import java.awt.*;
-import java.awt.image.ColorModel;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-// holds all objects
 public class Scene {
     private final List<Object> objects;
+    private final List<Material> materials;
     private final Map<Vector, double[]> lightsources; // points
     private Camera camera;
 
     public Scene() {
         this.objects = new ArrayList<>();
+        this.materials = new ArrayList<>();
         lightsources = new HashMap<>();
     }
 
@@ -24,6 +25,10 @@ public class Scene {
 
     public List<Object> getObjects() {
         return objects;
+    }
+
+    public List<Material> getMaterials() {
+        return materials;
     }
 
     public void setCamera(Camera camera) {
@@ -43,7 +48,11 @@ public class Scene {
         return this.lightsources;
     }
 
-    public void addObjects(List<java.lang.Object> objects) {
-        objects.forEach(o -> addObject((Object) o));
+    public void addObjects(List<Object> objects) {
+        this.objects.addAll(objects);
+    }
+
+    public void addMaterials(List<Material> materials) {
+        this.materials.addAll(materials);
     }
 }

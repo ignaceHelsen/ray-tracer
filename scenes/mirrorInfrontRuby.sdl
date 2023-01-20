@@ -1,6 +1,6 @@
 translate 450 0 -15
 scale 30 30 30
-perfectMirror
+mirror
 sphere
 
 translate 450 0 -15

@@ -16,12 +16,12 @@ import java.util.Random;
 
 public class Renderer {
     private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
-    private final double EPSILON = 0.01; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
+    private final double EPSILON = 0.3; // the difference that will be subtracted for shadowing
+    private final int MAXRECURSELEVEL = 1; // TODO: move to SDL parameter
     private final double DW = 0.1; // width lightbeam coming from source
     private final boolean shadowsEnabled = true;
     private final boolean reflection = true;
-    private final boolean refraction = false;
+    private final boolean refraction = true;
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -31,6 +31,8 @@ public class Renderer {
     private final Canvas canvas;
     private final BufferedImage buffer;
     private final BufferStrategy strategy;
+
+    private final double air = 299_792_458 * 0.9997;
 
     public Renderer(double focallength, double screenWidth, double screenHeight, double cmax, double rmax) {
         this.focallength = focallength;
@@ -90,7 +92,6 @@ public class Renderer {
                     double[] rgb = new double[3];
 
                     int recurseLevel = 0;
-                    double air = 299_792_458 * 0.9997;
                     getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
 
                     // rgb is now a value between 0 and 1
@@ -136,17 +137,16 @@ public class Renderer {
             // there will always be a T2.
             // currentIntersection times always have to be >= 0.
             if (currentIntersection != null) {
-                if ((currentIntersection.getEnter() == null && currentIntersection.getT2() >= 0 && currentIntersection.getT2() < minIntersectionTime) || (currentIntersection.getEnter() != null && currentIntersection.getT1() >= 0 && currentIntersection.getT1() < minIntersectionTime)) {
+                if ((currentIntersection.getEnter() == null && currentIntersection.getT2() >= 0.0001 && currentIntersection.getT2() < minIntersectionTime) || (currentIntersection.getEnter() != null && currentIntersection.getT1() >= 0.0001 && currentIntersection.getT1() < minIntersectionTime)) {
                     // the current intersection is in front of the previous hit, which means we have to deal with this hit in further code
                     intersectionHit = currentIntersection;
+                    closestObject = currentObject;
 
                     // for priorities with objects that are closer by and should be painted instead of objects behind it
                     if (currentIntersection.getEnter() == null) // set min as exit time (=T2) (since only an exit has been registered)
                         minIntersectionTime = currentIntersection.getT2();
                     else
                         minIntersectionTime = currentIntersection.getT1();
-
-                    closestObject = currentObject;
                 }
             }
         }
@@ -335,13 +335,14 @@ public class Renderer {
                 r.setType(0);
                 Ray reflection = new Ray(start, Utility.normalize(r));
 
-                Tuple<Object, Intersection> objectIntersection = getHit(reflection);
+                Tuple<Object, Intersection> hit = getHit(reflection);
 
-                Object reflectedObjectHit = objectIntersection.getObject();
-                Intersection reflectedIntersectionHit = objectIntersection.getIntersection();
+                Object reflectedObjectHit = hit.getObject();
+                Intersection reflectedIntersectionHit = hit.getIntersection();
 
                 if (reflectedObjectHit != null && reflectedObjectHit != currentObject) {
-                    double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
+                    // this code does not take into account boolean objects, we can assume that any reflection from an object to another will be cast through air
+                    double[] reflectedColors = getShading(reflection, reflectedObjectHit, reflectedIntersectionHit, rgb.clone(), recurseLevel, air);
 
                     for (int i = 0; i < 3; i++)
                         rgb[i] += (float) (1 / recurseLevel) * currentObject.getMaterial().getShininess() * reflectedColors[i];
@@ -350,32 +351,71 @@ public class Renderer {
 
             /* REFRACTION */ // Inside the object (hit enter) and outside (hit exit)
             if (currentObject.getMaterial().getTransparency() > 0.1 && refraction) {
+                //since we want to spawn a ray inside the object we slightly adjust the ray to start from inside the object: notice the subtract()
+                Vector startInnerRefraction = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, new Vector(normalVector)));
+
                 // spawn ray from hitpoint and call getShade()
                 double[] t = new double[4];
 
                 double c1 = previousObject;
                 double c2 = currentObject.getMaterial().getSpeedOfLight();
                 double factor = c2 / c1;
-                double thetaOne = getAngle(ray.getDir().getCoords(), normalVector);
-                double thetaTwo = Math.asin(Math.sin(thetaOne) * factor);
+                //double thetaOne = getAngle(ray.getDir().getCoords(), normalVector);
+                //double thetaTwo = Math.asin(Math.sin(thetaOne) * factor);
+                double cosThetaTwo = Math.sqrt(1 - Math.pow(factor, 2)*(1-Math.pow(dirDotNormalvector, 2)));
 
                 for (int i = 0; i < t.length; i++) {
-                    t[i] = factor * ray.getDir().getCoords()[i] + (factor * dirDotNormalvector - Math.cos(thetaTwo)) * normalVector[i];
+                    t[i] = factor * ray.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * normalVector[i];
                 }
 
-                Vector newDir = new Vector(Utility.normalize(Utility.normalize(t)));
-                Ray refraction = new Ray(Utility.normalize(start), newDir);
+                Vector NewDir = new Vector(Utility.normalize(t));
+                Ray refraction = new Ray(startInnerRefraction, NewDir);
 
                 Tuple<Object, Intersection> objectIntersection = getHit(refraction);
 
                 Object refractedObjectHit = objectIntersection.getObject();
                 Intersection refractedIntersectionHit = objectIntersection.getIntersection();
 
-                if (refractedObjectHit != null && refractedObjectHit != currentObject) {
-                    double[] reflectedColors = getShading(refraction, refractedObjectHit, refractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
-                    for (int i = 0; i < 3; i++)
-                        rgb[i] += currentObject.getMaterial().getTransparency() * reflectedColors[i];
+                if (refractedObjectHit != null) {
+                    if (refractedObjectHit == currentObject) {
+                        // TODO, change the above if when boolean objects have been added -> then the next hit will be the inner object.
+                        // ray from inside the object has hit the outer edge of the current object
+                        // now we spawn a ray starting from this exit hit
+                        // we know that the next medium the ray will travel through will be air
+
+                        // start the ray from just outside the object, notice the sum()
+                        Vector startOuterRefraction = Utility.sum(refractedIntersectionHit.getExit(), Utility.multiplyElementWise(EPSILON, new Vector(refractedIntersectionHit.getNormalVector())));
+
+                        dirDotNormalvector = Utility.dot(refraction.getDir().getCoords(), refractedIntersectionHit.getNormalVector());
+
+                        // same as before:
+                        t = new double[4];
+
+                        c1 = currentObject.getMaterial().getSpeedOfLight();
+                        c2 = air;
+                        factor = c2 / c1;
+                        cosThetaTwo = Math.sqrt(1 - Math.pow(factor, 2)*(1-Math.pow(dirDotNormalvector, 2)));
+
+                        for (int i = 0; i < t.length; i++) {
+                            t[i] = factor * refraction.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * refractedIntersectionHit.getNormalVector()[i];
+                        }
+
+                        Vector newDir = new Vector(Utility.normalize(t));
+                        Ray outerrefraction = new Ray(startOuterRefraction, newDir);
+
+                        Tuple<Object, Intersection> outerObjectIntersection = getHit(outerrefraction);
+
+                        Object outerRefractedObjectHit = outerObjectIntersection.getObject();
+                        Intersection outerRefractedIntersectionHit = outerObjectIntersection.getIntersection();
+
+                        if (outerRefractedObjectHit != null) {
+                            double[] reflectedColors = getShading(refraction, outerRefractedObjectHit, outerRefractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
+
+                            for (int i = 0; i < 3; i++)
+                                rgb[i] += currentObject.getMaterial().getTransparency() * reflectedColors[i];
+                        }
+                    }
                 }
             }
         }

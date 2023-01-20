@@ -64,6 +64,6 @@ public class Transformation {
     }
 
     public void addInverseTransformation(double[][] inverseTransformation) {
-        this.inverseTransformation = Utility.multiplyMatrices(inverseTransformation, this.inverseTransformation);
+        this.inverseTransformation = Utility.multiplyMatrices(this.inverseTransformation, inverseTransformation);
     }
 }

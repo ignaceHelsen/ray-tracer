@@ -33,16 +33,16 @@ taperedcylinder
 translate -100 -100 0
 scale 1 1000 250
 rotate 0 0 45
-perfectmirror
+mirror
 cube
 
 translate -100 100 0
 scale 1 1000 250
 rotate 0 0 -45
-perfectmirror
+mirror
 cube
 
 translate 1930 0 0
 scale 1 1000 250
-perfectmirror
+mirror
 cube

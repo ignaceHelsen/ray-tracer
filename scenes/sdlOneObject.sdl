@@ -1,11 +1,6 @@
 translate 1750 0 -10
 scale 25 25 25
-perfectmirror
-sphere
-
-translate 1650 0 -10
-scale 25 25 25
-ruby
+mirror
 sphere
 
 translate 0 0 20

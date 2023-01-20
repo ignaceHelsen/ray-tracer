@@ -4,17 +4,21 @@ import java.util.Arrays;
 
 public class Material {
     // all RGB values
-    private final double[] ambient;
-    private final double[] diffuse;
-    private final double[] specular;
-    private final double[] refractionIndex;
-    private final double[] kDistribution;
-    private final double roughness;
-    private final double shininess;
-    private final double transparency;
-    private final double fractionOfSpeedOfLight;
+    private String name;
+    private double[] ambient;
+    private double[] diffuse;
+    private double[] specular;
+    private double[] refractionIndex;
+    private double[] kDistribution;
+    private double roughness;
+    private double shininess;
+    private double transparency;
+    private double fractionOfSpeedOfLight;
 
-    public Material(double[] ambient, double[] diffuse, double[] specular, double[] refractionIndex, double roughness, double[] distributionK, double shininess, double transparency, double fractionOfSpeedOfLight) {
+    // TODO: change k distribution so that the total equals to 1
+
+    public Material(String name, double[] ambient, double[] diffuse, double[] specular, double[] refractionIndex, double roughness, double[] distributionK, double shininess, double transparency, double fractionOfSpeedOfLight) {
+        this.name = name;
         this.ambient = Arrays.stream(ambient).map(v -> v *= 1).toArray();
         this.diffuse = Arrays.stream(diffuse).map(v -> v *= 1).toArray();
         this.specular = Arrays.stream(specular).map(v -> v *= 1).toArray();
@@ -24,6 +28,14 @@ public class Material {
         this.shininess = shininess;
         this.transparency = transparency;
         this.fractionOfSpeedOfLight = fractionOfSpeedOfLight;
+    }
+
+    public Material() {
+
+    }
+
+    public String getName() {
+        return name;
     }
 
     public double[] getAmbient() {
@@ -60,5 +72,45 @@ public class Material {
 
     public double getTransparency() {
         return transparency;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAmbient(double[] ambient) {
+        this.ambient = ambient;
+    }
+
+    public void setDiffuse(double[] diffuse) {
+        this.diffuse = diffuse;
+    }
+
+    public void setSpecular(double[] specular) {
+        this.specular = specular;
+    }
+
+    public void setRefractionIndex(double[] refractionIndex) {
+        this.refractionIndex = refractionIndex;
+    }
+
+    public void setkDistribution(double[] kDistribution) {
+        this.kDistribution = kDistribution;
+    }
+
+    public void setRoughness(double roughness) {
+        this.roughness = roughness;
+    }
+
+    public void setShininess(double shininess) {
+        this.shininess = shininess;
+    }
+
+    public void setTransparency(double transparency) {
+        this.transparency = transparency;
+    }
+
+    public void setFractionOfSpeedOfLight(double fractionOfSpeedOfLight) {
+        this.fractionOfSpeedOfLight = fractionOfSpeedOfLight;
     }
 }

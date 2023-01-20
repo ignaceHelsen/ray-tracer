@@ -66,7 +66,8 @@ public class Sphere extends Object {
         else intersection.setNormalVector(intersection.getEnter().getCoords());
 
         // reset type of vector
-        intersection.setNormalVector(new double[] {intersection.getNormalVector()[0], intersection.getNormalVector()[1], intersection.getNormalVector()[2], 0});
+        intersection.setNormalVector(new double[]{intersection.getNormalVector()[0], intersection.getNormalVector()[1], intersection.getNormalVector()[2], 0});
+
 
         return intersection;
     }
