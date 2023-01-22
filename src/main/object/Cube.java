@@ -10,20 +10,27 @@ public class Cube extends Object {
 
     public Cube(Material material) {
         super(material);
-        this.normalVectors = new double[6][4];
+        this.normalVectors = new double[6][4];/*
         normalVectors[0] = new double[]{0, 1, 0, 0}; // right
         normalVectors[1] = new double[]{0, -1, 0, 0}; // left
         normalVectors[2] = new double[]{1, 0, 0, 0}; // bottom
         normalVectors[3] = new double[]{-1, 0, 0, 0}; // top
         normalVectors[4] = new double[]{0, 1, 0, 0}; // front
-        normalVectors[5] = new double[]{0, -1, 0, 0}; // back
+        normalVectors[5] = new double[]{0, -1, 0, 0}; // back*/
 
-        /*normalVectors[0] = new double[]{0, 0, -1, 0}; // top
-        normalVectors[1] = new double[]{0, 0, 1, 0}; // bottom
-        normalVectors[2] = new double[]{0, 1, 0, 0}; // right
-        normalVectors[3] = new double[]{0, -1, 0, 0}; // left
-        normalVectors[4] = new double[]{1, 0, 0, 0}; // front
-        normalVectors[5] = new double[]{-1, 0, 0, 0}; // back*/
+        /*normalVectors[0] = new double[]{0, 0, -1, 0}; // right -> top
+        normalVectors[1] = new double[]{0, 0, 1, 0}; // left -> bottom
+        normalVectors[2] = new double[]{0, 1, 0, 0}; // front -> right
+        normalVectors[3] = new double[]{0, -1, 0, 0}; // back -> left
+        normalVectors[4] = new double[]{1, 0, 0, 0}; // bottom -> front
+        normalVectors[5] = new double[]{-1, 0, 0, 0}; // top -> back*/
+
+        normalVectors[5] = new double[]{0, 0, -1, 0}; // top
+        normalVectors[4] = new double[]{0, 0, 1, 0}; // bottom
+        normalVectors[0] = new double[]{0, 1, 0, 0}; // right
+        normalVectors[1] = new double[]{0, -1, 0, 0}; // left
+        normalVectors[2] = new double[]{1, 0, 0, 0}; // front
+        normalVectors[3] = new double[]{-1, 0, 0, 0}; // back
     }
 
     @Override

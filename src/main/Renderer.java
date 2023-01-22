@@ -17,7 +17,7 @@ import java.util.Random;
 public class Renderer {
     private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
     private final double EPSILON = 0.3; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 1; // TODO: move to SDL parameter
+    private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
     private final double DW = 0.1; // width lightbeam coming from source
     private final boolean shadowsEnabled = true;
     private final boolean reflection = true;
@@ -376,7 +376,6 @@ public class Renderer {
                 Object refractedObjectHit = objectIntersection.getObject();
                 Intersection refractedIntersectionHit = objectIntersection.getIntersection();
 
-
                 if (refractedObjectHit != null) {
                     if (refractedObjectHit == currentObject) {
                         // TODO, change the above if when boolean objects have been added -> then the next hit will be the inner object.
@@ -410,7 +409,7 @@ public class Renderer {
                         Intersection outerRefractedIntersectionHit = outerObjectIntersection.getIntersection();
 
                         if (outerRefractedObjectHit != null) {
-                            double[] reflectedColors = getShading(refraction, outerRefractedObjectHit, outerRefractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
+                            double[] reflectedColors = getShading(outerrefraction, outerRefractedObjectHit, outerRefractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
                             for (int i = 0; i < 3; i++)
                                 rgb[i] += currentObject.getMaterial().getTransparency() * reflectedColors[i];
