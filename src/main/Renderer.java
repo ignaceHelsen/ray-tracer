@@ -383,8 +383,9 @@ public class Renderer {
                         // now we spawn a ray starting from this exit hit
                         // we know that the next medium the ray will travel through will be air
 
-                        // start the ray from just outside the object, notice the sum()
-                        Vector startOuterRefraction = Utility.sum(refractedIntersectionHit.getExit(), Utility.multiplyElementWise(EPSILON, new Vector(refractedIntersectionHit.getNormalVector())));
+                        // start the ray from just outside the object
+                        Vector exitPoint = new Vector(Utility.multiplyMatrices(refractedIntersectionHit.getExit().getCoords(), currentObject.getTransformation().getTransformation()));
+                        Vector startOuterRefraction = Utility.subtract(exitPoint, Utility.multiplyElementWise(EPSILON, new Vector(refractedIntersectionHit.getNormalVector())));
 
                         dirDotNormalvector = Utility.dot(refraction.getDir().getCoords(), refractedIntersectionHit.getNormalVector());
 
@@ -408,7 +409,7 @@ public class Renderer {
                         Object outerRefractedObjectHit = outerObjectIntersection.getObject();
                         Intersection outerRefractedIntersectionHit = outerObjectIntersection.getIntersection();
 
-                        if (outerRefractedObjectHit != null) {
+                        if (outerRefractedObjectHit != null && outerRefractedObjectHit != currentObject) {
                             double[] reflectedColors = getShading(outerrefraction, outerRefractedObjectHit, outerRefractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
                             for (int i = 0; i < 3; i++)

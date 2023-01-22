@@ -3,7 +3,7 @@ scale 10 25 25
 mirror
 cube
 
-translate 1000 0 -10
+translate 1700 0 -10
 scale 25 25 25
 ruby
 sphere
