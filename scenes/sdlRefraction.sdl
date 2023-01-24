@@ -3,10 +3,25 @@ scale 10 25 25
 mirror
 cube
 
-translate 1700 0 -10
-scale 25 25 25
+translate 1700 180 -250
+scale 10 2 1000
+rotate 35 0 0
 ruby
-sphere
+1
+taperedcylinder
+
+translate 1700 0 -250
+scale 10 2 1000
+ruby
+1
+taperedcylinder
+
+translate 1700 -500 -250
+scale 10 2 1000
+rotate -65 0 0
+ruby
+1
+taperedcylinder
 
 translate 0 0 20
 gold
