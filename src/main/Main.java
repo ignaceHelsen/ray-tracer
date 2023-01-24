@@ -41,7 +41,7 @@ public class Main {
 
         try {
             scene.addMaterials(SDL.parseMaterial("scenes/materials.sdl"));
-            scene.addObjects(SDL.parseObjects("scenes/sdlRefraction.sdl", scene.getMaterials()));
+            scene.addObjects(SDL.parseObjects("scenes/sdlAllObjects.sdl", scene.getMaterials()));
         } catch (IOException e) {
             System.out.println("Problem reading sdl");
         }

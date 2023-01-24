@@ -69,6 +69,12 @@ public class Renderer {
         final double w = screenWidth / 2;
 
         float starttime = System.nanoTime();
+        BufferedImage skybox = new BufferedImage((int) screenWidth, (int) screenHeight, BufferedImage.TYPE_INT_RGB);
+        try {
+            skybox = ImageIO.read(new File("skybox.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // shoot rays in a for loop
         for (double r = 0; r <= screenHeight - 1; r++) { // nRows
             for (double c = 0; c <= screenWidth - 1; c++) { //nColumns
@@ -105,14 +111,16 @@ public class Renderer {
                     int color = ((int) rgb[0] << 16) | ((int) rgb[1] << 8) | (int) rgb[2];
                     buffer.setRGB((int) c, (int) r, color);
                 } else {
-                    if (r < w) {
+                    int color = skybox.getRGB((int) c, (int) r);
+                    buffer.setRGB((int) c, (int) r, color);
+                    /*if (r < w) {
                         if (new Random().nextDouble(100) < 0.1) {
                             int color = (145 << 16) | (211 << 8) | 255;
                             buffer.setRGB((int) c, (int) r, color);
                         }
                     } else {
                         buffer.setRGB((int) c, (int) r, 0);
-                    }
+                    }*/
                 }
             }
         }
@@ -362,7 +370,7 @@ public class Renderer {
                 double factor = c2 / c1;
                 //double thetaOne = getAngle(ray.getDir().getCoords(), normalVector);
                 //double thetaTwo = Math.asin(Math.sin(thetaOne) * factor);
-                double cosThetaTwo = Math.sqrt(1 - Math.pow(factor, 2)*(1-Math.pow(dirDotNormalvector, 2)));
+                double cosThetaTwo = Math.sqrt(1 - Math.pow(factor, 2) * (1 - Math.pow(dirDotNormalvector, 2)));
 
                 for (int i = 0; i < t.length; i++) {
                     t[i] = factor * ray.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * normalVector[i];
@@ -395,7 +403,7 @@ public class Renderer {
                         c1 = currentObject.getMaterial().getSpeedOfLight();
                         c2 = air;
                         factor = c2 / c1;
-                        cosThetaTwo = Math.sqrt(1 - Math.pow(factor, 2)*(1-Math.pow(dirDotNormalvector, 2)));
+                        cosThetaTwo = Math.sqrt(1 - Math.pow(factor, 2) * (1 - Math.pow(dirDotNormalvector, 2)));
 
                         for (int i = 0; i < t.length; i++) {
                             t[i] = factor * refraction.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * refractedIntersectionHit.getNormalVector()[i];
