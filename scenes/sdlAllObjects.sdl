@@ -10,7 +10,7 @@ translate 0 0 60
 mirror
 plane
 
-translate 1500 -100 -50
+translate 1500 -100 -70
 scale 50 50 50
 ruby
 sphere
@@ -21,7 +21,7 @@ rotate 45 45 45
 chrome
 sphere
 
-translate 1500 220 -10
+translate 1500 220 5
 scale 50 50 50
 ruby
 sphere

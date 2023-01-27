@@ -7,11 +7,11 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        final double SCREEN_WIDTH = 3840;
-        final double SCREEN_HEIGHT = 2160;
-        final double FOCALLENGTH = 3840;
-        final double CMAX = 3840;
-        final double RMAX = 2160;
+        final double SCREEN_WIDTH = 1920;
+        final double SCREEN_HEIGHT = 1080;
+        final double FOCALLENGTH = 1920;
+        final double CMAX = 1920;
+        final double RMAX = 1080;
 
         /*
             /----------y
@@ -24,9 +24,9 @@ public class Main {
 
         // scene
         Vector lightsourceWhite = new Vector(1800, 0, -2000, 1); // location
-        Vector lightsourceBlue = new Vector(5000, -500, -1000, 1); // location
-        Vector lightsourceRed = new Vector(500, 500, -1000, 1); // location
-        Vector lightsourceOrange = new Vector(-10000, 1000, -1000, 1); // location
+        Vector lightsourceBlue = new Vector(5000, -500, -1500, 1); // location
+        Vector lightsourceRed = new Vector(500, 500, -1500, 1); // location
+        Vector lightsourceOrange = new Vector(-10000, 1500, -1000, 1); // location
         Vector lightsourcePink = new Vector(0, 4000, -2000, 1); // location
 
         Scene scene = new Scene(); // light color
