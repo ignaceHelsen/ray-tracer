@@ -7,8 +7,7 @@ reflection true
 refraction true
 
 translate 0 0 60
-gold
-CHECKERBOARD
+mirror
 plane
 
 translate 1500 -100 -50

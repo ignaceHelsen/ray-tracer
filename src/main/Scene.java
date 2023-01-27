@@ -1,6 +1,7 @@
 package main;
 
 import main.object.Object;
+import main.object.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import java.util.Map;
 public class Scene {
     private final List<Object> objects;
     private final List<Material> materials;
-    private final Map<Vector, double[]> lightsources; // points
+    private final Map<Vector, Tuple<double[], Double>> lightsources; // points
     private Camera camera;
 
     public Scene() {
@@ -40,11 +41,11 @@ public class Scene {
     }
 
 
-    public void addLightsource(Vector lightsource, double[] color) {
-        this.lightsources.put(lightsource, color);
+    public void addLightsource(Vector lightsource, double[] color, double dw) {
+        this.lightsources.put(lightsource, new Tuple<>(color, dw));
     }
 
-    public Map<Vector, double[]> getLightsources() {
+    public Map<Vector, Tuple<double[], Double>> getLightsources() {
         return this.lightsources;
     }
 

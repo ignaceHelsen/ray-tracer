@@ -1,3 +1,11 @@
+lightsourceFactor 0.1
+epsilon 0.3
+maxRecurseLevel 5
+dw 0.1
+shadowsEnabled true
+reflection true
+refraction true
+
 translate 1750 0 0
 scale 10 25 25
 mirror

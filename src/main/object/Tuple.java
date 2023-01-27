@@ -3,19 +3,27 @@ package main.object;
 import main.Intersection;
 
 public class Tuple<I, T> {
-    private main.object.Object object;
-    private Intersection intersection;
+    private I firstObject;
+    private T secondObject;
 
-    public Tuple(main.object.Object object, Intersection intersection) {
-        this.object = object;
-        this.intersection = intersection;
+    public Tuple(I firstObject, T secondObject) {
+        this.firstObject = firstObject;
+        this.secondObject = secondObject;
     }
 
-    public main.object.Object getObject() {
-        return object;
+    public Object getObject() {
+        return (Object) firstObject;
     }
 
     public Intersection getIntersection() {
-        return intersection;
+        return (Intersection) secondObject;
+    }
+
+    public double[] getLightColor() {
+        return (double[]) firstObject;
+    }
+
+    public double getDw() {
+        return (double) secondObject;
     }
 }

@@ -14,15 +14,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Renderer {
-    private double lightsourceFactor = 0.1; // or a bit of contrast
-    private double epsilon = 0.3; // the difference that will be subtracted for shadowing
-    private int maxRecurseLevel = 5; // TODO: move to SDL parameter
-    private double dw = 0.1; // width lightbeam coming from source
-    private boolean shadowsEnabled = true;
-    private boolean reflection = true;
-    private boolean refraction = true;
+    private final double lightsourceFactor; // or a bit of contrast
+    private final double epsilon; // the difference that will be subtracted for shadowing
+    private final int maxRecurseLevel; // TODO: move to SDL parameter
+    private final boolean shadowsEnabled;
+    private final boolean reflection;
+    private final boolean refraction;
+
+    private final int threads;
+
+    private BufferedImage skybox;
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -43,6 +50,8 @@ public class Renderer {
         this.cmax = cmax;
         this.rmax = rmax;
 
+        this.threads = Runtime.getRuntime().availableProcessors();
+
         /*
         SETTINGS
          */
@@ -50,7 +59,6 @@ public class Renderer {
         this.lightsourceFactor = settings.getLightsourceFactor();
         this.epsilon = settings.getEpsilon();
         this.maxRecurseLevel = settings.getMaxRecurseLevel();
-        this.dw = settings.getDw();
         this.shadowsEnabled = settings.isShadowsEnabled();
         this.reflection = settings.isReflection();
         this.refraction = settings.isRefraction();
@@ -82,15 +90,59 @@ public class Renderer {
         final double w = screenWidth / 2;
 
         float starttime = System.nanoTime();
-        BufferedImage skybox = new BufferedImage((int) screenWidth, (int) screenHeight, BufferedImage.TYPE_INT_RGB);
+        this.skybox = new BufferedImage((int) screenWidth, (int) screenHeight, BufferedImage.TYPE_INT_RGB);
         try {
-            skybox = ImageIO.read(new File("skybox.png"));
+            this.skybox = ImageIO.read(new File("skybox.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         // shoot rays in a for loop
-        for (double r = 0; r <= screenHeight - 1; r++) { // nRows
-            for (double c = 0; c <= screenWidth - 1; c++) { //nColumns
+        double threadedScreenHeight = screenHeight / (threads * 2);
+        double threadedScreenWidth = screenWidth / (threads * 2);
+
+        ExecutorService es = Executors.newFixedThreadPool(threads);
+
+        int rowIndex = 0;
+        int columnIndex = 0;
+
+        try {
+            while (columnIndex * threadedScreenWidth < screenWidth) {
+                int finalColumnIndex = columnIndex;
+                rowIndex = 0;
+
+                while (rowIndex * threadedScreenHeight < screenHeight) {
+                    int finalRowIndex = rowIndex;
+                    es.execute(() -> {
+                        double startColumn = finalColumnIndex * threadedScreenWidth;
+                        // uncomment for random rendering (does work but does not perform a complete render). It's quite funny tho
+                        // double startColumn = ThreadLocalRandom.current().nextInt((int) screenWidth);
+                        double finishColumn = threadedScreenWidth + (finalColumnIndex * threadedScreenWidth);
+
+                        double startRow = finalRowIndex * threadedScreenHeight;
+                        double finishRow = threadedScreenHeight + (finalRowIndex * threadedScreenHeight);
+
+                        traceRegion(startColumn, finishColumn, startRow, finishRow, h, w);
+                    });
+                    rowIndex++;
+                }
+                columnIndex++;
+            }
+
+            es.shutdown();
+            es.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (
+                InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        float endtime = System.nanoTime();
+        System.out.println(endtime - starttime);
+
+    }
+
+    private void traceRegion(double startColumn, double endColumn, double startRow, double finishRow, double h, double w) {
+        for (double r = startRow; r <= finishRow - 1; r++) { // nRows
+            for (double c = startColumn; c <= endColumn - 1; c++) { //nColumns
                 Vector dir = new Vector(-focallength, -(w - screenWidth * (c / cmax)), -(h - screenHeight * (r / rmax)), 0);
                 //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
                 //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
@@ -99,47 +151,49 @@ public class Renderer {
                 Vector normalizedDir = new Vector(Utility.normalize(dir.getCoords()));
                 Ray normalizedRay = new Ray(scene.getCamera().location, normalizedDir);
 
-                Tuple<Object, Intersection> objectIntersection = getHit(normalizedRay);
-
-                Object closestObject = objectIntersection.getObject();
-                Intersection intersectionHit = objectIntersection.getIntersection();
-
-                if (closestObject != null) {
-                    // p 641
-                    // shading
-                    // Color: ambient, diffuse, specular
-                    double[] rgb = new double[3];
-
-                    int recurseLevel = 0;
-                    getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
-
-                    // rgb is now a value between 0 and 1
-                    rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
-                    rgb = Arrays.stream(rgb).map(v -> {
-                        if (v > 255) v = 255;
-                        else if (v < 0) v = 0;
-                        return v;
-                    }).toArray();
-
-                    int color = ((int) rgb[0] << 16) | ((int) rgb[1] << 8) | (int) rgb[2];
-                    buffer.setRGB((int) c, (int) r, color);
-                } else {
-                    int color = skybox.getRGB((int) c, (int) r);
-                    buffer.setRGB((int) c, (int) r, color);
-                    /*if (r < w) {
-                        if (new Random().nextDouble(100) < 0.1) {
-                            int color = (145 << 16) | (211 << 8) | 255;
-                            buffer.setRGB((int) c, (int) r, color);
-                        }
-                    } else {
-                        buffer.setRGB((int) c, (int) r, 0);
-                    }*/
-                }
+                trace(normalizedRay, r, c, w);
             }
         }
+    }
 
-        float endtime = System.nanoTime();
-        System.out.println(endtime - starttime);
+    private void trace(Ray normalizedRay, double r, double c, double w) {
+        Tuple<Object, Intersection> objectIntersection = getHit(normalizedRay);
+
+        Object closestObject = objectIntersection.getObject();
+        Intersection intersectionHit = objectIntersection.getIntersection();
+
+        if (closestObject != null) {
+            // p 641
+            // shading
+            // Color: ambient, diffuse, specular
+            double[] rgb = new double[3];
+
+            int recurseLevel = 0;
+            getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
+
+            // rgb is now a value between 0 and 1
+            rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
+            rgb = Arrays.stream(rgb).map(v -> {
+                if (v > 255) v = 255;
+                else if (v < 0) v = 0;
+                return v;
+            }).toArray();
+
+            int color = ((int) rgb[0] << 16) | ((int) rgb[1] << 8) | (int) rgb[2];
+            buffer.setRGB((int) c, (int) r, color);
+        } else {
+            /*int color = this.skybox.getRGB((int) c, (int) r);
+            buffer.setRGB((int) c, (int) r, color);
+            */
+            if (r < w) {
+                if (new Random().nextDouble(100) < 0.1) {
+                    int color = (145 << 16) | (211 << 8) | 255;
+                    buffer.setRGB((int) c, (int) r, color);
+                }
+            } else {
+                buffer.setRGB((int) c, (int) r, 0);
+            }
+        }
     }
 
     private Tuple<Object, Intersection> getHit(Ray normalizedRay) {
@@ -186,7 +240,8 @@ public class Renderer {
      * @param previousObject: the speed of light in the previous object.
      * @return: updated rgb value.
      */
-    private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb, int recurseLevel, double previousObject) {
+    private double[] getShading(Ray ray, Object currentObject, Intersection intersection, double[] rgb,
+                                int recurseLevel, double previousObject) {
         double[] ambient = currentObject.getMaterial().getAmbient();
         double[] diffuse = currentObject.getMaterial().getDiffuse(); // We don't use this one anymore
         double[] specular = currentObject.getMaterial().getSpecular();
@@ -248,7 +303,7 @@ public class Renderer {
         Vector start = Utility.sum(hitpoint, Utility.multiplyElementWise(epsilon, new Vector(normalVector)));
 
         // for each lightsource
-        for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
+        for (Map.Entry<Vector, Tuple<double[], Double>> lightsource : scene.getLightsources().entrySet()) {
             // check first for possible shadow spots
             Vector dir = new Vector(lightsource.getKey().getX() - hitpoint.getX(), lightsource.getKey().getY() - hitpoint.getY(), lightsource.getKey().getZ() - hitpoint.getZ(), 0);
 
@@ -272,7 +327,7 @@ public class Renderer {
 
                 double lambert = mDots;
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] += specular[i] * dw * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * lightsourceFactor);
+                    rgb[i] += specular[i] * lightsource.getValue().getDw() * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue().getLightColor()[i] * lightsourceFactor);
                 }
             }
 
@@ -328,7 +383,7 @@ public class Renderer {
                 }
 
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * dw * torranceSpecularRGB[i];
+                    rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * lightsource.getValue().getDw() * torranceSpecularRGB[i];
                 }
             }
         }
