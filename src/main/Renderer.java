@@ -1,7 +1,9 @@
 package main;
 
-import main.object.*;
 import main.object.Object;
+import main.object.Sphere;
+import main.object.Tuple;
+import main.sdl.Settings;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,16 +14,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Random;
 
 public class Renderer {
-    private final double LIGHTSOURCEFACTOR = 0.1; // or a bit of contrast
-    private final double EPSILON = 0.3; // the difference that will be subtracted for shadowing
-    private final int MAXRECURSELEVEL = 5; // TODO: move to SDL parameter
-    private final double DW = 0.1; // width lightbeam coming from source
-    private final boolean shadowsEnabled = true;
-    private final boolean reflection = true;
-    private final boolean refraction = true;
+    private double lightsourceFactor = 0.1; // or a bit of contrast
+    private double epsilon = 0.3; // the difference that will be subtracted for shadowing
+    private int maxRecurseLevel = 5; // TODO: move to SDL parameter
+    private double dw = 0.1; // width lightbeam coming from source
+    private boolean shadowsEnabled = true;
+    private boolean reflection = true;
+    private boolean refraction = true;
 
     private final JFrame frame;
     private final double focallength, screenWidth, screenHeight;
@@ -34,13 +35,25 @@ public class Renderer {
 
     private final double air = 299_792_458 * 0.9997;
 
-    public Renderer(double focallength, double screenWidth, double screenHeight, double cmax, double rmax) {
+    public Renderer(double focallength, double screenWidth, double screenHeight, double cmax, double rmax, Settings settings) {
         this.focallength = focallength;
         this.frame = new JFrame();
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.cmax = cmax;
         this.rmax = rmax;
+
+        /*
+        SETTINGS
+         */
+
+        this.lightsourceFactor = settings.getLightsourceFactor();
+        this.epsilon = settings.getEpsilon();
+        this.maxRecurseLevel = settings.getMaxRecurseLevel();
+        this.dw = settings.getDw();
+        this.shadowsEnabled = settings.isShadowsEnabled();
+        this.reflection = settings.isReflection();
+        this.refraction = settings.isRefraction();
 
         // Following code with thanks to Maarten Van Loo
         this.canvas = new Canvas();
@@ -232,7 +245,7 @@ public class Renderer {
         }
 
         // shadows
-        Vector start = Utility.sum(hitpoint, Utility.multiplyElementWise(EPSILON, new Vector(normalVector)));
+        Vector start = Utility.sum(hitpoint, Utility.multiplyElementWise(epsilon, new Vector(normalVector)));
 
         // for each lightsource
         for (Map.Entry<Vector, double[]> lightsource : scene.getLightsources().entrySet()) {
@@ -242,7 +255,7 @@ public class Renderer {
             if (shadowsEnabled) {
                 if (isInShadow(start, dir)) {
                     for (int i = 0; i < 3; i++) {
-                        rgb[i] -= rgb[i] * 0.01 * LIGHTSOURCEFACTOR; // dim the scene a bit
+                        rgb[i] -= rgb[i] * 0.01 * lightsourceFactor; // dim the scene a bit
                     }
                     continue;
                 }
@@ -259,7 +272,7 @@ public class Renderer {
 
                 double lambert = mDots;
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] += specular[i] * DW * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * LIGHTSOURCEFACTOR);
+                    rgb[i] += specular[i] * dw * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue()[i] * lightsourceFactor);
                 }
             }
 
@@ -315,7 +328,7 @@ public class Renderer {
                 }
 
                 for (int i = 0; i < 3; i++) {
-                    rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * DW * torranceSpecularRGB[i];
+                    rgb[i] += specular[i] * currentObject.getMaterial().getkDistribution()[2] * dw * torranceSpecularRGB[i];
                 }
             }
         }
@@ -330,7 +343,7 @@ public class Renderer {
         }
 
         // REFLECTION
-        if (recurseLevel + 1 <= MAXRECURSELEVEL) {
+        if (recurseLevel + 1 <= maxRecurseLevel) {
             Vector vectorNormalVector = new Vector(normalVector);
             double dirDotNormalvector = Utility.dot(ray.getDir(), vectorNormalVector);
 
@@ -360,7 +373,7 @@ public class Renderer {
             /* REFRACTION */ // Inside the object (hit enter) and outside (hit exit)
             if (currentObject.getMaterial().getTransparency() > 0.1 && refraction) {
                 //since we want to spawn a ray inside the object we slightly adjust the ray to start from inside the object: notice the subtract()
-                Vector startInnerRefraction = Utility.subtract(hitpoint, Utility.multiplyElementWise(EPSILON, new Vector(normalVector)));
+                Vector startInnerRefraction = Utility.subtract(hitpoint, Utility.multiplyElementWise(epsilon, new Vector(normalVector)));
 
                 // spawn ray from hitpoint and call getShade()
                 double[] t = new double[4];
@@ -393,7 +406,7 @@ public class Renderer {
 
                         // start the ray from just outside the object
                         Vector exitPoint = new Vector(Utility.multiplyMatrices(refractedIntersectionHit.getExit().getCoords(), currentObject.getTransformation().getTransformation()));
-                        Vector startOuterRefraction = Utility.subtract(exitPoint, Utility.multiplyElementWise(EPSILON, new Vector(refractedIntersectionHit.getNormalVector())));
+                        Vector startOuterRefraction = Utility.subtract(exitPoint, Utility.multiplyElementWise(epsilon, new Vector(refractedIntersectionHit.getNormalVector())));
 
                         dirDotNormalvector = Utility.dot(refraction.getDir().getCoords(), refractedIntersectionHit.getNormalVector());
 
@@ -421,7 +434,7 @@ public class Renderer {
                             double[] reflectedColors = getShading(outerrefraction, outerRefractedObjectHit, outerRefractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
                             for (int i = 0; i < 3; i++)
-                                rgb[i] += currentObject.getMaterial().getTransparency() * reflectedColors[i];
+                                rgb[i] += 0.1 * currentObject.getMaterial().getTransparency() * reflectedColors[i];
                         }
                     }
                 }

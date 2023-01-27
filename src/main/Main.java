@@ -1,6 +1,7 @@
 package main;
 
 import main.sdl.SDL;
+import main.sdl.Settings;
 
 import java.io.IOException;
 
@@ -25,25 +26,27 @@ public class Main {
         Vector lightsourceWhite = new Vector(1800, 0, -2000, 1); // location
         Vector lightsourceBlue = new Vector(5000, -500, -1000, 1); // location
         Vector lightsourceRed = new Vector(500, 500, -1000, 1); // location
-        Vector lightsourceOrange = new Vector(-1000, 1000, -100, 1); // location
-        Vector lightsourcePink = new Vector(0, 400, -200, 1); // location
+        Vector lightsourceOrange = new Vector(-10000, 1000, -1000, 1); // location
+        Vector lightsourcePink = new Vector(0, 4000, -2000, 1); // location
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155});
         scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255});
         scene.addLightsource(lightsourceRed, new double[]{180, 0, 0});
         scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0});
-        scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
+        //scene.addLightsource(lightsourcePink, new double[]{255, 30, 122});
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
         scene.setCamera(camera);
+        Settings settings = new Settings();
 
         try {
-            scene.addMaterials(SDL.parseMaterial("scenes/materials.sdl"));
-            scene.addObjects(SDL.parseObjects("scenes/sdlAllObjects.sdl", scene.getMaterials()));
+            scene.addMaterials(SDL.parseMaterial("scenes/materials.sdl", 0));
+            scene.addObjects(SDL.parseObjects("scenes/sdlAllObjects.sdl", scene.getMaterials(), 8));
+            settings = SDL.parseSettings("scenes/sdlAllObjects.sdl", 0);
         } catch (IOException e) {
-            System.out.println("Problem reading sdl");
+            System.out.println("Problem reading sdl: " + e.getMessage());
         }
 
         // MATERIALS
@@ -52,7 +55,7 @@ public class Main {
         Material chrome = new Material(new double[]{0.25, 0.25, 0.25}, new double[]{0.4, 0.4, 0.4}, new double[]{3.1812, 3.1812, 3.1812}, new double[]{3.1812, 3.1812, 3.1812}, 0.2, new double[]{0.6, 0.3, 0.1}, 0.6);
         Material gold = new Material(new double[]{0.54725, 0.4995, 0.3745}, new double[]{0.95164, 0.80648, 0.52648}, new double[]{0.928281, 0.855802, 0.666065}, new double[]{fresnelToRefr(0.989), fresnelToRefr(0.876), fresnelToRefr(0.399)}, 0.2, new double[]{0.5, 0.3, 0.1}, 0.4);
 */
-        Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, CMAX, RMAX);
+        Renderer renderer = new Renderer(FOCALLENGTH, SCREEN_WIDTH, SCREEN_HEIGHT, CMAX, RMAX, settings);
         renderer.setScene(scene);
 
         Thread render = new Thread(renderer::startRender);
@@ -80,6 +83,7 @@ public class Main {
 
         show.start();
     }
+
 
     public static double fresnelToRefr(double fresnel) {
         double sqrt = Math.sqrt(fresnel);

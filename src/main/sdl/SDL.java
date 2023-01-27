@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class SDL {
-    public static List<Object> parseObjects(String sourcePath, List<Material> materials) throws IOException {
+    public static List<Object> parseObjects(String sourcePath, List<Material> materials, int skipLines) throws IOException {
         List<Object> objects = new ArrayList<>();
 
         BufferedReader reader = new BufferedReader(new FileReader(sourcePath));
@@ -32,8 +32,17 @@ public class SDL {
         Material material = materials.stream().filter(m -> m.getName().equalsIgnoreCase("ruby")).findAny().orElse(null); // default is ruby
         double ratio = 0; // for taperedcylinder
 
+        int lines = 0;
+
         while (reader.ready()) {
             String currentLine = reader.readLine();
+            if (lines < skipLines) {
+                lines++;
+                continue;
+            }
+
+            lines++;
+
             if (currentLine.equals("") || currentLine.startsWith("#")) continue;
 
             String instruction = currentLine.trim().toLowerCase();
@@ -98,16 +107,25 @@ public class SDL {
         return objects;
     }
 
-    public static List<Material> parseMaterial(String sourcePath) throws IOException {
+    public static List<Material> parseMaterial(String sourcePath, int skipLines) throws IOException {
         List<Material> materials = new ArrayList<>();
         String[] candidateMaterials = new String[]{"ruby", "copper", "gold", "mirror", "chrome"};
 
         BufferedReader reader = new BufferedReader(new FileReader(sourcePath));
         Material currentMaterial = new Material();
 
+        int lines = 0;
         while (reader.ready()) {
-            // in this loop we will cover one material. Therefore, a material in the sdl should be strictly structured
             String currentLine = reader.readLine();
+            if (lines < skipLines) {
+                lines++;
+                continue;
+            }
+
+            lines++;
+
+
+            // in this loop we will cover one material. Therefore, a material in the sdl should be strictly structured
             if (currentLine.equals("") || currentLine.startsWith("#")) continue;
 
             String text = currentLine.trim().toLowerCase();
@@ -164,5 +182,59 @@ public class SDL {
     public static double fresnelToRefr(double fresnel) {
         double sqrt = Math.sqrt(fresnel);
         return (1 + sqrt) / (1 - sqrt);
+    }
+
+    public static Settings parseSettings(String sourcePath, int skipLines) throws IOException {
+        Settings settings = new Settings();
+
+        BufferedReader reader = new BufferedReader(new FileReader(sourcePath));
+
+        int lines = 0;
+        while (reader.ready()) {
+            String currentLine = reader.readLine();
+            if (lines > 6) break;
+
+            if (lines < skipLines) {
+                lines++;
+                continue;
+            }
+
+            lines++;
+
+            // in this loop we will cover one material. Therefore, a material in the sdl should be strictly structured
+            if (currentLine.equals("") || currentLine.startsWith("#")) continue;
+
+            String text = currentLine.trim().toLowerCase();
+            String instruction = text.substring(0, text.indexOf(" ")); // first word (= everything before the first space)
+
+            double value = 0;
+            boolean trueOrFalse = false;
+
+            try {
+                // let's assume the value is a double, if exception: it's a boolean
+                value = Double.parseDouble(text.substring(text.indexOf(" "))); // the value of the text (= everything after the first space)
+            } catch (NumberFormatException nfe) {
+                trueOrFalse = Boolean.parseBoolean(text.substring(text.indexOf(" ")).trim());
+            }
+
+            switch (instruction) {
+                case "lightsourcefactor":
+                    settings.setLightsourceFactor(value);
+                case "epsilon":
+                    settings.setEpsilon(value);
+                case "maxrecurselevel":
+                    settings.setMaxRecurseLevel((int) value);
+                case "dw":
+                    settings.setDw(value);
+                case "shadowsenabled":
+                    settings.setShadowsEnabled(trueOrFalse);
+                case "reflection":
+                    settings.setReflection(trueOrFalse);
+                case "refraction":
+                    settings.setRefraction(trueOrFalse);
+            }
+        }
+
+        return settings;
     }
 }
