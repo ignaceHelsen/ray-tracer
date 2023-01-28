@@ -12,17 +12,20 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class Renderer {
+    private final boolean spiralRender = true;
+    private final boolean randomRendering = false;
+
     private final double lightsourceFactor; // or a bit of contrast
     private final double epsilon; // the difference that will be subtracted for shadowing
-    private final int maxRecurseLevel; // TODO: move to SDL parameter
+    private final int maxRecurseLevel;
     private final boolean shadowsEnabled;
     private final boolean reflection;
     private final boolean refraction;
@@ -96,9 +99,6 @@ public class Renderer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // shoot rays in a for loop
-        double threadedScreenHeight = screenHeight / (threads * 2);
-        double threadedScreenWidth = screenWidth / (threads * 2);
 
         ExecutorService es = Executors.newFixedThreadPool(threads);
 
@@ -106,26 +106,63 @@ public class Renderer {
         int columnIndex = 0;
 
         try {
-            while (columnIndex * threadedScreenWidth < screenWidth) {
-                int finalColumnIndex = columnIndex;
-                rowIndex = 0;
+            if (spiralRender) {
+                int rows = 60;
+                int columns = 60;
 
-                while (rowIndex * threadedScreenHeight < screenHeight) {
-                    int finalRowIndex = rowIndex;
+                List<int[]> spiralOrder = RenderFormat.getSpiralOrder(columns, rows);
+                Collections.reverse(spiralOrder);
+
+                double threadedSpiralScreenHeight = screenHeight / rows;
+                double threadedSpiralScreenWidth = screenWidth / columns;
+
+                for (int[] ints : spiralOrder) {
+                    rowIndex = ints[0];
+                    columnIndex = ints[1];
+
+                    int finalColumnIndex1 = columnIndex;
+                    int finalRowIndex1 = rowIndex;
+
                     es.execute(() -> {
-                        double startColumn = finalColumnIndex * threadedScreenWidth;
-                        // uncomment for random rendering (does work but does not perform a complete render). It's quite funny tho
-                        // double startColumn = ThreadLocalRandom.current().nextInt((int) screenWidth);
-                        double finishColumn = threadedScreenWidth + (finalColumnIndex * threadedScreenWidth);
+                        double startColumn = finalColumnIndex1 * threadedSpiralScreenWidth;
+                        double finishColumn = threadedSpiralScreenWidth + (finalColumnIndex1 * threadedSpiralScreenWidth);
 
-                        double startRow = finalRowIndex * threadedScreenHeight;
-                        double finishRow = threadedScreenHeight + (finalRowIndex * threadedScreenHeight);
+                        double startRow = finalRowIndex1 * threadedSpiralScreenHeight;
+                        double finishRow = threadedSpiralScreenHeight + (finalRowIndex1 * threadedSpiralScreenHeight);
 
                         traceRegion(startColumn, finishColumn, startRow, finishRow, h, w);
                     });
-                    rowIndex++;
                 }
-                columnIndex++;
+            } else {
+                // normal order
+                double threadedScreenHeight = screenHeight / (threads * 2);
+                double threadedScreenWidth = screenWidth / (threads * 2);
+
+                while (columnIndex * threadedScreenWidth < screenWidth) {
+                    int finalColumnIndex = columnIndex;
+                    rowIndex = 0;
+
+                    while (rowIndex * threadedScreenHeight < screenHeight) {
+                        int finalRowIndex = rowIndex;
+                        es.execute(() -> {
+                            double startColumn;
+                            if (randomRendering) {
+                                // random rendering (does work but does not perform a complete render). It's quite funny tho
+                                startColumn = ThreadLocalRandom.current().nextInt((int) screenWidth);
+                            } else {
+                                startColumn = finalColumnIndex * threadedScreenWidth;
+                            }
+                            double finishColumn = threadedScreenWidth + (finalColumnIndex * threadedScreenWidth);
+
+                            double startRow = finalRowIndex * threadedScreenHeight;
+                            double finishRow = threadedScreenHeight + (finalRowIndex * threadedScreenHeight);
+
+                            traceRegion(startColumn, finishColumn, startRow, finishRow, h, w);
+                        });
+                        rowIndex++;
+                    }
+                    columnIndex++;
+                }
             }
 
             es.shutdown();
