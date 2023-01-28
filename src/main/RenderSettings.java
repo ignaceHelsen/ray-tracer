@@ -3,7 +3,12 @@ package main;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RenderFormat {
+public class RenderSettings {
+    public static double[][] aaFourMap = {{-0.5, -0.5}, {0.5, -0.5}, {-0.5, 0.5}, {0.5, 0.5}};
+    public static double[][] aaNineMap = {{-0.5, -0.5}, {0, -0.5}, {0.5, -0.5},
+                                          {-0.5, 0}, {0, 0}, {0.5, 0},
+                                          {-0.5, 0.5}, {0, 0.5}, {0.5, 0.5}};
+
     public static List<int[]> getSpiralOrder(int columns, int rows) {
         int i, k = 0, l = 0;
         int m = rows;

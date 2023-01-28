@@ -18,10 +18,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.DoubleStream;
 
 public class Renderer {
-    private final boolean spiralRender = true;
-    private final boolean randomRendering = false;
+    private final boolean SPIRAL_RENDER = true;
+    private final boolean REVERSE_SPIRAL = true;
+    private final boolean RANDOM_RENDER = false;
+    private final int SSA = 9; // antialiasing
 
     private final double lightsourceFactor; // or a bit of contrast
     private final double epsilon; // the difference that will be subtracted for shadowing
@@ -53,7 +56,7 @@ public class Renderer {
         this.cmax = cmax;
         this.rmax = rmax;
 
-        this.threads = Runtime.getRuntime().availableProcessors();
+        this.threads = 1;
 
         /*
         SETTINGS
@@ -106,12 +109,13 @@ public class Renderer {
         int columnIndex = 0;
 
         try {
-            if (spiralRender) {
+            if (SPIRAL_RENDER) {
                 int rows = 60;
                 int columns = 60;
 
-                List<int[]> spiralOrder = RenderFormat.getSpiralOrder(columns, rows);
-                Collections.reverse(spiralOrder);
+                List<int[]> spiralOrder = RenderSettings.getSpiralOrder(columns, rows);
+                if (REVERSE_SPIRAL)
+                    Collections.reverse(spiralOrder);
 
                 double threadedSpiralScreenHeight = screenHeight / rows;
                 double threadedSpiralScreenWidth = screenWidth / columns;
@@ -144,9 +148,10 @@ public class Renderer {
 
                     while (rowIndex * threadedScreenHeight < screenHeight) {
                         int finalRowIndex = rowIndex;
+
                         es.execute(() -> {
                             double startColumn;
-                            if (randomRendering) {
+                            if (RANDOM_RENDER) {
                                 // random rendering (does work but does not perform a complete render). It's quite funny tho
                                 startColumn = ThreadLocalRandom.current().nextInt((int) screenWidth);
                             } else {
@@ -166,7 +171,7 @@ public class Renderer {
             }
 
             es.shutdown();
-            es.awaitTermination(1, TimeUnit.MINUTES);
+            es.awaitTermination(10, TimeUnit.MINUTES);
         } catch (
                 InterruptedException e) {
             e.printStackTrace();
@@ -179,56 +184,70 @@ public class Renderer {
 
     private void traceRegion(double startColumn, double endColumn, double startRow, double finishRow, double h, double w) {
         for (double r = startRow; r <= finishRow - 1; r++) { // nRows
-            for (double c = startColumn; c <= endColumn - 1; c++) { //nColumns
-                Vector dir = new Vector(-focallength, -(w - screenWidth * (c / cmax)), -(h - screenHeight * (r / rmax)), 0);
-                //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
-                //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
+            for (double c = startColumn; c <= endColumn - 1; c++) { // nColumns
+                double[][] rgbValues = new double[SSA][3];
 
-                // create normalized ray
-                Vector normalizedDir = new Vector(Utility.normalize(dir.getCoords()));
-                Ray normalizedRay = new Ray(scene.getCamera().location, normalizedDir);
+                double x = c;
+                double y = r;
 
-                trace(normalizedRay, r, c, w);
-            }
-        }
-    }
+                for (int i = 0; i < SSA; i++) {
+                    if (SSA == 4) {
+                        x = c + RenderSettings.aaFourMap[i][0];
+                        y = r + RenderSettings.aaFourMap[i][1];
+                    } else if (SSA == 9) {
+                        x = c + RenderSettings.aaNineMap[i][0];
+                        y = r + RenderSettings.aaNineMap[i][1];
+                    }
 
-    private void trace(Ray normalizedRay, double r, double c, double w) {
-        Tuple<Object, Intersection> objectIntersection = getHit(normalizedRay);
+                    Vector dir = new Vector(-focallength, -(w - screenWidth * (x / cmax)), -(h - screenHeight * (y / rmax)), 0);
+                    //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
+                    //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
 
-        Object closestObject = objectIntersection.getObject();
-        Intersection intersectionHit = objectIntersection.getIntersection();
+                    // create normalized ray
+                    Vector normalizedDir = new Vector(Utility.normalize(dir.getCoords()));
+                    Ray normalizedRay = new Ray(scene.getCamera().location, normalizedDir);
 
-        if (closestObject != null) {
-            // p 641
-            // shading
-            // Color: ambient, diffuse, specular
-            double[] rgb = new double[3];
+                    Tuple<Object, Intersection> objectIntersection = getHit(normalizedRay);
 
-            int recurseLevel = 0;
-            getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
+                    Object closestObject = objectIntersection.getObject();
+                    Intersection intersectionHit = objectIntersection.getIntersection();
 
-            // rgb is now a value between 0 and 1
-            rgb = Arrays.stream(rgb).map(v -> v * 255).toArray();
-            rgb = Arrays.stream(rgb).map(v -> {
-                if (v > 255) v = 255;
-                else if (v < 0) v = 0;
-                return v;
-            }).toArray();
+                    if (closestObject != null) {
+                        // p 641
+                        // shading
+                        // Color: ambient, diffuse, specular
+                        double[] rgb = new double[3];
 
-            int color = ((int) rgb[0] << 16) | ((int) rgb[1] << 8) | (int) rgb[2];
-            buffer.setRGB((int) c, (int) r, color);
-        } else {
-            /*int color = this.skybox.getRGB((int) c, (int) r);
-            buffer.setRGB((int) c, (int) r, color);
-            */
-            if (r < w) {
-                if (new Random().nextDouble(100) < 0.1) {
-                    int color = (145 << 16) | (211 << 8) | 255;
-                    buffer.setRGB((int) c, (int) r, color);
+                        int recurseLevel = 0;
+                        rgbValues[i] = getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
+
+                    } else {
+                        rgbValues[i] = new double[]{0, 0, 0};
+                    }
                 }
-            } else {
-                buffer.setRGB((int) c, (int) r, 0);
+
+                // get average from all rgb values
+                double[] averageRgbValues = new double[3];
+                // red
+                averageRgbValues[0] = Arrays.stream(rgbValues).flatMapToDouble(v -> DoubleStream.of(v[0])).average().getAsDouble();
+
+                // green
+                averageRgbValues[1] = Arrays.stream(rgbValues).flatMapToDouble(v -> DoubleStream.of(v[1])).average().getAsDouble();
+
+                // blue
+                averageRgbValues[2] = Arrays.stream(rgbValues).flatMapToDouble(v -> DoubleStream.of(v[2])).average().getAsDouble();
+
+
+                // rgb is now a value between 0 and 1
+                averageRgbValues = Arrays.stream(averageRgbValues).map(v -> v * 255).toArray();
+                averageRgbValues = Arrays.stream(averageRgbValues).map(v -> {
+                    if (v > 255) v = 255;
+                    else if (v < 0) v = 0;
+                    return v;
+                }).toArray();
+
+                int color = ((int) averageRgbValues[0] << 16) | ((int) averageRgbValues[1] << 8) | (int) averageRgbValues[2];
+                buffer.setRGB((int) c, (int) r, color);
             }
         }
     }

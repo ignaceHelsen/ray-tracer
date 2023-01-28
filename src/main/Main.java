@@ -24,9 +24,9 @@ public class Main {
 
         // scene
         Vector lightsourceWhite = new Vector(1800, 0, -2000, 1); // location
-        Vector lightsourceBlue = new Vector(5000, -500, -1500, 1); // location
-        Vector lightsourceRed = new Vector(500, 500, -1500, 1); // location
-        Vector lightsourceOrange = new Vector(-10000, 1500, -1000, 1); // location
+        Vector lightsourceBlue = new Vector(5000, -500, -2000, 1); // location
+        Vector lightsourceRed = new Vector(500, 500, -2000, 1); // location
+        Vector lightsourceOrange = new Vector(-10000, 1500, -2000, 1); // location
         Vector lightsourcePink = new Vector(0, 4000, -2000, 1); // location
 
         Scene scene = new Scene(); // light color
