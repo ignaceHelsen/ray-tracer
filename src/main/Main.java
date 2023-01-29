@@ -23,7 +23,7 @@ public class Main {
         */
 
         // scene
-        Vector lightsourceWhite = new Vector(1800, 0, -2000, 1); // location
+        Vector lightsourceWhite = new Vector(1800, 0, -500, 1); // location
         Vector lightsourceBlue = new Vector(5000, -500, -1000, 1); // location
         Vector lightsourceRed = new Vector(500, 500, -800, 1); // location
         Vector lightsourceOrange = new Vector(-10000, 1000, -1000, 1); // location
@@ -44,7 +44,7 @@ public class Main {
         try {
             scene.addMaterials(SDL.parseMaterial("scenes/materials.sdl", 0));
             scene.addObjects(SDL.parseObjects("scenes/sdlOneObject.sdl", scene.getMaterials(), 8));
-            settings = SDL.parseSettings("scenes/sdlOneObject.sdl", 0);
+            settings = SDL.parseSettings("scenes/sdlAllObjects.sdl", 0);
         } catch (IOException e) {
             System.out.println("Problem reading sdl: " + e.getMessage());
         }

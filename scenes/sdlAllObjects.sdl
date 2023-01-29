@@ -18,8 +18,7 @@ sphere
 
 translate 120 0 -250
 scale 300 300 300
-rotate 45 45 45
-chrome
+ruby
 sphere
 
 translate 1500 220 5

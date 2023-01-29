@@ -21,6 +21,14 @@ import java.io.IOException;
 import java.util.*;
 
 public class SDL {
+    /**
+     * Will parse all objects from a file.
+     * @param sourcePath: The file to read.
+     * @param materials: The materials that will be looked for.
+     * @param skipLines: Number of lines to skip before reading the objects. Mostly used for settings.
+     * @return: List of materials found in the file.
+     * @throws IOException
+     */
     public static List<Object> parseObjects(String sourcePath, List<Material> materials, int skipLines) throws IOException {
         List<Object> objects = new ArrayList<>();
 
@@ -71,7 +79,7 @@ public class SDL {
             } else {
                 // currentline is a transformation
                 try {
-                    double[] coords = getCoords(currentLine.trim());
+                    double[] coords = getValues(currentLine.trim());
 
                     if (instruction.startsWith("translate")) {
                         translation = new Translation((int) coords[0], (int) coords[1], (int) coords[2]);
@@ -135,15 +143,15 @@ public class SDL {
             String text = currentLine.trim().toLowerCase();
             currentMaterial.setName(text);
 
-            currentMaterial.setAmbient(getCoords(reader.readLine().trim()));
-            currentMaterial.setDiffuse(getCoords(reader.readLine().trim()));
-            currentMaterial.setSpecular(getCoords(reader.readLine().trim()));
-            currentMaterial.setRefractionIndex(getCoords(reader.readLine()));
+            currentMaterial.setAmbient(getValues(reader.readLine().trim()));
+            currentMaterial.setDiffuse(getValues(reader.readLine().trim()));
+            currentMaterial.setSpecular(getValues(reader.readLine().trim()));
+            currentMaterial.setRefractionIndex(getValues(reader.readLine()));
 
             String roughness = reader.readLine().trim();
             currentMaterial.setRoughness(Double.parseDouble(roughness.substring(roughness.indexOf(" "))));
 
-            currentMaterial.setkDistribution(getCoords(reader.readLine().trim()));
+            currentMaterial.setkDistribution(getValues(reader.readLine().trim()));
 
             String shininess = reader.readLine().trim();
             currentMaterial.setShininess(Double.parseDouble(shininess.substring(shininess.indexOf(" "))));
@@ -162,7 +170,12 @@ public class SDL {
         return materials;
     }
 
-    private static double[] getCoords(String currentLine) {
+    /**
+     * Will get the next three values from a string.
+     * @param currentLine: The text to scan.
+     * @return: Three values from the text.
+     */
+    private static double[] getValues(String currentLine) {
         System.out.println(currentLine);
         int indexOfFirstSpace = currentLine.indexOf(" ");
         String textWithoutTransformationWord = currentLine.substring(indexOfFirstSpace);

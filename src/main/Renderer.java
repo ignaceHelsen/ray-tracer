@@ -363,16 +363,10 @@ public class Renderer {
             // check first for possible shadow spots
             Vector dir = new Vector(lightsource.getKey().getX() - hitpoint.getX(), lightsource.getKey().getY() - hitpoint.getY(), lightsource.getKey().getZ() - hitpoint.getZ(), 0);
 
-            if (shadowsEnabled) {
-                if (isInShadow(start, dir)) {
-                    for (int i = 0; i < 3; i++) {
-                        rgb[i] -= rgb[i] * 0.01 * lightsourceFactor; // dim the scene a bit
-                    }
-                    continue;
-                }
-            }
-
             // continue onto diffuse and specular
+            /*
+            DIFFUSE
+             */
             double[] s = Utility.normalize(Utility.subtract(lightsource.getKey().getCoords(), hitpoint.getCoords()));
 
             double mDots = Utility.dot(s, normalVector);
@@ -395,6 +389,16 @@ public class Renderer {
 
             for (int i = 0; i < 3; i++) {
                 rgb[i] *= textureRgb[i];
+            }
+
+
+            if (shadowsEnabled) {
+                if (isInShadow(start, dir)) {
+                    for (int i = 0; i < 3; i++) {
+                        rgb[i] -= rgb[i] * 5 * lightsourceFactor; // dim the scene a bit
+                    }
+                    continue;
+                }
             }
 
             /*
