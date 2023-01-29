@@ -4,6 +4,7 @@ import main.object.Object;
 import main.object.Sphere;
 import main.object.Tuple;
 import main.sdl.Settings;
+import main.texture.Texture;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,7 +25,7 @@ public class Renderer {
     private final boolean SPIRAL_RENDER = true;
     private final boolean REVERSE_SPIRAL = true;
     private final boolean RANDOM_RENDER = false;
-    private final int SSA = 9; // antialiasing
+    private final int SSA = 1; // antialiasing
 
     private final double lightsourceFactor; // or a bit of contrast
     private final double epsilon; // the difference that will be subtracted for shadowing
@@ -56,7 +57,7 @@ public class Renderer {
         this.cmax = cmax;
         this.rmax = rmax;
 
-        this.threads = 1;
+        this.threads = Runtime.getRuntime().availableProcessors();
 
         /*
         SETTINGS
@@ -182,6 +183,15 @@ public class Renderer {
 
     }
 
+    /**
+     * This method is used by one thread. This thread has a certain region assigned which it should render.
+     * @param startColumn: The X-coordinate of the screen where it will start rendering.
+     * @param endColumn: The X-coordinate of the screen where it will stop rendering.
+     * @param startRow: Idem
+     * @param finishRow: Idem
+     * @param h: Half of screen height, directly passed.
+     * @param w: Half of screen-width, directly passed.
+     */
     private void traceRegion(double startColumn, double endColumn, double startRow, double finishRow, double h, double w) {
         for (double r = startRow; r <= finishRow - 1; r++) { // nRows
             for (double c = startColumn; c <= endColumn - 1; c++) { // nColumns
@@ -345,16 +355,6 @@ public class Renderer {
             rgb[i] += ambient[i] * currentObject.getMaterial().getkDistribution()[0] * fresnelCoefficient0RGB[i];
         }
 
-        /*
-            TEXTURE
-         */
-
-        double[] textureRgb = getTexture(currentObject.getTexture(), hitpoint.getX(), hitpoint.getY(), hitpoint.getZ());
-
-        for (int i = 0; i < 3; i++) {
-            rgb[i] *= textureRgb[i];
-        }
-
         // shadows
         Vector start = Utility.sum(hitpoint, Utility.multiplyElementWise(epsilon, new Vector(normalVector)));
 
@@ -385,6 +385,16 @@ public class Renderer {
                 for (int i = 0; i < 3; i++) {
                     rgb[i] += specular[i] * lightsource.getValue().getDw() * currentObject.getMaterial().getkDistribution()[1] * fresnelCoefficient0RGB[i] * lambert * (lightsource.getValue().getLightColor()[i] * lightsourceFactor);
                 }
+            }
+
+            /*
+                TEXTURE
+             */
+
+            double[] textureRgb = currentObject.getTexture(hitpoint.getX(), hitpoint.getY(), hitpoint.getZ());
+
+            for (int i = 0; i < 3; i++) {
+                rgb[i] *= textureRgb[i];
             }
 
             /*
@@ -553,28 +563,6 @@ public class Renderer {
         }
 
         return rgb;
-    }
-
-    private double[] getTexture(Texture texture, double x, double y, double z) {
-        if (texture == Texture.CHECKERBOARD) {
-            boolean u = ((int) (x * 0.0125)) % 2 == 0;
-            boolean v = ((int) (y * 0.0125)) % 2 == 0;
-            boolean w = ((int) (z * 0.0125)) % 2 == 0;
-
-            if (u ^ v ^ w) {
-                if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
-                    return new double[]{0, 0, 0};
-                } else {
-                    return new double[]{1, 1, 1};
-                }
-            } else if ((x < 0 && y > 0) || (x > 0 && y < 0)) {
-                return new double[]{1, 1, 1};
-            } else {
-                return new double[]{0, 0, 0};
-            }
-        }
-
-        return new double[]{1, 1, 1};
     }
 
     private boolean isInShadow(Vector start, Vector dir) {

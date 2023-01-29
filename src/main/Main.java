@@ -24,17 +24,17 @@ public class Main {
 
         // scene
         Vector lightsourceWhite = new Vector(1800, 0, -2000, 1); // location
-        Vector lightsourceBlue = new Vector(5000, -500, -2000, 1); // location
-        Vector lightsourceRed = new Vector(500, 500, -2000, 1); // location
-        Vector lightsourceOrange = new Vector(-10000, 1500, -2000, 1); // location
+        Vector lightsourceBlue = new Vector(5000, -500, -1000, 1); // location
+        Vector lightsourceRed = new Vector(500, 500, -800, 1); // location
+        Vector lightsourceOrange = new Vector(-10000, 1000, -1000, 1); // location
         Vector lightsourcePink = new Vector(0, 4000, -2000, 1); // location
 
         Scene scene = new Scene(); // light color
         scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155}, 0.1);
-        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255}, 0.1);
+        /*scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255}, 0.1);
         scene.addLightsource(lightsourceRed, new double[]{180, 0, 0}, 0.1);
         scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0}, 0.1);
-        scene.addLightsource(lightsourcePink, new double[]{255, 30, 122}, 0.1);
+        *///scene.addLightsource(lightsourcePink, new double[]{255, 30, 122}, 0.1);
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);
@@ -43,8 +43,8 @@ public class Main {
 
         try {
             scene.addMaterials(SDL.parseMaterial("scenes/materials.sdl", 0));
-            scene.addObjects(SDL.parseObjects("scenes/sdlAllObjects.sdl", scene.getMaterials(), 8));
-            settings = SDL.parseSettings("scenes/sdlAllObjects.sdl", 0);
+            scene.addObjects(SDL.parseObjects("scenes/sdlOneObject.sdl", scene.getMaterials(), 8));
+            settings = SDL.parseSettings("scenes/sdlOneObject.sdl", 0);
         } catch (IOException e) {
             System.out.println("Problem reading sdl: " + e.getMessage());
         }

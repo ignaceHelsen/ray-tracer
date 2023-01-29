@@ -8,7 +8,7 @@ refraction true
 
 translate 0 0 60
 gold
-checkerboard
+CHECKERBOARD
 plane
 
 translate 1500 -100 -70

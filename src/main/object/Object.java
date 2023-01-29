@@ -1,6 +1,7 @@
 package main.object;
 
 import main.*;
+import main.texture.Texture;
 import main.transformation.Transformation;
 
 public abstract class Object {
@@ -40,11 +41,13 @@ public abstract class Object {
         this.material = material;
     }
 
-    public Texture getTexture() {
-        return texture;
+    public double[] getTexture(double x, double y, double z) {
+        if (this.texture == null) return new double[] {1, 1, 1};
+        return texture.getTexture(x, y, z, 90);
     }
 
     public void setTexture(Texture texture) {
+        // texture can be null
         this.texture = texture;
     }
 }

@@ -1,7 +1,16 @@
-translate 1750 0 -50
+lightsourceFactor 0.1
+epsilon 0.3
+maxRecurseLevel 5
+dw 0.1
+shadowsEnabled true
+reflection true
+refraction true
+
+translate 1700 0 -20
 scale 25 25 25
-rotate 0 45 0
-chrome
+rotate 0 90 0
+wood
+WOOD
 cube
 
 translate 0 0 20
