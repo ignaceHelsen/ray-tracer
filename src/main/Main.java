@@ -35,9 +35,9 @@ public class Main {
         Scene scene = new Scene(); // light color
         // refraction scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155}, 0.000002);
         scene.addLightsource(lightsourceWhite, new double[]{155, 155, 155}, 0.1);
-        scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255}, 0.1);
+        /*scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255}, 0.1);
         scene.addLightsource(lightsourceRed, new double[]{180, 0, 0}, 0.1);
-        scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0}, 0.1);
+        scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0}, 0.1);*/
         // scene.addLightsource(lightsourcePink, new double[]{255, 30, 122}, 0.1);
 
         // camera in center of screen
@@ -47,10 +47,10 @@ public class Main {
         List<Material> materials = new ArrayList<>();
 
         try {
-            settings = SDL.parseSettings("scenes/sdlAllObjects.sdl", 0);
+            settings = SDL.parseSettings("scenes/sdlChristmas.sdl", 0);
             materials = SDL.parseMaterial("scenes/materials.sdl", 0);
             scene.addMaterials(materials);
-            scene.addObjects(SDL.parseObjects("scenes/sdlAllObjects.sdl", scene.getMaterials(), 7));
+            scene.addObjects(SDL.parseObjects("scenes/sdlChristmas.sdl", scene.getMaterials(), 7));
         } catch (IOException e) {
             System.out.println("Problem reading sdl: " + e.getMessage());
         }

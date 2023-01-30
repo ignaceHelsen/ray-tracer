@@ -7,8 +7,7 @@ reflection true
 refraction true
 
 translate 0 0 30
-gold
-CHECKERBOARD
+snow
 plane
 
 translate 1700 0 10

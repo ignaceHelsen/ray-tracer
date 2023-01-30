@@ -78,3 +78,14 @@ kdistribution 50 0.9 0.1
 shininess 0.05
 transparency 0
 lightspeed 0
+
+snow
+ambient 0 0 1
+diffusee 1 1 1
+specular 1 1 1
+refraction 8 8 8
+roughness 1
+kdistribution 0.4 0.1428 0.8571
+shininess 0.1
+transparency 0
+lightspeed 1
