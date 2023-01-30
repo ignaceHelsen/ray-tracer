@@ -38,7 +38,7 @@ public class Main {
         scene.addLightsource(lightsourceBlue, new double[]{0, 0, 255}, 0.1);
         scene.addLightsource(lightsourceRed, new double[]{180, 0, 0}, 0.1);
         scene.addLightsource(lightsourceOrange, new double[]{200, 50, 0}, 0.1);
-        //scene.addLightsource(lightsourcePink, new double[]{255, 30, 122}, 0.1);
+        // scene.addLightsource(lightsourcePink, new double[]{255, 30, 122}, 0.1);
 
         // camera in center of screen
         Camera camera = new Camera(FOCALLENGTH, 0, 0);

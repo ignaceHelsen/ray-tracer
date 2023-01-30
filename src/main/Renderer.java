@@ -265,6 +265,12 @@ public class Renderer {
         }
     }
 
+
+    /**
+     * Will return the first hitpoint of a ray based on hittime. This means that even though several objects are on the path of a ray, the closest one will be returned together with the intersection.
+     * @param normalizedRay: The ray.
+     * @return Tuple containing Object hit and Intersection. The intersection contains the hitpoints of enter and exit, enter and/or exit vector and normal.
+     */
     private Tuple<Object, Intersection> getHit(Ray normalizedRay) {
         // for every object, cast the ray and find the object nearest to us, that is the object where the collision time (t1) is lowest
         double minIntersectionTime = Integer.MAX_VALUE;
@@ -319,8 +325,6 @@ public class Renderer {
         v = Arrays.stream(v).map(value -> value * -1).toArray();
 
         double mRoughness = currentObject.getMaterial().getRoughness();
-
-        int debug;
 
         //re-transform the hitpoint
         Vector hitpoint;
@@ -417,8 +421,6 @@ public class Renderer {
             if (mDoth >= 0.0001) {
                 // angle between h and normalVector
                 double angle = getAngle(normalVector, h);
-                if (Double.isNaN(angle))
-                    System.out.println("Nan found");
 
                 double d = Math.exp(-Math.pow(Math.tan(angle) / mRoughness, 2)) / (4 * mRoughness * mRoughness * Math.pow(angle, 4));
 
