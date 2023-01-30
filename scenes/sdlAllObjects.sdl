@@ -1,7 +1,6 @@
 lightsourceFactor 0.1
-epsilon 0.3
+epsilon 1.5
 maxRecurseLevel 5
-dw 0.1
 shadowsEnabled true
 reflection true
 refraction true

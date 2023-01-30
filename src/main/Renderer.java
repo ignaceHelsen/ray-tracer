@@ -26,7 +26,7 @@ public class Renderer {
     private final boolean SPIRAL_RENDER = true;
     private final boolean REVERSE_SPIRAL = true;
     private final boolean RANDOM_RENDER = false;
-    private final int SSA = 4; // antialiasing
+    private final int SSA = 1; // antialiasing
 
     private final double lightsourceFactor; // or a bit of contrast
     private final double epsilon; // the difference that will be subtracted for shadowing
@@ -97,7 +97,6 @@ public class Renderer {
         final double h = screenHeight / 2;
         final double w = screenWidth / 2;
 
-        float starttime = System.nanoTime();
         float starttime = System.nanoTime();
         this.skybox = new BufferedImage((int) screenWidth, (int) screenHeight, BufferedImage.TYPE_INT_RGB);
         try {
@@ -174,7 +173,7 @@ public class Renderer {
             }
 
             es.shutdown();
-            es.awaitTermination(10, TimeUnit.MINUTES);
+            es.awaitTermination(1, TimeUnit.HOURS);
         } catch (
                 InterruptedException e) {
             e.printStackTrace();
@@ -470,11 +469,6 @@ public class Renderer {
             REFLECTION & TRANSPARENCY
         */
 
-        if (Double.isNaN(rgb[0])) {
-            //getShading(ray, currentObject, intersection, previousRgb, recurseLevel);
-            System.out.println("Nan shading Found");
-        }
-
         // REFLECTION
         if (recurseLevel + 1 <= maxRecurseLevel) {
             Vector vectorNormalVector = new Vector(normalVector);
@@ -515,19 +509,14 @@ public class Renderer {
                 double c2 = currentObject.getMaterial().getSpeedOfLight();
                 double factor = c2 / c1;
                 double cosThetaTwoSquared = 1 - Math.pow(factor, 2) * (1 - Math.pow(dirDotNormalvector, 2));
-                // if cosThetaTwoSquared becomes negative, we have reached or exceeded the critical angle
-                if (cosThetaTwoSquared <= 0) {
-                    // total internal reflection
-                    debug = 0;
-                }
                 double cosThetaTwo = Math.sqrt(cosThetaTwoSquared);
 
                 for (int i = 0; i < t.length; i++) {
                     t[i] = factor * ray.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * normalVector[i];
                 }
 
-                Vector NewDir = new Vector(Utility.normalize(t));
-                Ray refraction = new Ray(startInnerRefraction, NewDir);
+                Vector newDir = new Vector(Utility.normalize(t));
+                Ray refraction = new Ray(startInnerRefraction, newDir);
 
                 Tuple<Object, Intersection> objectIntersection = getHit(refraction);
 
@@ -554,22 +543,35 @@ public class Renderer {
                         c2 = air;
                         factor = c2 / c1;
                         cosThetaTwoSquared = 1 - Math.pow(factor, 2) * (1 - Math.pow(dirDotNormalvector, 2));
-                        cosThetaTwo = Math.sqrt(cosThetaTwoSquared);
 
-                        for (int i = 0; i < t.length; i++) {
-                            t[i] = factor * refraction.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * refractedIntersectionHit.getNormalVector()[i];
+                        Ray refractionOrReflectionRay; // the next ray to spawn. Could just be ray that exits the object or can travel across the edge of the current object
+
+                        // if cosThetaTwoSquared becomes negative, exceeded the critical angle (when =  0, the ray will follow the object's edge
+                        if (cosThetaTwoSquared < 0) {
+                            // total internal reflection: so just reflection
+                            Vector r = Utility.subtract(newDir, Utility.multiplyElementWise(2 * dirDotNormalvector, vectorNormalVector));
+
+                            r.setType(0);
+                            refractionOrReflectionRay = new Ray(startOuterRefraction, Utility.normalize(r));
+
+                        } else {
+                            cosThetaTwo = Math.sqrt(cosThetaTwoSquared);
+
+                            for (int i = 0; i < t.length; i++) {
+                                t[i] = factor * refraction.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * refractedIntersectionHit.getNormalVector()[i];
+                            }
+
+                            newDir = new Vector(Utility.normalize(t));
+                            refractionOrReflectionRay = new Ray(startOuterRefraction, newDir);
                         }
 
-                        Vector newDir = new Vector(Utility.normalize(t));
-                        Ray outerrefraction = new Ray(startOuterRefraction, newDir);
-
-                        Tuple<Object, Intersection> outerObjectIntersection = getHit(outerrefraction);
+                        Tuple<Object, Intersection> outerObjectIntersection = getHit(refractionOrReflectionRay);
 
                         Object outerRefractedObjectHit = outerObjectIntersection.getObject();
                         Intersection outerRefractedIntersectionHit = outerObjectIntersection.getIntersection();
 
                         if (outerRefractedObjectHit != null && outerRefractedObjectHit != currentObject) {
-                            double[] reflectedColors = getShading(outerrefraction, outerRefractedObjectHit, outerRefractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
+                            double[] reflectedColors = getShading(refractionOrReflectionRay, outerRefractedObjectHit, outerRefractedIntersectionHit, rgb.clone(), recurseLevel, currentObject.getMaterial().getSpeedOfLight());
 
                             for (int i = 0; i < 3; i++)
                                 rgb[i] += 0.1 * currentObject.getMaterial().getTransparency() * reflectedColors[i];

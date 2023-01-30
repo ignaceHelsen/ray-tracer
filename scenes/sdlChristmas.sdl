@@ -635,6 +635,252 @@ emerald
 0
 taperedcylinder
 
+
+# ninth tree
+
+translate 1670 35 -10
+scale 6 6 40
+wood
+WOOD
+1
+taperedcylinder
+
+translate 1670 35 30
+scale 12 12 20
+rotate 180 0 0
+wood
+WOOD
+0
+taperedcylinder
+
+translate 1670 35 5
+scale 20 20 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 35 0
+scale 18 18 20
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 35 -5
+scale 16 16 18
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 35 -10
+scale 14 14 13
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 35 -15
+scale 12 12 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 35 -20
+scale 10 10 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 35 -23
+scale 8 8 10
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 35 -27
+scale 6 6 8
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 35 -30
+scale 4 4 3
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+
+# tenth tree
+
+translate 1670 -35 -10
+scale 6 6 40
+wood
+WOOD
+1
+taperedcylinder
+
+translate 1670 -35 30
+scale 12 12 20
+rotate 180 0 0
+wood
+WOOD
+0
+taperedcylinder
+
+translate 1670 -35 5
+scale 20 20 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -35 0
+scale 18 18 20
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -35 -5
+scale 16 16 18
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -35 -10
+scale 14 14 13
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -35 -15
+scale 12 12 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -35 -20
+scale 10 10 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -35 -23
+scale 8 8 10
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -35 -27
+scale 6 6 8
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -35 -30
+scale 4 4 3
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+
+# eleventh tree
+
+translate 1670 -55 -10
+scale 6 6 40
+wood
+WOOD
+1
+taperedcylinder
+
+translate 1670 -55 30
+scale 12 12 20
+rotate 180 0 0
+wood
+WOOD
+0
+taperedcylinder
+
+translate 1670 -55 5
+scale 20 20 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -55 0
+scale 18 18 20
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -55 -5
+scale 16 16 18
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -55 -10
+scale 14 14 13
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -55 -15
+scale 12 12 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -55 -20
+scale 10 10 15
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -55 -23
+scale 8 8 10
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -55 -27
+scale 6 6 8
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+translate 1670 -55 -30
+scale 4 4 3
+rotate 180 0 0
+emerald
+0
+taperedcylinder
+
+
+
+
 # boxes
 
 translate 1750 -70 30
