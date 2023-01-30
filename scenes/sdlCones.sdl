@@ -1,0 +1,1343 @@
+lightsourceFactor 0.1
+epsilon 0.3
+maxRecurseLevel 5
+dw 0.5
+shadowsEnabled true
+reflection true
+refraction true
+
+# column 0
+
+translate 1700 -100 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -100 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -100 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -100 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -100 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -100 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -100 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -100 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 2
+
+translate 1700 -80 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -80 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -80 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -80 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -80 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -80 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -80 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -80 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 2
+
+translate 1700 -60 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -60 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -60 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -60 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -60 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -60 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -60 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -60 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 4
+
+translate 1700 -40 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -40 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -40 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -40 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -40 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -40 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -40 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -40 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 5
+
+translate 1700 -20 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -20 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -20 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -20 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -20 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -20 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -20 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 -20 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 6
+
+translate 1700 0 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 0 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 0 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 0 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 0 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 0 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 0 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 0 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 7
+
+translate 1700 20 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 20 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 20 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 20 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 20 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 20 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 20 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 20 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 8
+
+translate 1700 40 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 40 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 40 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 40 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 40 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 40 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 40 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 40 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 9
+
+translate 1700 60 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 60 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 60 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 60 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 60 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 60 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 60 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 60 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 10
+
+translate 1700 80 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 80 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 80 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 80 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 80 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 80 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 80 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 80 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# column 10
+
+translate 1700 100 -100
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 100 -80
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 100 -60
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 100 -40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 100 -20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 100 0
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 100 20
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+translate 1700 100 40
+scale 10 10 30
+rotate 0 90 0
+ruby
+0
+taperedcylinder
+
+# behind
+
+# column 0
+
+translate 1690 -105 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -105 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -105 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -105 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -105 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -105 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -105 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -105 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 2
+
+translate 1690 -85 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -85 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -85 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -85 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -85 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -85 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -85 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -85 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 2
+
+translate 1690 -65 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -65 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -65 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -65 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -65 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -65 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -65 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -65 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 4
+
+translate 1690 -45 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -45 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -45 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -45 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -45 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -45 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -45 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -45 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 5
+
+translate 1690 -25 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -25 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -25 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -25 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -25 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -25 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -25 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -25 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# middle column
+
+translate 1690 -5 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -5 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -5 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -5 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -5 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -5 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -5 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 -5 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 6
+
+translate 1690 5 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 5 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 5 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 5 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 5 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 5 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 5 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 5 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 7
+
+translate 1690 25 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 25 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 25 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 25 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 25 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 25 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 25 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 25 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 8
+
+translate 1690 45 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 45 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 45 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 45 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 45 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 45 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 45 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 45 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 9
+
+translate 1690 65 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 65 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 65 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 65 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 65 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 65 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 65 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 65 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 10
+
+translate 1690 85 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 85 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 85 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 85 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 85 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 85 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 85 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 85 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+# column 10
+
+translate 1690 105 -105
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 105 -85
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 105 -65
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 105 -45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 105 -25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 105 5
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 105 25
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder
+
+translate 1690 105 45
+scale 10 10 30
+rotate 0 45 0
+ruby
+0
+taperedcylinder

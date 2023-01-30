@@ -3,7 +3,7 @@ package main.texture;
 import java.util.Random;
 
 public class Wood extends Texture {
-    private final double D = 0.6;
+    private final double D = 0.2;
     private final double A = D * Math.random();
     private final double M = new Random().nextDouble(0.8-0.6) + 0.6; // thickness
 

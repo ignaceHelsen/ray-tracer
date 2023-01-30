@@ -26,7 +26,7 @@ public class Renderer {
     private final boolean SPIRAL_RENDER = true;
     private final boolean REVERSE_SPIRAL = true;
     private final boolean RANDOM_RENDER = false;
-    private final int SSA = 9; // antialiasing
+    private final int SSA = 4; // antialiasing
 
     private final double lightsourceFactor; // or a bit of contrast
     private final double epsilon; // the difference that will be subtracted for shadowing
@@ -97,6 +97,7 @@ public class Renderer {
         final double h = screenHeight / 2;
         final double w = screenWidth / 2;
 
+        float starttime = System.nanoTime();
         float starttime = System.nanoTime();
         this.skybox = new BufferedImage((int) screenWidth, (int) screenHeight, BufferedImage.TYPE_INT_RGB);
         try {

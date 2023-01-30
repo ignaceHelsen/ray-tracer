@@ -86,7 +86,7 @@ public class SDL {
                     } else if (instruction.startsWith("scale")) {
                         scale = new Scale((int) coords[0], (int) coords[1], (int) coords[2]);
                     } else if (instruction.startsWith("rotate")) {
-                        rotation = new Rotation().rotateX(coords[0]).rotateY(coords[1]).rotateZ(coords[2]);
+                        rotation = new Rotation(coords[0], coords[1], coords[2]);
                     }
 
                 } catch (Exception e) {

@@ -1,8 +1,11 @@
 package main.transformation;
 
 public class Rotation extends Transformation {
-    public Rotation() {
+    public Rotation(double angleX, double angleY, double angleZ) {
         super();
+        this.rotateX(angleX);
+        this.rotateY(angleY);
+        this.rotateZ(angleZ);
     }
 
     public Rotation rotateX(double angle) {
