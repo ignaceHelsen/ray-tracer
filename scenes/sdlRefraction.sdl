@@ -6,32 +6,27 @@ shadowsEnabled true
 reflection true
 refraction true
 
-translate 1750 0 0
-scale 10 25 25
+translate 1800 0 0
+scale 30 25 25
 mirror
 cube
 
-translate 1700 180 -250
+translate 1750 380 -550
 scale 10 2 1000
 rotate 35 0 0
 ruby
 1
 taperedcylinder
 
-translate 1700 0 -250
+translate 1750 0 -550
 scale 10 2 1000
 ruby
 1
 taperedcylinder
 
-translate 1700 -500 -250
-scale 10 2 1000
+translate 1750 -1300 -600
+scale 10 2 10000
 rotate -65 0 0
 ruby
 1
 taperedcylinder
-
-translate 0 0 20
-gold
-CHECKERBOARD
-plane

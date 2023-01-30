@@ -9,9 +9,8 @@ refraction true
 translate 1700 0 -20
 scale 25 25 25
 rotate 0 90 0
-wood
-WOOD
-cube
+ruby
+sphere
 
 translate 0 0 20
 gold

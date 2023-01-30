@@ -4,7 +4,6 @@ import main.object.Object;
 import main.object.Sphere;
 import main.object.Tuple;
 import main.sdl.Settings;
-import main.texture.Texture;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,8 +12,10 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -25,7 +26,7 @@ public class Renderer {
     private final boolean SPIRAL_RENDER = true;
     private final boolean REVERSE_SPIRAL = true;
     private final boolean RANDOM_RENDER = false;
-    private final int SSA = 1; // antialiasing
+    private final int SSA = 9; // antialiasing
 
     private final double lightsourceFactor; // or a bit of contrast
     private final double epsilon; // the difference that will be subtracted for shadowing
@@ -185,12 +186,13 @@ public class Renderer {
 
     /**
      * This method is used by one thread. This thread has a certain region assigned which it should render.
+     *
      * @param startColumn: The X-coordinate of the screen where it will start rendering.
-     * @param endColumn: The X-coordinate of the screen where it will stop rendering.
-     * @param startRow: Idem
-     * @param finishRow: Idem
-     * @param h: Half of screen height, directly passed.
-     * @param w: Half of screen-width, directly passed.
+     * @param endColumn:   The X-coordinate of the screen where it will stop rendering.
+     * @param startRow:    Idem
+     * @param finishRow:   Idem
+     * @param h:           Half of screen height, directly passed.
+     * @param w:           Half of screen-width, directly passed.
      */
     private void traceRegion(double startColumn, double endColumn, double startRow, double finishRow, double h, double w) {
         for (double r = startRow; r <= finishRow - 1; r++) { // nRows
@@ -229,8 +231,13 @@ public class Renderer {
                         double[] rgb = new double[3];
 
                         int recurseLevel = 0;
-                        rgbValues[i] = getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
-
+                        // if our first hit only has a exit point, this means that we're inside the object or hitting it in tangent.
+                        if (intersectionHit.getEnter() == null) {
+                            rgbValues[i] = getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, closestObject.getMaterial().getSpeedOfLight());
+                        } else {
+                            // normal scenario is that we are located in air and look at an object.
+                            rgbValues[i] = getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
+                        }
                     } else {
                         rgbValues[i] = new double[]{0, 0, 0};
                     }
@@ -506,9 +513,13 @@ public class Renderer {
                 double c1 = previousObject;
                 double c2 = currentObject.getMaterial().getSpeedOfLight();
                 double factor = c2 / c1;
-                //double thetaOne = getAngle(ray.getDir().getCoords(), normalVector);
-                //double thetaTwo = Math.asin(Math.sin(thetaOne) * factor);
-                double cosThetaTwo = Math.sqrt(1 - Math.pow(factor, 2) * (1 - Math.pow(dirDotNormalvector, 2)));
+                double cosThetaTwoSquared = 1 - Math.pow(factor, 2) * (1 - Math.pow(dirDotNormalvector, 2));
+                // if cosThetaTwoSquared becomes negative, we have reached or exceeded the critical angle
+                if (cosThetaTwoSquared <= 0) {
+                    // total internal reflection
+                    debug = 0;
+                }
+                double cosThetaTwo = Math.sqrt(cosThetaTwoSquared);
 
                 for (int i = 0; i < t.length; i++) {
                     t[i] = factor * ray.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * normalVector[i];
@@ -541,7 +552,8 @@ public class Renderer {
                         c1 = currentObject.getMaterial().getSpeedOfLight();
                         c2 = air;
                         factor = c2 / c1;
-                        cosThetaTwo = Math.sqrt(1 - Math.pow(factor, 2) * (1 - Math.pow(dirDotNormalvector, 2)));
+                        cosThetaTwoSquared = 1 - Math.pow(factor, 2) * (1 - Math.pow(dirDotNormalvector, 2));
+                        cosThetaTwo = Math.sqrt(cosThetaTwoSquared);
 
                         for (int i = 0; i < t.length; i++) {
                             t[i] = factor * refraction.getDir().getCoords()[i] + (factor * dirDotNormalvector - cosThetaTwo) * refractedIntersectionHit.getNormalVector()[i];
