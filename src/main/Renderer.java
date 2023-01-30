@@ -12,10 +12,8 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -98,12 +96,6 @@ public class Renderer {
         final double w = screenWidth / 2;
 
         float starttime = System.nanoTime();
-        this.skybox = new BufferedImage((int) screenWidth, (int) screenHeight, BufferedImage.TYPE_INT_RGB);
-        try {
-            this.skybox = ImageIO.read(new File("skybox.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         ExecutorService es = Executors.newFixedThreadPool(threads);
 
@@ -212,8 +204,6 @@ public class Renderer {
                     }
 
                     Vector dir = new Vector(-focallength, -(w - screenWidth * (x / cmax)), -(h - screenHeight * (y / rmax)), 0);
-                    //Vector dir = new Vector(-focallength, w * (y * c - 1), h * (z * r - 1), 0);
-                    //Vector dir = new Vector(-focallength, (w - screenWidth) * (y * c / cmax), (h - screenHeight) * (z * r / rmax), 0);
 
                     // create normalized ray
                     Vector normalizedDir = new Vector(Utility.normalize(dir.getCoords()));
@@ -239,7 +229,13 @@ public class Renderer {
                             rgbValues[i] = getShading(normalizedRay, closestObject, intersectionHit, rgb, recurseLevel, air);
                         }
                     } else {
-                        rgbValues[i] = new double[]{0, 0, 0};
+                        if (r < w) {
+                            if (new Random().nextDouble(100) < 0.1) {
+                                rgbValues[i] = new double[]{145, 211, 255};
+                            }
+                        } else {
+                            rgbValues[i] = new double[]{0, 0, 0};
+                        }
                     }
                 }
 
